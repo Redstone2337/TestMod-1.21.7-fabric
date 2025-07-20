@@ -21,7 +21,7 @@ public class ModItemGroups {
     }
 
     public static void registerModItemGroups() {
-        Registry.register(Registries.ITEM_GROUP,ModItemGroups.SILICON_BUILDINGS,
+        Registry.register(Registries.ITEM_GROUP,ModItemGroups.SILICON_ITEMS,
                 ItemGroup.create(
                         ItemGroup.Row.TOP, 0)
                         .displayName(Text.translatable("itemGroup.mtc.silicon_items"))
