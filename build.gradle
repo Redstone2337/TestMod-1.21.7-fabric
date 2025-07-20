@@ -5,9 +5,9 @@ plugins {
 
 version = project.mod_version
 group = project.maven_group
-
+t
 base {
-	archivesName = project.archives_base_name
+	archivesName = project.archives_base_name + "-${project.minecraft_version}"
 }
 
 repositories {
