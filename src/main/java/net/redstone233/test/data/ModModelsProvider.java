@@ -23,7 +23,7 @@ public class ModModelsProvider extends FabricModelProvider {
                                         .family(blockFamily)
                 );
 
-        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.SILICON_BLOCK);
+//        blockStateModelGenerator.registerSimpleState(ModBlocks.SILICON_BLOCK);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.RAW_SILICON_BLOCK);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.SILICON_ORE);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.DEEPSLATE_SILICON_ORE);
@@ -33,6 +33,6 @@ public class ModModelsProvider extends FabricModelProvider {
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(ModItems.SILICON, Models.GENERATED);
         itemModelGenerator.register(ModItems.RAW_SILICON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.SILICON ,Models.GENERATED);
+        itemModelGenerator.register(ModItems.SILICON_INGOT ,Models.GENERATED);
     }
 }

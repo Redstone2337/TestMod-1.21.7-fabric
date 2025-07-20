@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "mtc:block/silicon_button_inventory"
+  }
+}

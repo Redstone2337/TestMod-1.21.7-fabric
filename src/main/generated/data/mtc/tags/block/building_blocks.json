@@ -1,0 +1,14 @@
+{
+  "values": [
+    "mtc:silicon_block",
+    "mtc:raw_silicon_block",
+    "mtc:silicon_block_stairs",
+    "mtc:silicon_block_slab",
+    "mtc:silicon_fence",
+    "mtc:silicon_fence_gate",
+    "mtc:silicon_wall",
+    "mtc:silicon_button",
+    "mtc:silicon_door",
+    "mtc:silicon_trapdoor"
+  ]
+}
