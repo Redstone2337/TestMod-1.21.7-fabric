@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_raw_silicon": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mtc:raw_silicon"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "mtc:raw_silicon_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_raw_silicon"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "mtc:raw_silicon_block"
+    ]
+  }
+}

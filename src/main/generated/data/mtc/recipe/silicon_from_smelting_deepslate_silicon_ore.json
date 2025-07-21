@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 300,
+  "experience": 200.0,
+  "group": "silicon",
+  "ingredient": "mtc:deepslate_silicon_ore",
+  "result": {
+    "id": "mtc:silicon"
+  }
+}

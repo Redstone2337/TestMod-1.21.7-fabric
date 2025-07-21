@@ -1,0 +1,20 @@
+{
+  "block.mtc.deepslate_silicon_ore": "Deepslate Silicon Ore",
+  "block.mtc.raw_silicon_block": "Block of Raw Silicon",
+  "block.mtc.silicon_block": "Block of Silicon",
+  "block.mtc.silicon_block_slab": "Silicon Block Slab",
+  "block.mtc.silicon_block_stairs": "Silicon Block Stairs",
+  "block.mtc.silicon_button": "Silicon Block Button",
+  "block.mtc.silicon_door": "Silicon Block Door",
+  "block.mtc.silicon_fence": "Silicon Block Fence",
+  "block.mtc.silicon_fence_gate": "Silicon Block Fence Gate",
+  "block.mtc.silicon_ore": "Silicon Ore",
+  "block.mtc.silicon_pressure_plate": "Silicon Block Pressure Plate",
+  "block.mtc.silicon_trapdoor": "Silicon Block Trapdoor",
+  "block.mtc.silicon_wall": "Silicon Block Wall",
+  "item.mtc.raw_silicon": "Raw Silicon",
+  "item.mtc.silicon": "Silicon",
+  "item.mtc.silicon_ingot": "Silicon Ingot",
+  "itemGroup.mtc.silicon_build": "Silicon|Build Blocks",
+  "itemGroup.mtc.silicon_items": "Silicon Mod|Items"
+}

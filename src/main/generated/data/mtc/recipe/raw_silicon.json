@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "mtc:raw_silicon_block"
+  ],
+  "result": {
+    "count": 9,
+    "id": "mtc:raw_silicon"
+  }
+}

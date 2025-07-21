@@ -1,11 +1,19 @@
 package net.redstone233.test.data;
 
+import com.google.common.collect.ImmutableList;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.fabricmc.fabric.impl.resource.loader.ModNioResourcePack;
 import net.minecraft.data.recipe.RecipeExporter;
 import net.minecraft.data.recipe.RecipeGenerator;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.Items;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.RegistryWrapper;
 import net.redstone233.test.TestMod;
+import net.redstone233.test.blocks.ModBlocks;
+import net.redstone233.test.items.ModItems;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -14,11 +22,59 @@ public class ModRecipesProvider extends FabricRecipeProvider {
         super(output, registriesFuture);
     }
 
+    private static final ImmutableList<ItemConvertible> SILICON_ORES = ImmutableList.of(ModBlocks.SILICON_ORE, ModBlocks.DEEPSLATE_SILICON_ORE);
+
     @Override
     protected RecipeGenerator getRecipeGenerator(RegistryWrapper.WrapperLookup wrapperLookup, RecipeExporter recipeExporter) {
         return new RecipeGenerator(wrapperLookup,recipeExporter) {
             @Override
             public void generate() {
+                createShaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.SILICON_BLOCK)
+                        .pattern("###")
+                        .pattern("###")
+                        .pattern("###")
+                        .input('#', ModItems.SILICON_INGOT)
+                        .criterion("has_silicon", conditionsFromItem(ModItems.SILICON))
+                        .offerTo(recipeExporter);
+
+                createShapeless(RecipeCategory.MISC, ModItems.SILICON_INGOT, 9)
+                        .input(Ingredient.ofItem(ModBlocks.SILICON_BLOCK))
+                        .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
+                        .offerTo(recipeExporter);
+
+                createStairsRecipe(ModBlocks.SILICON_BLOCK_STAIRS, Ingredient.ofItem(ModBlocks.SILICON_BLOCK))
+                        .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
+                        .offerTo(recipeExporter);
+
+                createSlabRecipe(RecipeCategory.BUILDING_BLOCKS,ModBlocks.SILICON_BLOCK_SLAB,Ingredient.ofItem(ModBlocks.SILICON_BLOCK))
+                        .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
+                        .offerTo(recipeExporter);
+
+                createButtonRecipe(ModBlocks.SILICON_BUTTON, Ingredient.ofItem(ModBlocks.SILICON_BLOCK))
+                        .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
+                        .offerTo(recipeExporter);
+
+                createDoorRecipe(ModBlocks.SILICON_DOOR, Ingredient.ofItem(ModBlocks.SILICON_BLOCK))
+                        .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
+                        .offerTo(recipeExporter);
+
+                createTrapdoorRecipe(ModBlocks.SILICON_TRAPDOOR, Ingredient.ofItem(ModBlocks.SILICON_BLOCK))
+                        .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
+                        .offerTo(recipeExporter);
+
+                createFenceRecipe(ModBlocks.SILICON_FENCE, Ingredient.ofItem(ModBlocks.SILICON_BLOCK))
+                        .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
+                        .offerTo(recipeExporter);
+
+                createFenceGateRecipe(ModBlocks.SILICON_FENCE_GATE, Ingredient.ofItem(ModBlocks.SILICON_BLOCK))
+                        .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
+                        .offerTo(recipeExporter);
+
+                offerSmelting(SILICON_ORES, RecipeCategory.MISC, ModItems.SILICON,200,300,"silicon");
+
+                offerBlasting(SILICON_ORES, RecipeCategory.MISC, ModItems.SILICON, 200, 150, "silicon");
+
+                offerReversibleCompactingRecipes(RecipeCategory.MISC, ModItems.RAW_SILICON, RecipeCategory.BUILDING_BLOCKS, ModBlocks.RAW_SILICON_BLOCK);
 
             }
         };

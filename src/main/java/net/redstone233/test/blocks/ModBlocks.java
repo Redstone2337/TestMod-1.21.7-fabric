@@ -8,16 +8,36 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.redstone233.test.TestMod;
 
 import java.util.function.Function;
 
 public class ModBlocks {
 
+    //AbstractBlock.Settings.create()
+    // .mapColor(MapColor.STONE_GRAY)
+    // .instrument(NoteBlockInstrument.BASEDRUM)
+    // .requiresTool().strength(3.0F, 3.0F)
+
     public static final Block SILICON_BLOCK = register("silicon_block", AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
     public static final Block RAW_SILICON_BLOCK = register("raw_silicon_block", AbstractBlock.Settings.copy(Blocks.RAW_IRON_BLOCK));
-    public static final Block SILICON_ORE = register("silicon_ore", AbstractBlock.Settings.copy(Blocks.IRON_ORE));
-    public static final Block DEEPSLATE_SILICON_ORE = register("deepslate_silicon_ore", AbstractBlock.Settings.copy(Blocks.IRON_ORE));
+    public static final Block SILICON_ORE = register(
+            "silicon_ore",
+            settings -> new ExperienceDroppingBlock(ConstantIntProvider.create(0),settings),
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.WHITE_GRAY)
+                    .instrument(NoteBlockInstrument.BIT)
+                    .requiresTool()
+                    .strength(2.0f,3.5f)
+    );
+    public static final Block DEEPSLATE_SILICON_ORE = register(
+            "deepslate_silicon_ore",
+            settings -> new ExperienceDroppingBlock(ConstantIntProvider.create(0),settings),
+            AbstractBlock.Settings.copy(Blocks.IRON_ORE)
+                    .mapColor(MapColor.DEEPSLATE_GRAY)
+                    .strength(3.0F,4.0f)
+    );
     //建筑方块
     public static final Block SILICON_BLOCK_STAIRS = register(
             "silicon_block_stairs",

@@ -1,0 +1,13 @@
+// 1.21.7	-999999999-01-01T00:00:00	Test Mod/Block Loot Tables
+497ad78a31d13a4eff0650b13352f6b6473bc874 data/mtc/loot_table/blocks/deepslate_silicon_ore.json
+b680f25782086d4fbb33597baea86c1040fa39fa data/mtc/loot_table/blocks/raw_silicon_block.json
+439a00010fc8f1862fc422375e79776e749718b4 data/mtc/loot_table/blocks/silicon_block.json
+269c71da3cb63987d3ddc675859a1737ea8ba97f data/mtc/loot_table/blocks/silicon_block_slab.json
+003596bebfe2da3018ea48f1c412fc5a4bd01f78 data/mtc/loot_table/blocks/silicon_block_stairs.json
+d7b36082c657856b17840343016cfc6db2dc7c5a data/mtc/loot_table/blocks/silicon_button.json
+c63968642af335b64a42edde47393282e2f426a5 data/mtc/loot_table/blocks/silicon_door.json
+bbfc9574d946b82abdc6e530c812a5354b015ea0 data/mtc/loot_table/blocks/silicon_fence.json
+9e93ea5b947fa7fd01f50fc944890a964f015a0b data/mtc/loot_table/blocks/silicon_fence_gate.json
+ef69d564e00a9e346acd1b074c932d4e77441659 data/mtc/loot_table/blocks/silicon_ore.json
+21309292fa4ebd9547045b18fa13f47ac1340432 data/mtc/loot_table/blocks/silicon_trapdoor.json
+8a7905d176e10d2c7bd1f9e18a1e594710ba487b data/mtc/loot_table/blocks/silicon_wall.json
