@@ -18,6 +18,9 @@
 		"main": [
 			"net.redstone233.test.TestMod"
 		],
+		"client": [
+			"net.redstone233.test.TestModClient"
+		],
 		"fabric-datagen": [
 			"net.redstone233.test.TestModDataGenerator"
 		]

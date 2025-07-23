@@ -34,5 +34,6 @@ public class ModModelsProvider extends FabricModelProvider {
         itemModelGenerator.register(ModItems.SILICON, Models.GENERATED);
         itemModelGenerator.register(ModItems.RAW_SILICON, Models.GENERATED);
         itemModelGenerator.register(ModItems.SILICON_INGOT ,Models.GENERATED);
+        itemModelGenerator.register(ModItems.FREEZE_SWORD, Models.HANDHELD);
     }
 }
