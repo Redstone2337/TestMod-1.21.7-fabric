@@ -3,12 +3,15 @@ package net.redstone233.test;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.resource.ResourceType;
 import net.redstone233.test.blocks.ModBlockFamilies;
 import net.redstone233.test.blocks.ModBlocks;
 import net.redstone233.test.core.commands.SetValueCountCommand;
 import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.tags.ModBlockTags;
 import net.redstone233.test.core.tags.ModItemTags;
+import net.redstone233.test.core.tags.ModTagReloader;
 import net.redstone233.test.items.ModItemGroups;
 import net.redstone233.test.items.ModItems;
 import org.slf4j.Logger;
@@ -40,6 +43,9 @@ public class TestMod implements ModInitializer {
 					commandDispatcher.register(SetValueCountCommand.register());
 				}
 		);
+
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
+				.registerReloadListener(ModTagReloader.INSTANCE);
 
 		LOGGER.info("Hello Fabric world!");
 	}
