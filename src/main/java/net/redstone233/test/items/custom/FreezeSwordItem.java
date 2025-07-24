@@ -2,9 +2,13 @@
 package net.redstone233.test.items.custom;
 
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -23,7 +27,25 @@ public class FreezeSwordItem extends Item {
     public static final int CHARGE_TIME = 40; // 2秒蓄力
 
     public FreezeSwordItem(ToolMaterial material, float attackDamage, float attackSpeed, Item.Settings settings) {
-        super(settings.sword(material, attackDamage, attackSpeed).component(ModDataComponentTypes.FREEZING_SWORD, FreezingSwordComponent.DEFAULT));
+        super(settings.sword(material, attackDamage, attackSpeed)
+                .component(ModDataComponentTypes.FREEZING_SWORD, FreezingSwordComponent.DEFAULT)
+                .attributeModifiers(createAttributeModifiers())
+        );
+    }
+
+    public static AttributeModifiersComponent createAttributeModifiers() {
+        return AttributeModifiersComponent.builder()
+                .add(
+                        EntityAttributes.ATTACK_DAMAGE,
+                        new EntityAttributeModifier(BASE_ATTACK_DAMAGE_MODIFIER_ID, 10.5F, EntityAttributeModifier.Operation.ADD_VALUE),
+                        AttributeModifierSlot.MAINHAND
+                )
+                .add(
+                        EntityAttributes.ATTACK_SPEED,
+                        new EntityAttributeModifier(BASE_ATTACK_SPEED_MODIFIER_ID, 3.5F, EntityAttributeModifier.Operation.ADD_VALUE),
+                        AttributeModifierSlot.MAINHAND
+                )
+                .build();
     }
 
     @Override
@@ -64,7 +86,11 @@ public class FreezeSwordItem extends Item {
 
         FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
         if (component != null && component.chargeProgress() >= CHARGE_TIME) {
-            entity.damage((ServerWorld) user.getWorld(),user.getDamageSources().playerAttack(user), 20.0F);
+            World world = user.getWorld();
+            if (!(world instanceof ServerWorld serverWorld)) {
+                return ActionResult.PASS;
+            }
+            entity.damage(serverWorld,user.getDamageSources().playerAttack(user), 20.0F);
             FreezeHelper.freezeEntity(entity, 200); // 10秒冻结
 
             stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(0, false));
@@ -74,6 +100,13 @@ public class FreezeSwordItem extends Item {
             return ActionResult.SUCCESS;
         }
         return ActionResult.PASS;
+    }
+
+    @Override
+    public void postDamageEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        stack.damage(1, attacker, EquipmentSlot.MAINHAND);
+        stack.damage(1, attacker, EquipmentSlot.OFFHAND);
+        super.postDamageEntity(stack, target, attacker);
     }
 
     @Override
