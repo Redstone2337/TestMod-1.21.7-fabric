@@ -12,9 +12,17 @@
   "block.mtc.silicon_pressure_plate": "Silicon Block Pressure Plate",
   "block.mtc.silicon_trapdoor": "Silicon Block Trapdoor",
   "block.mtc.silicon_wall": "Silicon Block Wall",
+  "item.freeze.freezing_sword.charged": "Freezing energy fully charged!",
+  "item.freeze.freezing_sword.charging": "Charging freezing energy...",
+  "item.freeze.freezing_sword.power_attack": "Unleashed frozen fury!",
+  "item.mtc.freeze_sword": "Freeze Sword",
   "item.mtc.raw_silicon": "Raw Silicon",
   "item.mtc.silicon": "Silicon",
   "item.mtc.silicon_ingot": "Silicon Ingot",
-  "itemGroup.mtc.silicon_build": "Silicon|Build Blocks",
-  "itemGroup.mtc.silicon_items": "Silicon Mod|Items"
+  "itemGroup.mtc.silicon_build": "Silicon | Build Blocks",
+  "itemGroup.mtc.silicon_items": "Silicon | Items",
+  "tooltip.freezing_sword.charge": "Freeze Charge:",
+  "tooltip.freezing_sword.normal_attack": "Left-click: Freezes target for 3 seconds",
+  "tooltip.freezing_sword.power_attack": "Right-click (charged): 20 damage + 10 second freeze",
+  "tooltip.freezing_sword.ready": "READY TO FREEZE!"
 }

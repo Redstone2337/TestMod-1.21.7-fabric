@@ -1,11 +1,21 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_silicon_block": {
+    "has_blue_ice": {
       "conditions": {
         "items": [
           {
-            "items": "mtc:raw_silicon_block"
+            "items": "minecraft:blue_ice"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_packed_ice": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:packed_ice"
           }
         ]
       },
@@ -13,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "mtc:raw_silicon"
+        "recipe": "mtc:freeze_sword"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +31,13 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_silicon_block"
+      "has_packed_ice",
+      "has_blue_ice"
     ]
   ],
   "rewards": {
     "recipes": [
-      "mtc:raw_silicon"
+      "mtc:freeze_sword"
     ]
   }
 }

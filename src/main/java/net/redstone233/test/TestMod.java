@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.redstone233.test.blocks.ModBlockFamilies;
 import net.redstone233.test.blocks.ModBlocks;
 import net.redstone233.test.core.commands.SetValueCountCommand;
-import net.redstone233.test.core.component.ModComponentTypes;
+import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.tags.ModBlockTags;
 import net.redstone233.test.core.tags.ModItemTags;
 import net.redstone233.test.items.ModItemGroups;
@@ -31,7 +31,6 @@ public class TestMod implements ModInitializer {
 		ModBlockFamilies.init();
 		ModBlockTags.init();
 		ModItemTags.init();
-		ModComponentTypes.init();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
