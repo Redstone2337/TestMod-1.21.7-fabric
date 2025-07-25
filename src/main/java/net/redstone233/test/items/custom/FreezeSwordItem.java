@@ -29,7 +29,7 @@ import org.lwjgl.glfw.GLFW;
 public class FreezeSwordItem extends Item {
     public static final int CHARGE_TIME = 40; // 2秒蓄力
     public static final float BASE_DAMAGE = 11.5F; // 基础伤害
-    public static final float BOSS_DAMAGE = 115.0F; // 对Boss的伤害（10倍）
+    public static final float BOSS_DAMAGE = BASE_DAMAGE * 10; // 对Boss的伤害（10倍）
     public static final float NON_BOSS_DAMAGE = BASE_DAMAGE * 2; // 非法目标伤害（2倍）
 
     public FreezeSwordItem(ToolMaterial material, float attackDamage, float attackSpeed, Settings settings) {
