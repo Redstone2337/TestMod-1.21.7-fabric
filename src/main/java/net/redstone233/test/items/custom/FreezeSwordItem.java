@@ -26,10 +26,10 @@ import net.redstone233.test.core.until.ModToolMaterial;
 import org.jetbrains.annotations.Nullable;
 
 public class FreezeSwordItem extends Item {
-    public static final int CHARGE_TIME = 40; // 2秒蓄力
+    public static final int CHARGE_TIME = 140; // 7秒蓄力
     public static final float BASE_DAMAGE = ModToolMaterial.SILICON.attackDamageBonus();// 基础伤害
     public static final float BOSS_DAMAGE = BASE_DAMAGE * 10; // 对Boss的伤害（10倍）
-    public static final float NON_BOSS_DAMAGE = BASE_DAMAGE * 2; // 非法目标伤害（2倍）
+    public static final float NON_BOSS_DAMAGE = BASE_DAMAGE * 3; // 非法目标伤害（2倍）
 
     public FreezeSwordItem(ToolMaterial material, float attackDamage, float attackSpeed, Settings settings) {
         super(settings
@@ -96,12 +96,28 @@ public class FreezeSwordItem extends Item {
 
         if (newProgress >= CHARGE_TIME) {
             newProgress = CHARGE_TIME;
-            if (world.getTime() % 10 == 0 && isCharging) {
+            // 每2秒（40 ticks）提醒一次蓄力进度
+            if (world.getTime() % 40 == 0 && isCharging) {
+                int secondsLeft = (CHARGE_TIME - component.chargeProgress()) / 20;
                 player.sendMessage(
-                        Text.literal("\n")
-                                .append(Text.translatable("msg.freezesword.charged").formatted(Formatting.BLUE, Formatting.BOLD))
-                                .append("\n"),
-                        true
+                    Text.literal("\n")
+                        .append(Text.translatable("msg.freezesword.charging_progress", 
+                            String.format("%.1f", component.getChargePercent() * 100),
+                            secondsLeft)
+                            .formatted(Formatting.BLUE))
+                        .append("\n"),
+                    true
+                );
+            }
+            
+            // 蓄力完成时发送特殊消息
+            if (newProgress == CHARGE_TIME && component.chargeProgress() < CHARGE_TIME) {
+                player.sendMessage(
+                    Text.literal("\n")
+                        .append(Text.translatable("msg.freezesword.fully_charged")
+                        .formatted(Formatting.GREEN, Formatting.BOLD)
+                        .append("\n"),
+                    true
                 );
             }
         }
