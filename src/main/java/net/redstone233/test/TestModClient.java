@@ -4,6 +4,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
@@ -35,6 +36,22 @@ public class TestModClient implements ClientModInitializer {
         HudElementRegistry.addLast(Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> {
             FreezeSwordHud.render(context);
         });
+
+HudElementRegistry.attachElementBefore(VanillaHudElements.MISC_OVERLAYS, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
+			FreezeSwordHud.render(context)
+ });
+
+/*
+HudElementRegistry.attachElementBefore(VanillaHudElements.HOTBAR, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
+			FreezeSwordHud.render(context)
+ });
+*/
+
+/*
+HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
+			FreezeSwordHud.render(context)
+ });
+*/
 
         ModKeys.register(); // 注册键位
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
