@@ -1,7 +1,5 @@
 package net.redstone233.test.items.custom;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.Entity;
@@ -10,6 +8,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.WardenEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,12 +22,12 @@ import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.ModDataComponentTypes;
 import net.redstone233.test.core.until.FreezeHelper;
 import net.redstone233.test.core.until.ModKeys;
+import net.redstone233.test.core.until.ModToolMaterial;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 
 public class FreezeSwordItem extends Item {
     public static final int CHARGE_TIME = 40; // 2秒蓄力
-    public static final float BASE_DAMAGE = 11.5F; // 基础伤害
+    public static final float BASE_DAMAGE = ModToolMaterial.SILICON.attackDamageBonus();// 基础伤害
     public static final float BOSS_DAMAGE = BASE_DAMAGE * 10; // 对Boss的伤害（10倍）
     public static final float NON_BOSS_DAMAGE = BASE_DAMAGE * 2; // 非法目标伤害（2倍）
 
