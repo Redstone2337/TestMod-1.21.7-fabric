@@ -62,21 +62,25 @@ public class FreezeSwordItem extends Item {
                 FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
                 boolean isCharging = component != null && component.isCharging();
 
-                // 只有当按键状态改变时才更新
                 if (isKeyPressed != isCharging) {
                     stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(0, isKeyPressed));
                     if (isKeyPressed) {
+                        // 获取绑定的按键名称
+                        Text keyName = ModKeys.CHARGE_KEY.getBoundKeyLocalizedText();
                         player.sendMessage(
                                 Text.literal("\n")
-                                        .append(Text.translatable("msg.freezesword.start_charging").formatted(Formatting.AQUA, Formatting.BOLD))
+                                        .append(Text.translatable("msg.freezesword.start_charging", keyName)
+                                                .formatted(Formatting.AQUA, Formatting.BOLD))
                                         .append("\n"),
                                 true
                         );
                     } else {
-                        // 如果提前释放按键，重置蓄力
+                        // 获取绑定的按键名称
+                        Text keyName = ModKeys.CHARGE_KEY.getBoundKeyLocalizedText();
                         player.sendMessage(
                                 Text.literal("\n")
-                                        .append(Text.translatable("msg.freezesword.charge_canceled").formatted(Formatting.GRAY))
+                                        .append(Text.translatable("msg.freezesword.charge_canceled", keyName)
+                                                .formatted(Formatting.GRAY))
                                         .append("\n"),
                                 true
                         );
@@ -116,9 +120,8 @@ public class FreezeSwordItem extends Item {
                     Text.literal("\n")
                         .append(Text.translatable("msg.freezesword.fully_charged")
                         .formatted(Formatting.GREEN, Formatting.BOLD)
-                        .append("\n"),
-                    true
-                );
+                        .append("\n")
+                        ), true);
             }
         }
 

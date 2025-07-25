@@ -48,22 +48,24 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("tooltip.freezing_sword.charge_instruction", "Press %s to charge, then left-click for massive damage!");
         translationBuilder.add("tooltip.freezing_sword.charging", "Charging: %d%%");
         translationBuilder.add("tooltip.freezing_sword.ready", "READY! Left-click to unleash power!");
-        translationBuilder.add("tooltip.freezing_sword.damage.normal", "Base Damage: §a+11.5");
-        translationBuilder.add("tooltip.freezing_sword.damage.charged", "Charged vs Bosses: §c+115");
-        translationBuilder.add("tooltip.freezing_sword.damage.non_boss", "Charged vs Others: §d+23");
-        translationBuilder.add("tooltip.freezing_sword.loot_only", "Found in ancient ruins.");
+        translationBuilder.add("tooltip.freezing_sword.damage.normal", "Base Damage: §a+%f");
+        translationBuilder.add("tooltip.freezing_sword.damage.charged", "Charged vs Bosses: §c+%f");
+        translationBuilder.add("tooltip.freezing_sword.damage.non_boss", "Charged vs Others: §d+%f");
+        translationBuilder.add("tooltip.freezing_sword.loot_only", "Can be synthesized by Recipe's formula.");
 
         // Freeze Sword In-Game Messages
         translationBuilder.add("item.freeze.freezing_sword.charging", "Charging freezing energy...");
         translationBuilder.add("item.freeze.freezing_sword.charged", "Freezing energy fully charged!");
         translationBuilder.add("item.freeze.freezing_sword.power_attack", "Unleashed frozen fury!");
-        translationBuilder.add("msg.freezesword.start_charging", "§b[Freeze Sword]§r Charging started...");
+//        translationBuilder.add("msg.freezesword.start_charging", "§b[Freeze Sword]§r Charging started...");
         translationBuilder.add("msg.freezesword.charged", "§b[Freeze Sword]§r Fully charged!");
         translationBuilder.add("msg.freezesword.charging_progress", "§3[Freeze Sword]§r Charge Progress: %s%% (%s seconds remaining)");
         translationBuilder.add("msg.freezesword.fully_charged", "§a[Freeze Sword]§r Fully Charged!");
-        translationBuilder.add("msg.freezesword.charge_canceled", "§7[Freeze Sword]§r Charge canceled");
+//        translationBuilder.add("msg.freezesword.charge_canceled", "§7[Freeze Sword]§r Charge canceled");
         translationBuilder.add("msg.freezesword.boss_hit", "§6[Freeze Sword]§r Critical hit on Boss!");
         translationBuilder.add("msg.freezesword.invalid_target", "§c[Freeze Sword]§r Invalid target, damage reduced!");
+        translationBuilder.add("msg.freezesword.start_charging", "§b[Freeze Sword]§r Charging started! Hold [%s] to continue...");
+        translationBuilder.add("msg.freezesword.charge_canceled", "§7[Freeze Sword]§r Charge canceled (released [%s])");
 
         // Key Bindings
         translationBuilder.add("key.freezesword.charge", "Activate Freeze Sword Charge");

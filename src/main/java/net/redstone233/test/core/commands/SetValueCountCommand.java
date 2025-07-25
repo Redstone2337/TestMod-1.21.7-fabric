@@ -15,7 +15,7 @@ public class SetValueCountCommand {
     private static final int DefaultValue = Item.DEFAULT_MAX_COUNT;
     private static final int DefaultMaxValue = Item.MAX_MAX_COUNT;
     private static final int MAX_SIZE = 300;
-    private static int CustomMaxSize = 120;
+    private static int CustomMaxSize = 99;
 
 
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
@@ -27,6 +27,9 @@ public class SetValueCountCommand {
                         )
                         .then(CommandManager.literal("defaultMax")
                                 .executes(run -> getDefaultMaxSize(run.getSource(),run.getSource().getPlayer()))
+                        )
+                        .then(CommandManager.literal("defaultCustomMaxCount")
+                                .executes(run -> getDefaultCustomMaxSize(run.getSource(), run.getSource().getPlayer()))
                         )
                 )
                 .then(CommandManager.literal("set")
@@ -84,6 +87,16 @@ public class SetValueCountCommand {
     private static int getDefaultMaxSize(ServerCommandSource source, PlayerEntity player) throws CommandSyntaxException {
         if (player != null) {
             source.sendFeedback(() -> Text.literal("默认最大值为：" + getDefaultMaxValue()), true);
+        } else {
+            source.sendError(Text.literal("执行失败！未发现玩家。"));
+            return 0;
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int getDefaultCustomMaxSize(ServerCommandSource source, PlayerEntity player) throws CommandSyntaxException {
+        if (player != null) {
+            source.sendFeedback(() -> Text.literal("默认最大值为：" + getCustomMaxSize()), true);
         } else {
             source.sendError(Text.literal("执行失败！未发现玩家。"));
             return 0;

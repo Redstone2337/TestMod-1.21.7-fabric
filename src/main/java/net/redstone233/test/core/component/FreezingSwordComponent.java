@@ -37,32 +37,6 @@ public record FreezingSwordComponent(int chargeProgress, boolean isCharging) imp
         return MathHelper.clamp((float) chargeProgress / FreezeSwordItem.CHARGE_TIME, 0, 1);
     }
 
-    /*
-    private void addChargeProgressBar(Consumer<Text> textConsumer, float chargePercent) {
-        int segments = 10;
-        int filledSegments = (int) (chargePercent * segments);
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(Formatting.GRAY + "[");
-
-        for (int i = 0; i < segments; i++) {
-            if (i < filledSegments) {
-                // 颜色渐变：从红色到蓝色
-                float hue = 0.66f * (1 - (float) i / segments);
-                int rgb = java.awt.Color.HSBtoRGB(hue, 1.0f, 1.0f);
-                builder.append(String.format("§x§%02X§%02X§%02X|",
-                        (rgb >> 16) & 0xFF,
-                        (rgb >> 8) & 0xFF,
-                        rgb & 0xFF));
-            } else {
-                builder.append(Formatting.DARK_GRAY + "|");
-            }
-        }
-
-        builder.append(Formatting.GRAY + "]");
-        textConsumer.accept(Text.literal(builder.toString()));
-    }*/
-
     private void addChargeProgressBar(Consumer<Text> textConsumer, float chargePercent) {
         int segments = 10;
         int filledSegments = (int) (chargePercent * segments);
