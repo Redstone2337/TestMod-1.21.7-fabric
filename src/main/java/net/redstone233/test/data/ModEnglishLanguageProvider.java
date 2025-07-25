@@ -59,9 +59,11 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("item.freeze.freezing_sword.power_attack", "Unleashed frozen fury!");
         translationBuilder.add("msg.freezesword.start_charging", "§b[Freeze Sword]§r Charging started...");
         translationBuilder.add("msg.freezesword.charged", "§b[Freeze Sword]§r Fully charged!");
+        translationBuilder.add("msg.freezesword.charging_progress", "§3[Freeze Sword]§r Charge Progress: %s%% (%s seconds remaining)");
+        translationBuilder.add("msg.freezesword.fully_charged", "§a[Freeze Sword]§r Fully Charged!");
+        translationBuilder.add("msg.freezesword.charge_canceled", "§7[Freeze Sword]§r Charge canceled");
         translationBuilder.add("msg.freezesword.boss_hit", "§6[Freeze Sword]§r Critical hit on Boss!");
         translationBuilder.add("msg.freezesword.invalid_target", "§c[Freeze Sword]§r Invalid target, damage reduced!");
-        translationBuilder.add("msg.freezesword.charge_canceled", "§b[Freeze Sword]§r Cancel Accumulation.");
 
         // Key Bindings
         translationBuilder.add("key.freezesword.charge", "Activate Freeze Sword Charge");
