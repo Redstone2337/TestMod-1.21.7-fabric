@@ -28,5 +28,6 @@ public class ModBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                         ModBlocks.SILICON_DOOR,
                         ModBlocks.SILICON_TRAPDOOR
                 );
+        valueLookupBuilder(ModBlockTags.INCORRECT_FOR_SILICON_TOOL);
     }
 }

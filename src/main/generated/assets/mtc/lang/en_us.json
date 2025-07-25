@@ -24,6 +24,7 @@
   "itemGroup.mtc.silicon_items": "Silicon | Items",
   "key.freezesword.charge": "Activate Freeze Sword Charge",
   "msg.freezesword.boss_hit": "§6[Freeze Sword]§r Critical hit on Boss!",
+  "msg.freezesword.charge_canceled": "§b[Freeze Sword]§r Cancel Accumulation.",
   "msg.freezesword.charged": "§b[Freeze Sword]§r Fully charged!",
   "msg.freezesword.invalid_target": "§c[Freeze Sword]§r Invalid target, damage reduced!",
   "msg.freezesword.start_charging": "§b[Freeze Sword]§r Charging started...",

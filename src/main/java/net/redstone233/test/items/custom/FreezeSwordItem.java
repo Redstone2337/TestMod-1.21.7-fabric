@@ -8,7 +8,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.WardenEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.ModDataComponentTypes;
@@ -53,14 +53,35 @@ public class FreezeSwordItem extends Item {
                 .build();
     }
 
-    // 客户端按键监听
-    // 替换原有的 handleKeyInput 方法
+    // 修改后的长按检测逻辑
     public static void handleKeyInput(PlayerEntity player) {
-        if (player.getWorld().isClient && ModKeys.isChargeKeyPressed()) {
+        if (player.getWorld().isClient) {
             ItemStack stack = player.getMainHandStack();
             if (stack.getItem() instanceof FreezeSwordItem) {
-                stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(0, true));
-                player.sendMessage(Text.translatable("msg.freezesword.start_charging"), true);
+                boolean isKeyPressed = ModKeys.isChargeKeyPressed();
+                FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
+                boolean isCharging = component != null && component.isCharging();
+
+                // 只有当按键状态改变时才更新
+                if (isKeyPressed != isCharging) {
+                    stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(0, isKeyPressed));
+                    if (isKeyPressed) {
+                        player.sendMessage(
+                                Text.literal("\n")
+                                        .append(Text.translatable("msg.freezesword.start_charging").formatted(Formatting.AQUA, Formatting.BOLD))
+                                        .append("\n"),
+                                true
+                        );
+                    } else {
+                        // 如果提前释放按键，重置蓄力
+                        player.sendMessage(
+                                Text.literal("\n")
+                                        .append(Text.translatable("msg.freezesword.charge_canceled").formatted(Formatting.GRAY))
+                                        .append("\n"),
+                                true
+                        );
+                    }
+                }
             }
         }
     }
@@ -70,22 +91,28 @@ public class FreezeSwordItem extends Item {
         if (!(entity instanceof PlayerEntity player)) return;
 
         FreezingSwordComponent component = stack.getOrDefault(ModDataComponentTypes.FREEZING_SWORD, FreezingSwordComponent.DEFAULT);
-        boolean shouldCharge = slot == EquipmentSlot.MAINHAND && component.isCharging();
-        int newProgress = shouldCharge ? component.chargeProgress() + 1 : 0;
+        boolean isCharging = component.isCharging();
+        int newProgress = isCharging ? component.chargeProgress() + 1 : 0;
 
         if (newProgress >= CHARGE_TIME) {
             newProgress = CHARGE_TIME;
-            if (world.getTime() % 10 == 0) {
-                player.sendMessage(Text.translatable("msg.freezesword.charged"), true);
+            if (world.getTime() % 10 == 0 && isCharging) {
+                player.sendMessage(
+                        Text.literal("\n")
+                                .append(Text.translatable("msg.freezesword.charged").formatted(Formatting.BLUE, Formatting.BOLD))
+                                .append("\n"),
+                        true
+                );
             }
         }
 
-        if (newProgress != component.chargeProgress() || shouldCharge != component.isCharging()) {
-            stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(newProgress, shouldCharge));
+        if (newProgress != component.chargeProgress() || isCharging != component.isCharging()) {
+            stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(newProgress, isCharging));
         }
         super.inventoryTick(stack, world, entity, slot);
     }
 
+    // 其余方法保持不变...
     @Override
     public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
@@ -97,27 +124,33 @@ public class FreezeSwordItem extends Item {
             int freezeTime = isBoss ? 200 : 60;
             World world = player.getWorld();
 
-            // 伤害与冰冻
             if (world instanceof ServerWorld serverWorld) {
                 target.damage(serverWorld, attacker.getDamageSources().playerAttack(player), damage);
                 FreezeHelper.freezeEntity(target, freezeTime);
             }
 
-            // 提示信息
             if (isBoss) {
-                player.sendMessage(Text.translatable("msg.freezesword.boss_hit"), true);
+                player.sendMessage(
+                        Text.literal("\n")
+                                .append(Text.translatable("msg.freezesword.boss_hit").formatted(Formatting.RED, Formatting.BOLD))
+                                .append("\n"),
+                        true
+                );
             } else {
-                player.sendMessage(Text.translatable("msg.freezesword.invalid_target"), true);
+                player.sendMessage(
+                        Text.literal("\n")
+                                .append(Text.translatable("msg.freezesword.invalid_target").formatted(Formatting.YELLOW))
+                                .append("\n"),
+                        true
+                );
             }
 
-            stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(0, false)); // 重置蓄力
+            stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(0, false));
         } else {
             World world = attacker.getWorld();
-            // 普通攻击逻辑
             if (world instanceof ServerWorld serverWorld) {
                 target.damage(serverWorld, attacker.getDamageSources().playerAttack(attacker.getAttackingPlayer()), BASE_DAMAGE);
             }
-
             FreezeHelper.freezeEntity(target, 60);
         }
         super.postHit(stack, target, attacker);

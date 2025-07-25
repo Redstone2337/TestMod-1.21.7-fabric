@@ -9,6 +9,7 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
@@ -36,6 +37,7 @@ public record FreezingSwordComponent(int chargeProgress, boolean isCharging) imp
         return MathHelper.clamp((float) chargeProgress / FreezeSwordItem.CHARGE_TIME, 0, 1);
     }
 
+    /*
     private void addChargeProgressBar(Consumer<Text> textConsumer, float chargePercent) {
         int segments = 10;
         int filledSegments = (int) (chargePercent * segments);
@@ -59,6 +61,53 @@ public record FreezingSwordComponent(int chargeProgress, boolean isCharging) imp
 
         builder.append(Formatting.GRAY + "]");
         textConsumer.accept(Text.literal(builder.toString()));
+    }*/
+
+    private void addChargeProgressBar(Consumer<Text> textConsumer, float chargePercent) {
+        int segments = 10;
+        int filledSegments = (int) (chargePercent * segments);
+
+        MutableText builder = Text.literal("");
+        builder.append(Text.literal("[").formatted(Formatting.GRAY));
+
+        for (int i = 0; i < segments; i++) {
+            if (i < filledSegments) {
+                // 颜色渐变：从白色(透明)到黑色，经过红蓝绿渐变
+                float position = (float) i / segments;
+                int r, g, b;
+
+                if (position < 0.33f) {
+                    // 红色到蓝色过渡
+                    float phase = position / 0.33f;
+                    r = (int) (255 * (1 - phase));
+                    g = 0;
+                    b = (int) (255 * phase);
+                } else if (position < 0.66f) {
+                    // 蓝色到绿色过渡
+                    float phase = (position - 0.33f) / 0.33f;
+                    r = 0;
+                    g = (int) (255 * phase);
+                    b = (int) (255 * (1 - phase));
+                } else {
+                    // 绿色到黑色过渡
+                    float phase = (position - 0.66f) / 0.34f;
+                    r = 0;
+                    g = (int) (255 * (1 - phase));
+                    b = 0;
+                }
+
+                // 使用■字符并应用渐变颜色
+                builder.append(Text.literal("■").styled(style ->
+                        style.withColor(r << 16 | g << 8 | b)
+                ));
+            } else {
+                // 未填充部分使用□字符
+                builder.append(Text.literal("□").formatted(Formatting.DARK_GRAY));
+            }
+        }
+
+        builder.append(Text.literal("]").formatted(Formatting.GRAY));
+        textConsumer.accept(builder);
     }
 
     @Override

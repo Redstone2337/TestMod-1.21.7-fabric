@@ -61,6 +61,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("msg.freezesword.charged", "§b[Freeze Sword]§r Fully charged!");
         translationBuilder.add("msg.freezesword.boss_hit", "§6[Freeze Sword]§r Critical hit on Boss!");
         translationBuilder.add("msg.freezesword.invalid_target", "§c[Freeze Sword]§r Invalid target, damage reduced!");
+        translationBuilder.add("msg.freezesword.charge_canceled", "§b[Freeze Sword]§r Cancel Accumulation.");
 
         // Key Bindings
         translationBuilder.add("key.freezesword.charge", "Activate Freeze Sword Charge");
