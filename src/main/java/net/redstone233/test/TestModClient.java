@@ -38,18 +38,18 @@ public class TestModClient implements ClientModInitializer {
         });
 
 HudElementRegistry.attachElementBefore(VanillaHudElements.MISC_OVERLAYS, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
-			FreezeSwordHud.render(context)
+			FreezeSwordHud.render(context);
  });
 
 /*
 HudElementRegistry.attachElementBefore(VanillaHudElements.HOTBAR, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
-			FreezeSwordHud.render(context)
+			FreezeSwordHud.render(context);
  });
 */
 
 /*
 HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
-			FreezeSwordHud.render(context)
+			FreezeSwordHud.render(context);
  });
 */
 
