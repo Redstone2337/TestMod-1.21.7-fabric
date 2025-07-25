@@ -8,7 +8,6 @@ import net.minecraft.resource.ResourceType;
 import net.redstone233.test.blocks.ModBlockFamilies;
 import net.redstone233.test.blocks.ModBlocks;
 import net.redstone233.test.core.commands.SetValueCountCommand;
-import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.tags.ModBlockTags;
 import net.redstone233.test.core.tags.ModItemTags;
 import net.redstone233.test.core.tags.ModTagReloader;
