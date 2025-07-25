@@ -22,7 +22,7 @@ private static final int CUSTOM_MAX_COUNT = SetValueCountCommand.getCustomMaxSiz
     public static final Item FREEZE_SWORD = register("freeze_sword",
             settings -> new FreezeSwordItem(ModToolMaterial.SILICON,10.5f, 2.5f,settings),
             new Item.Settings().maxDamage(300000)
-                    .attributeModifiers(FreezeSwordItem.createAttributeModifiers())
+                    /*.attributeModifiers(FreezeSwordItem.createAttributeModifiers())*/
     );
 
 

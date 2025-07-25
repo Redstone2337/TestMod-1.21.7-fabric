@@ -87,42 +87,22 @@ public class FreezeSwordItem extends Item {
         super.inventoryTick(stack, world, entity, slot);
     }
 
-    /*
-    @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, @Nullable EquipmentSlot slot) {
-        if (!(entity instanceof PlayerEntity player)) return;
-
-        FreezingSwordComponent component = stack.getOrDefault(ModDataComponentTypes.FREEZING_SWORD, FreezingSwordComponent.DEFAULT);
-        boolean shouldCharge = slot == EquipmentSlot.MAINHAND && component.isCharging();
-        int newProgress = shouldCharge ? component.chargeProgress() + 1 : 0;
-
-        if (newProgress >= CHARGE_TIME) {
-            newProgress = CHARGE_TIME;
-            if (world.getTime() % 10 == 0) {
-                player.sendMessage(Text.translatable("msg.freezesword.charged"), true);
-            }
-        }
-
-        if (newProgress != component.chargeProgress() || shouldCharge != component.isCharging()) {
-            stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(newProgress, shouldCharge));
-        }
-    }*/
-
     @Override
     public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
         boolean isCharged = component != null && component.chargeProgress() >= CHARGE_TIME;
-        World world = attacker.getWorld();
 
         if (isCharged && !attacker.getWorld().isClient() && attacker instanceof PlayerEntity player) {
             boolean isBoss = target instanceof WardenEntity || target instanceof EnderDragonEntity || target instanceof WitherEntity;
             float damage = isBoss ? BOSS_DAMAGE : NON_BOSS_DAMAGE;
             int freezeTime = isBoss ? 200 : 60;
-            world = player.getWorld();
+            World world = player.getWorld();
 
             // 伤害与冰冻
-            target.damage((ServerWorld) world, attacker.getDamageSources().playerAttack(player), damage);
-            FreezeHelper.freezeEntity(target, freezeTime);
+            if (world instanceof ServerWorld serverWorld) {
+                target.damage(serverWorld, attacker.getDamageSources().playerAttack(player), damage);
+                FreezeHelper.freezeEntity(target, freezeTime);
+            }
 
             // 提示信息
             if (isBoss) {
@@ -133,10 +113,12 @@ public class FreezeSwordItem extends Item {
 
             stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(0, false)); // 重置蓄力
         } else {
+            World world = attacker.getWorld();
             // 普通攻击逻辑
-            if (attacker instanceof PlayerEntity) {
-                target.damage((ServerWorld) world, attacker.getDamageSources().playerAttack((PlayerEntity) attacker), BASE_DAMAGE);
+            if (world instanceof ServerWorld serverWorld) {
+                target.damage(serverWorld, attacker.getDamageSources().playerAttack(attacker.getAttackingPlayer()), BASE_DAMAGE);
             }
+
             FreezeHelper.freezeEntity(target, 60);
         }
         super.postHit(stack, target, attacker);
