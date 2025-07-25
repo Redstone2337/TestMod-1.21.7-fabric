@@ -31,5 +31,7 @@ public class ModItemTagsProvider extends FabricTagProvider.ItemTagProvider {
                         ModItems.SILICON,
                         ModItems.SILICON_INGOT
                 );
+        valueLookupBuilder(ModItemTags.SILICON_TOOL_MATERIALS)
+                .add(ModItems.SILICON_INGOT);
     }
 }

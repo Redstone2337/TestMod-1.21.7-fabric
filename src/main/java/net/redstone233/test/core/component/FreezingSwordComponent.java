@@ -15,6 +15,7 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
+import net.redstone233.test.core.until.ModKeys;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 
 import java.util.function.Consumer;
@@ -67,17 +68,45 @@ public record FreezingSwordComponent(int chargeProgress, boolean isCharging) imp
     public void appendTooltip(Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type, ComponentsAccess components) {
         float chargePercent = getChargePercent();
 
-        // 添加蓄力标题
-        textConsumer.accept(Text.translatable("tooltip.freezing_sword.charge")
+        // 基础描述
+        textConsumer.accept(Text.translatable("tooltip.freezing_sword.desc")
                 .formatted(Formatting.GRAY));
+        textConsumer.accept(Text.empty());
 
-        // 添加进度条
+        // 蓄力状态
+        if (isCharging) {
+            textConsumer.accept(Text.translatable("tooltip.freezing_sword.charging",
+                            (int)(chargePercent * 100))
+                    .formatted(Formatting.BLUE));
+        } else {
+            textConsumer.accept(Text.translatable("tooltip.freezing_sword.charge_instruction",
+                            Text.keybind(ModKeys.CHARGE_KEY.getBoundKeyLocalizedText().getString())
+                                    .formatted(Formatting.GOLD))
+                    .formatted(Formatting.YELLOW));
+        }
+
+        // 进度条
         addChargeProgressBar(textConsumer, chargePercent);
+
+        // 伤害信息
+        textConsumer.accept(Text.translatable("tooltip.freezing_sword.damage.normal",
+                        FreezeSwordItem.BASE_DAMAGE)
+                .formatted(Formatting.GREEN));
+        textConsumer.accept(Text.translatable("tooltip.freezing_sword.damage.charged",
+                        FreezeSwordItem.BOSS_DAMAGE)
+                .formatted(Formatting.RED));
+        textConsumer.accept(Text.translatable("tooltip.freezing_sword.damage.non_boss",
+                        FreezeSwordItem.NON_BOSS_DAMAGE)
+                .formatted(Formatting.LIGHT_PURPLE));
 
         // 蓄满提示
         if (chargePercent >= 1.0f) {
             textConsumer.accept(Text.translatable("tooltip.freezing_sword.ready")
                     .formatted(Formatting.AQUA, Formatting.BOLD));
         }
+
+        // 来源提示
+        textConsumer.accept(Text.translatable("tooltip.freezing_sword.loot_only")
+                .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
     }
 }

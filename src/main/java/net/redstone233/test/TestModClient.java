@@ -1,12 +1,15 @@
 package net.redstone233.test;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.redstone233.test.client.hud.FreezeSwordHud;
 import net.redstone233.test.client.tooltip.FreezeSwordTooltipComponent;
+import net.redstone233.test.core.until.ModKeys;
+import net.redstone233.test.items.custom.FreezeSwordItem;
 
 public class TestModClient implements ClientModInitializer {
 
@@ -24,6 +27,13 @@ public class TestModClient implements ClientModInitializer {
         // 注册HUD渲染
         HudElementRegistry.addLast(Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> {
             FreezeSwordHud.render(context);
+        });
+
+        ModKeys.register(); // 注册键位
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player != null) {
+                FreezeSwordItem.handleKeyInput(client.player);
+            }
         });
     }
 }

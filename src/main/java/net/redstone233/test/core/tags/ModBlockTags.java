@@ -9,6 +9,7 @@ import net.redstone233.test.TestMod;
 public class ModBlockTags {
 
     public static final TagKey<Block> BUILDING_BLICKS = of("building_blocks");
+    public static final TagKey<Block> INCORRECT_FOR_SILICON_TOOL = of("incorrect_for_silicon_tool");
 
 
     private static TagKey<Block> of(String id) {
