@@ -28,7 +28,7 @@ public class TestModClient implements ClientModInitializer {
             return null;
         });
 
-        ComponentTooltipAppenderRegistry.addLast(ModDataComponentTypes.FREEZING_SWORD);
+        //ComponentTooltipAppenderRegistry.addLast(ModDataComponentTypes.FREEZING_SWORD);
         ComponentTooltipAppenderRegistry.addAfter(DataComponentTypes.LORE, ModDataComponentTypes.FREEZING_SWORD);
 
         // 注册HUD渲染
