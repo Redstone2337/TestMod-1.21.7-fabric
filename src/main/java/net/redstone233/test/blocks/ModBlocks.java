@@ -139,7 +139,6 @@ public class ModBlocks {
     );
 
     private static Block register(String id, Function<AbstractBlock.Settings, Block> factory, AbstractBlock.Settings settings) {
-//        final Identifier identifier = Identifier.of("tutorial", path);
         final RegistryKey<Block> registryKey = RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(TestMod.MOD_ID,id));
         final Block block = Blocks.register(registryKey, factory, settings);
         Items.register(block);
