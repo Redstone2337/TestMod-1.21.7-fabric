@@ -1,0 +1,7 @@
+// 1.21.7	-999999999-01-01T00:00:00	Test Mod/World Gen
+e13ef66b43188dd8549521912d76f1013dbaa329 data/mtc/worldgen/configured_feature/end_silicon_ore.json
+64212e650060f7b161dd2042776a9c8dfd7ce1f6 data/mtc/worldgen/configured_feature/nether_silicon_ore.json
+ed56c1556ff454c886b4dacda49d982d61045068 data/mtc/worldgen/configured_feature/silicon_ore.json
+a9530f23dd7d7854db09663125a1bdab7d981665 data/mtc/worldgen/placed_feature/end_silicon_ore_placed.json
+01264a7936033fccae9c1c8a5340d6043ccaaf06 data/mtc/worldgen/placed_feature/nether_silicon_ore_placed.json
+a1ed838e366e9037d133288677491b8206840138 data/mtc/worldgen/placed_feature/silicon_ore_placed.json

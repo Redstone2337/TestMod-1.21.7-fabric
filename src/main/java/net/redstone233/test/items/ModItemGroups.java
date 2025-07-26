@@ -15,6 +15,7 @@ public class ModItemGroups {
 
     public static final RegistryKey<ItemGroup> SILICON_BUILDINGS = register("silicon_buildings");
     public static final RegistryKey<ItemGroup> SILICON_ITEMS = register("silicon_items");
+    public static final RegistryKey<ItemGroup> SILICON_FUTURES = register("silicon_futures");
 
     private static RegistryKey<ItemGroup> register(String id) {
         return RegistryKey.of(RegistryKeys.ITEM_GROUP, Identifier.of(TestMod.MOD_ID,id));
@@ -23,7 +24,7 @@ public class ModItemGroups {
     public static void registerModItemGroups() {
         Registry.register(Registries.ITEM_GROUP,ModItemGroups.SILICON_ITEMS,
                 ItemGroup.create(
-                        ItemGroup.Row.TOP, 0)
+                                ItemGroup.Row.TOP, 0)
                         .displayName(Text.translatable("itemGroup.mtc.silicon_items"))
                         .icon(() -> new ItemStack(ModItems.SILICON)).entries((displayContext, entries) -> {
                             entries.add(ModItems.RAW_SILICON);
@@ -37,11 +38,29 @@ public class ModItemGroups {
                         .build()
         );
 
+        Registry.register(Registries.ITEM_GROUP,ModItemGroups.SILICON_FUTURES,
+                ItemGroup.create(
+                                ItemGroup.Row.TOP, 0)
+                        .displayName(Text.translatable("itemGroup.mtc.silicon_futures"))
+                        .icon(() -> new ItemStack(ModItems.SILICON)).entries((displayContext, entries) -> {
+//                            entries.add(ModItems.RAW_SILICON);
+//                            entries.add(ModItems.SILICON);
+//                            entries.add(ModBlocks.SILICON_BLOCK);
+                            entries.add(ModBlocks.SILICON_ORE);
+                            entries.add(ModBlocks.DEEPSLATE_SILICON_ORE);
+//                            entries.add(ModItems.SILICON_INGOT);
+//                            entries.add(ModItems.FREEZE_SWORD);
+                        })
+                        .build()
+        );
+
+
+
         Registry.register(Registries.ITEM_GROUP,ModItemGroups.SILICON_BUILDINGS,
                 ItemGroup.create(
                                 ItemGroup.Row.TOP, 0)
                         .displayName(Text.translatable("itemGroup.mtc.silicon_build"))
-                        .icon(() -> new ItemStack(ModItems.SILICON)).entries((displayContext, entries) -> {
+                        .icon(() -> new ItemStack(ModBlocks.SILICON_BLOCK)).entries((displayContext, entries) -> {
                             entries.add(ModBlocks.SILICON_BLOCK);
                             entries.add(ModBlocks.RAW_SILICON_BLOCK);
                             entries.add(ModBlocks.SILICON_BLOCK_STAIRS);

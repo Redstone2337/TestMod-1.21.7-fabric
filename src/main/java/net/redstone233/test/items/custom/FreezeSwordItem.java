@@ -1,21 +1,18 @@
+// FreezeSwordItem.java
 package net.redstone233.test.items.custom;
 
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.mob.WardenEntity;
-import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ToolMaterial;
+import net.minecraft.item.*;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import net.redstone233.test.core.component.FreezingSwordComponent;
@@ -26,10 +23,12 @@ import net.redstone233.test.core.until.ModToolMaterial;
 import org.jetbrains.annotations.Nullable;
 
 public class FreezeSwordItem extends Item {
-    public static final int CHARGE_TIME = 140; // 7秒蓄力
-    public static final float BASE_DAMAGE = ModToolMaterial.SILICON.attackDamageBonus();// 基础伤害
-    public static final float BOSS_DAMAGE = BASE_DAMAGE * 10; // 对Boss的伤害（10倍）
-    public static final float NON_BOSS_DAMAGE = BASE_DAMAGE * 3; // 非法目标伤害（2倍）
+    public static final int CHARGE_TIME = 40;
+    public static final int MAX_CHARGES = 5;
+    public static final float BASE_DAMAGE = ModToolMaterial.SILICON.attackDamageBonus();
+    public static final float BOSS_DAMAGE = BASE_DAMAGE * 10;
+    public static final float NON_BOSS_DAMAGE = BASE_DAMAGE * 3;
+    public static final float CHARGE_DAMAGE_MULTIPLIER = 2.0f;
 
     public FreezeSwordItem(ToolMaterial material, float attackDamage, float attackSpeed, Settings settings) {
         super(settings
@@ -40,20 +39,17 @@ public class FreezeSwordItem extends Item {
 
     public static AttributeModifiersComponent createAttributeModifiers() {
         return AttributeModifiersComponent.builder()
-                .add(
-                        EntityAttributes.ATTACK_DAMAGE,
-                        new EntityAttributeModifier(BASE_ATTACK_DAMAGE_MODIFIER_ID, BASE_DAMAGE, EntityAttributeModifier.Operation.ADD_VALUE),
-                        AttributeModifierSlot.MAINHAND
-                )
-                .add(
-                        EntityAttributes.ATTACK_SPEED,
-                        new EntityAttributeModifier(BASE_ATTACK_SPEED_MODIFIER_ID, 3.5F, EntityAttributeModifier.Operation.ADD_VALUE),
-                        AttributeModifierSlot.MAINHAND
-                )
+                .add(EntityAttributes.ATTACK_DAMAGE,
+                        new EntityAttributeModifier(BASE_ATTACK_DAMAGE_MODIFIER_ID, BASE_DAMAGE,
+                                EntityAttributeModifier.Operation.ADD_VALUE),
+                        AttributeModifierSlot.MAINHAND)
+                .add(EntityAttributes.ATTACK_SPEED,
+                        new EntityAttributeModifier(BASE_ATTACK_SPEED_MODIFIER_ID, 3.5F,
+                                EntityAttributeModifier.Operation.ADD_VALUE),
+                        AttributeModifierSlot.MAINHAND)
                 .build();
     }
 
-    // 修改后的长按检测逻辑
     public static void handleKeyInput(PlayerEntity player) {
         if (player.getWorld().isClient) {
             ItemStack stack = player.getMainHandStack();
@@ -62,29 +58,13 @@ public class FreezeSwordItem extends Item {
                 FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
                 boolean isCharging = component != null && component.isCharging();
 
-                if (isKeyPressed != isCharging) {
-                    stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(0, isKeyPressed));
-                    if (isKeyPressed) {
-                        // 获取绑定的按键名称
-                        Text keyName = ModKeys.CHARGE_KEY.getBoundKeyLocalizedText();
-                        player.sendMessage(
-                                Text.literal("\n")
-                                        .append(Text.translatable("msg.freezesword.start_charging", keyName)
-                                                .formatted(Formatting.AQUA, Formatting.BOLD))
-                                        .append("\n"),
-                                true
-                        );
-                    } else {
-                        // 获取绑定的按键名称
-                        Text keyName = ModKeys.CHARGE_KEY.getBoundKeyLocalizedText();
-                        player.sendMessage(
-                                Text.literal("\n")
-                                        .append(Text.translatable("msg.freezesword.charge_canceled", keyName)
-                                                .formatted(Formatting.GRAY))
-                                        .append("\n"),
-                                true
-                        );
-                    }
+                if (isKeyPressed && !isCharging) {
+                    stack.set(ModDataComponentTypes.FREEZING_SWORD,
+                            new FreezingSwordComponent(0, true, component != null ? component.charges() : 0));
+                    player.sendMessage(
+                            Text.translatable("msg.freezesword.charge_start")
+                                    .formatted(Formatting.AQUA),
+                            true);
                 }
             }
         }
@@ -94,85 +74,133 @@ public class FreezeSwordItem extends Item {
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
         if (!(entity instanceof PlayerEntity player)) return;
 
-        FreezingSwordComponent component = stack.getOrDefault(ModDataComponentTypes.FREEZING_SWORD, FreezingSwordComponent.DEFAULT);
+        FreezingSwordComponent component = stack.getOrDefault(ModDataComponentTypes.FREEZING_SWORD,
+                FreezingSwordComponent.DEFAULT);
         boolean isCharging = component.isCharging();
+        int charges = component.charges();
         int newProgress = isCharging ? component.chargeProgress() + 1 : 0;
 
-        if (newProgress >= CHARGE_TIME) {
-            newProgress = CHARGE_TIME;
-            // 每2秒（40 ticks）提醒一次蓄力进度
-            if (world.getTime() % 40 == 0 && isCharging) {
-                int secondsLeft = (CHARGE_TIME - component.chargeProgress()) / 20;
+        if (isCharging && newProgress >= CHARGE_TIME) {
+            newProgress = 0;
+            charges = Math.min(charges + 1, MAX_CHARGES);
+
+            player.sendMessage(buildChargeMessage(charges), true);
+
+            if (charges >= MAX_CHARGES) {
                 player.sendMessage(
-                    Text.literal("\n")
-                        .append(Text.translatable("msg.freezesword.charging_progress", 
-                            String.format("%.1f", component.getChargePercent() * 100),
-                            secondsLeft)
-                            .formatted(Formatting.BLUE))
-                        .append("\n"),
-                    true
-                );
-            }
-            
-            // 蓄力完成时发送特殊消息
-            if (newProgress == CHARGE_TIME && component.chargeProgress() < CHARGE_TIME) {
-                player.sendMessage(
-                    Text.literal("\n")
-                        .append(Text.translatable("msg.freezesword.fully_charged")
-                        .formatted(Formatting.GREEN, Formatting.BOLD)
-                        .append("\n")
-                        ), true);
+                        Text.translatable("msg.freezesword.max_charges")
+                                .formatted(Formatting.GREEN, Formatting.BOLD),
+                        true);
             }
         }
 
-        if (newProgress != component.chargeProgress() || isCharging != component.isCharging()) {
-            stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(newProgress, isCharging));
+        if (newProgress != component.chargeProgress() ||
+                isCharging != component.isCharging() ||
+                charges != component.charges()) {
+            stack.set(ModDataComponentTypes.FREEZING_SWORD,
+                    new FreezingSwordComponent(newProgress, isCharging, charges));
         }
         super.inventoryTick(stack, world, entity, slot);
     }
 
-    // 其余方法保持不变...
+    public static Text buildChargeMessage(int charges) {
+        float damage = calculateDamage(charges, false);
+        return Text.translatable("msg.freezesword.charge_progress",
+                        Text.translatable("msg.freezesword.progress_value")
+                                .formatted(Formatting.GRAY)
+                                .append("100%")
+                                .formatted(Formatting.AQUA),
+                        Text.translatable("msg.freezesword.charges_value")
+                                .formatted(Formatting.GRAY)
+                                .append(charges + "/" + MAX_CHARGES)
+                                .formatted(Formatting.BLUE),
+                        Text.translatable("msg.freezesword.damage_value")
+                                .formatted(Formatting.GRAY)
+                                .append(String.format("%.0f", damage))
+                                .formatted(Formatting.RED))
+                .formatted(Formatting.WHITE);
+    }
+
+    public static Text buildHudText(FreezingSwordComponent component) {
+        return Text.translatable("msg.freezesword.hud_charge",
+                Text.translatable("msg.freezesword.progress_value")
+                        .formatted(Formatting.GRAY)
+                        .append(String.format("%.0f%%", component.getChargePercent() * 100))
+                        .formatted(Formatting.AQUA)
+        ).formatted(Formatting.WHITE);
+    }
+
+    @Override
+    public Text getName(ItemStack stack) {
+        FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
+        int charges = component != null ? component.charges() : 0;
+        if (charges > 0) {
+            return super.getName(stack).copy()
+                    .append(" ")
+                    .append(Text.literal("[" + charges + "/" + MAX_CHARGES + "]")
+                            .formatted(Formatting.AQUA));
+        }
+        return super.getName(stack);
+    }
+
     @Override
     public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
-        boolean isCharged = component != null && component.chargeProgress() >= CHARGE_TIME;
+        int charges = component != null ? component.charges() : 0;
 
-        if (isCharged && !attacker.getWorld().isClient() && attacker instanceof PlayerEntity player) {
-            boolean isBoss = target instanceof WardenEntity || target instanceof EnderDragonEntity || target instanceof WitherEntity;
-            float damage = isBoss ? BOSS_DAMAGE : NON_BOSS_DAMAGE;
-            int freezeTime = isBoss ? 200 : 60;
-            World world = player.getWorld();
+        if (!attacker.getWorld().isClient() && attacker instanceof PlayerEntity player) {
+            boolean isBoss = target instanceof WardenEntity ||
+                    target instanceof EnderDragonEntity ||
+                    target instanceof WitherEntity;
+            float damage = calculateDamage(charges, isBoss);
+            float damageBonus = damage - BASE_DAMAGE;
 
-            if (world instanceof ServerWorld serverWorld) {
+            if (attacker.getWorld() instanceof ServerWorld serverWorld) {
                 target.damage(serverWorld, attacker.getDamageSources().playerAttack(player), damage);
-                FreezeHelper.freezeEntity(target, freezeTime);
+                FreezeHelper.freezeEntity(target, isBoss ? 200 : 60 * (charges + 1));
             }
 
-            if (isBoss) {
-                player.sendMessage(
-                        Text.literal("\n")
-                                .append(Text.translatable("msg.freezesword.boss_hit").formatted(Formatting.RED, Formatting.BOLD))
-                                .append("\n"),
-                        true
-                );
-            } else {
-                player.sendMessage(
-                        Text.literal("\n")
-                                .append(Text.translatable("msg.freezesword.invalid_target").formatted(Formatting.YELLOW))
-                                .append("\n"),
-                        true
-                );
+            if (charges > 0) {
+                player.sendMessage(buildHitMessage(stack, isBoss, charges, damageBonus), true);
+                stack.set(ModDataComponentTypes.FREEZING_SWORD,
+                        new FreezingSwordComponent(0, false, 0));
             }
-
-            stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(0, false));
         } else {
             World world = attacker.getWorld();
             if (world instanceof ServerWorld serverWorld) {
-                target.damage(serverWorld, attacker.getDamageSources().playerAttack(attacker.getAttackingPlayer()), BASE_DAMAGE);
+                target.damage(serverWorld,
+                        attacker.getDamageSources().playerAttack(attacker.getAttackingPlayer()),
+                        BASE_DAMAGE);
             }
             FreezeHelper.freezeEntity(target, 60);
         }
         super.postHit(stack, target, attacker);
+    }
+
+    private Text buildHitMessage(ItemStack stack, boolean isBoss, int charges, float damageBonus) {
+        Text swordName = Text.translatable(stack.getItem().getTranslationKey()).formatted(Formatting.AQUA);
+
+        return Text.empty()
+                .append(Text.literal("[").formatted(Formatting.AQUA))
+                .append(swordName)
+                .append(Text.literal("] ").formatted(Formatting.AQUA))
+                .append(Text.translatable(isBoss ? "msg.freezesword.boss_target" : "msg.freezesword.invalid_target")
+                        .formatted(Formatting.RED))
+                .append(" ")
+                .append(Text.translatable("msg.freezesword.damage_plus")
+                        .formatted(Formatting.GRAY)
+                        .append(String.format("%.0f", damageBonus))
+                        .formatted(Formatting.GOLD))
+                .append(" ")
+                .append(Text.translatable("msg.freezesword.charges_value")
+                        .formatted(Formatting.GRAY)
+                        .append(charges + "/" + MAX_CHARGES)
+                        .formatted(Formatting.BLUE));
+    }
+
+    public static float calculateDamage(int charges, boolean isBoss) {
+        float damageMultiplier = 1.0f + (CHARGE_DAMAGE_MULTIPLIER * charges);
+        return isBoss ? BOSS_DAMAGE * damageMultiplier : NON_BOSS_DAMAGE * damageMultiplier;
     }
 
     @Override

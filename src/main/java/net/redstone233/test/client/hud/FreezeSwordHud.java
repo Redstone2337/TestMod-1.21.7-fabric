@@ -8,7 +8,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.ModDataComponentTypes;
+import net.redstone233.test.items.custom.FreezeSwordItem;
 
 @Environment(EnvType.CLIENT)
 public class FreezeSwordHud {
@@ -26,14 +28,14 @@ public class FreezeSwordHud {
 
         // 使用 DataComponentTypes.FREEZING_SWORD 获取组件
         var component = mainHandStack.get(ModDataComponentTypes.FREEZING_SWORD);
-        if (component != null && (component.isCharging() || component.getChargePercent() > 0)) {
+        if (component != null && (component.isCharging() || component.chargeProgress() > 0)) {
             float chargePercent = component.getChargePercent();
             int windowWidth = client.getWindow().getScaledWidth();
             int x = (windowWidth - BAR_WIDTH) / 2;
             int y = client.getWindow().getScaledHeight() - HUD_OFFSET_Y;
 
             renderChargeBar(context, x, y, chargePercent);
-            renderChargeText(context, windowWidth, y, chargePercent);
+            renderChargeText(context, windowWidth, y, component);
 
             // 蓄满时添加闪烁效果
             if (chargePercent >= 1.0f && (System.currentTimeMillis() / 200) % 2 == 0) {
@@ -58,16 +60,16 @@ public class FreezeSwordHud {
         context.drawBorder(x, y, BAR_WIDTH, BAR_HEIGHT, 0xFFFFFFFF);
     }
 
-    private static void renderChargeText(DrawContext context, int windowWidth, int y, float chargePercent) {
+    private static void renderChargeText(DrawContext context, int windowWidth, int y, FreezingSwordComponent component) {
         MinecraftClient client = MinecraftClient.getInstance();
-        String text = String.format("Freeze Charge: %.0f%%", chargePercent * 100);
+        Text text = FreezeSwordItem.buildHudText(component);
 
         context.drawCenteredTextWithShadow(
                 client.textRenderer,
-                Text.literal(text),
+                text,
                 windowWidth / 2,
                 y - 12,
-                chargePercent >= 1.0f ? 0xFF00FFFF : 0xFFFFFF
+                component.getChargePercent() >= 1.0f ? 0xFF00FFFF : 0xFFFFFF
         );
     }
 }

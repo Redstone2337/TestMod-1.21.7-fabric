@@ -12,6 +12,7 @@ import net.redstone233.test.core.tags.ModBlockTags;
 import net.redstone233.test.core.tags.ModItemTags;
 import net.redstone233.test.core.tags.ModTagReloader;
 import net.redstone233.test.core.until.ModToolMaterial;
+import net.redstone233.test.core.world.gen.ModWorldGeneration;
 import net.redstone233.test.items.ModItemGroups;
 import net.redstone233.test.items.ModItems;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ public class TestMod implements ModInitializer {
 		ModBlockTags.init();
 		ModItemTags.init();
 		ModToolMaterial.register();
+		ModWorldGeneration.generateModWorldGen();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
