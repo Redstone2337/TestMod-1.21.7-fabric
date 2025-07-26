@@ -49,5 +49,7 @@
   "tooltip.freezing_sword.desc": "A legendary sword that freezes enemies with each hit.",
   "tooltip.freezing_sword.loot_only": "Can be synthesized by Recipe's formula.",
   "tooltip.freezing_sword.max_charges": "MAX CHARGES REACHED!",
-  "tooltip.freezing_sword.ready": "READY! Left-click to unleash power!"
+  "tooltip.freezing_sword.ready": "READY! Left-click to unleash power!",
+
+"msg.freezesword.max_charges_hud": "MAX CHARGES READY!"
 }
