@@ -20,6 +20,7 @@ import net.redstone233.test.core.component.type.ModDataComponentTypes;
 import net.redstone233.test.core.until.FreezeHelper;
 import net.redstone233.test.core.until.ModKeys;
 import net.redstone233.test.core.until.ModToolMaterial;
+import net.redstone233.test.client.hud.FreezeSwordHud;
 import org.jetbrains.annotations.Nullable;
 
 public class FreezeSwordItem extends Item {
@@ -155,7 +156,7 @@ public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker)
             player.sendMessage(buildHitMessage(stack, isBoss, charges, damageBonus), true);
             // 攻击后重置蓄力状态（包括charges）
 
-//FreezeSwordHud.resetMaxChargesState();
+FreezeSwordHud.resetMaxChargesState();
             stack.set(ModDataComponentTypes.FREEZING_SWORD,
                     new FreezingSwordComponent(0, false, 0));
         }
