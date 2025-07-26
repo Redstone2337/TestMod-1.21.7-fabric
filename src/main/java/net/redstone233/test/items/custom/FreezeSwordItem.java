@@ -62,24 +62,20 @@ public static void handleKeyInput(PlayerEntity player) {
             boolean isCharging = component != null && component.isCharging();
             int charges = component != null ? component.charges() : 0;
 
-            // 只有在未达到最大蓄力次数时才允许改变蓄力状态
-            if (charges < FreezeSwordItem.MAX_CHARGES) {
-                if (isKeyPressed && !isCharging) {
-                    // 开始蓄力
-                    stack.set(ModDataComponentTypes.FREEZING_SWORD,
-                            new FreezingSwordComponent(0, true, charges));
+            // 按键状态变化处理
+            if (isKeyPressed != isCharging) {
+                stack.set(ModDataComponentTypes.FREEZING_SWORD, 
+                    new FreezingSwordComponent(
+                        isKeyPressed ? 0 : component.chargeProgress(),
+                        isKeyPressed,
+                        charges
+                    ));
+                
+                if (isKeyPressed) {
                     player.sendMessage(
-                            Text.translatable("msg.freezesword.charge_start")
-                                    .formatted(Formatting.AQUA),
-                            true);
-                } else if (!isKeyPressed && isCharging) {
-                    // 取消蓄力
-                    stack.set(ModDataComponentTypes.FREEZING_SWORD,
-                            new FreezingSwordComponent(0, false, charges));
-                    player.sendMessage(
-                            Text.translatable("msg.freezesword.charge_canceled")
-                                    .formatted(Formatting.GRAY),
-                            true);
+                        Text.translatable("msg.freezesword.charge_start")
+                            .formatted(Formatting.AQUA),
+                        true);
                 }
             }
         }
@@ -92,49 +88,35 @@ public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nu
 
     FreezingSwordComponent component = stack.getOrDefault(ModDataComponentTypes.FREEZING_SWORD,
             FreezingSwordComponent.DEFAULT);
-    boolean isCharging = component.isCharging();
-    int charges = component.charges();
-    int newProgress = component.chargeProgress();
+    
+    // 只在蓄力状态且未达最大蓄力时增加进度
+    if (component.isCharging() && component.charges() < MAX_CHARGES) {
+        int newProgress = component.chargeProgress() + 1;
+        int charges = component.charges();
+        boolean isCharging = component.isCharging();
 
-    // 检查按键状态是否与蓄力状态一致
-    boolean keyPressed = ModKeys.isChargeKeyPressed();
-    if (isCharging != keyPressed) {
-        // 状态不一致时立即停止蓄力
-        isCharging = false;
-        newProgress = 0;
-    }
-
-    // 只在按键按下且未达最大蓄力时才增加进度
-    if (keyPressed && charges < MAX_CHARGES) {
-        newProgress++;
-        
         // 完成一次蓄力
         if (newProgress >= CHARGE_TIME) {
             newProgress = 0;
             charges = Math.min(charges + 1, MAX_CHARGES);
-
+            
             player.sendMessage(buildChargeMessage(charges), true);
-
+            
             if (charges >= MAX_CHARGES) {
                 isCharging = false;
                 player.sendMessage(
-                        Text.translatable("msg.freezesword.max_charges")
-                                .formatted(Formatting.GREEN, Formatting.BOLD),
-                        true);
+                    Text.translatable("msg.freezesword.max_charges")
+                        .formatted(Formatting.GREEN, Formatting.BOLD),
+                    true);
             }
         }
-    }
 
-    // 更新组件状态
-    if (newProgress != component.chargeProgress() ||
-            isCharging != component.isCharging() ||
-            charges != component.charges()) {
+        // 更新组件状态
         stack.set(ModDataComponentTypes.FREEZING_SWORD,
-                new FreezingSwordComponent(newProgress, isCharging, charges));
+            new FreezingSwordComponent(newProgress, isCharging, charges));
     }
     super.inventoryTick(stack, world, entity, slot);
 }
-
 @Override
 public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
     FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
