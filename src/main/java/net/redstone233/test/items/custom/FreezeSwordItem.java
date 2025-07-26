@@ -23,7 +23,7 @@ import net.redstone233.test.core.until.ModToolMaterial;
 import org.jetbrains.annotations.Nullable;
 
 public class FreezeSwordItem extends Item {
-    public static final int CHARGE_TIME = 40;
+    public static final int CHARGE_TIME = 140;
     public static final int MAX_CHARGES = 5;
     public static final float BASE_DAMAGE = ModToolMaterial.SILICON.attackDamageBonus();
     public static final float BOSS_DAMAGE = BASE_DAMAGE * 10;
