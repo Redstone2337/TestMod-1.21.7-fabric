@@ -50,6 +50,7 @@ public class FreezeSwordItem extends Item {
                 .build();
     }
 
+/*
     public static void handleKeyInput(PlayerEntity player) {
         if (player.getWorld().isClient) {
             ItemStack stack = player.getMainHandStack();
@@ -68,7 +69,33 @@ public class FreezeSwordItem extends Item {
                 }
             }
         }
+    }*/
+
+public static void handleKeyInput(PlayerEntity player) {
+    if (player.getWorld().isClient) {
+        ItemStack stack = player.getMainHandStack();
+        if (stack.getItem() instanceof FreezeSwordItem) {
+            boolean isKeyPressed = ModKeys.isChargeKeyPressed();
+            FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
+            boolean isCharging = component != null && component.isCharging();
+            int charges = component != null ? component.charges() : 0;
+
+            // 只有在未达到最大蓄力次数时才允许开始新的蓄力
+            if (isKeyPressed && !isCharging && charges < MAX_CHARGES) {
+                stack.set(ModDataComponentTypes.FREEZING_SWORD,
+                        new FreezingSwordComponent(0, true, charges));
+                player.sendMessage(
+                        Text.translatable("msg.freezesword.charge_start")
+                                .formatted(Formatting.AQUA),
+                        true);
+            } else if (!isKeyPressed && isCharging) {
+                // 释放按键时停止蓄力
+                stack.set(ModDataComponentTypes.FREEZING_SWORD,
+                        new FreezingSwordComponent(0, false, charges));
+            }
+        }
     }
+}
 
     @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
