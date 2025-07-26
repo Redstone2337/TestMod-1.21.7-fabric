@@ -172,6 +172,14 @@ FreezeSwordHud.resetMaxChargesState();
     super.postHit(stack, target, attacker);
 }
 
+    public static Text buildChargeMessage(int charges) {
+    float damage = calculateDamage(charges, false);
+    return Text.translatable("msg.freezesword.charging_progress",
+        String.format("%.0f", 100f), // 进度百分比
+        String.format("%.0f", damage) // 伤害值
+    ).formatted(Formatting.AQUA);
+    }
+
     public static Text buildHudText(FreezingSwordComponent component) {
     return Text.translatable("item.freeze.freezing_sword.charging",
         String.format("%.0f%%", component.getChargePercent() * 100)
