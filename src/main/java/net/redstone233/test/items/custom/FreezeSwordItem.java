@@ -97,6 +97,81 @@ public static void handleKeyInput(PlayerEntity player) {
     }
 }
 
+@Override
+public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
+    if (!(entity instanceof PlayerEntity player)) return;
+
+    FreezingSwordComponent component = stack.getOrDefault(ModDataComponentTypes.FREEZING_SWORD,
+            FreezingSwordComponent.DEFAULT);
+    boolean isCharging = component.isCharging();
+    int charges = component.charges();
+    int newProgress = isCharging ? component.chargeProgress() + 1 : 0;
+
+    // 只在未达到最大蓄力次数且正在蓄力时才继续蓄力
+    if (isCharging && charges < MAX_CHARGES && newProgress >= CHARGE_TIME) {
+        newProgress = 0;
+        charges = Math.min(charges + 1, MAX_CHARGES);
+
+        player.sendMessage(buildChargeMessage(charges), true);
+
+        if (charges >= MAX_CHARGES) {
+            // 达到最大蓄力后自动停止蓄力，但不重置charges
+            isCharging = false;
+            player.sendMessage(
+                    Text.translatable("msg.freezesword.max_charges")
+                            .formatted(Formatting.GREEN, Formatting.BOLD),
+                    true);
+        }
+    }
+
+    // 更新组件状态（注意：即使达到最大蓄力也保留charges值）
+    if (newProgress != component.chargeProgress() ||
+            isCharging != component.isCharging() ||
+            charges != component.charges()) {
+        stack.set(ModDataComponentTypes.FREEZING_SWORD,
+                new FreezingSwordComponent(newProgress, isCharging, charges));
+    }
+    super.inventoryTick(stack, world, entity, slot);
+}
+
+@Override
+public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
+    int charges = component != null ? component.charges() : 0;
+
+    if (!attacker.getWorld().isClient() && attacker instanceof PlayerEntity player) {
+        boolean isBoss = target instanceof WardenEntity ||
+                target instanceof EnderDragonEntity ||
+                target instanceof WitherEntity;
+        float damage = calculateDamage(charges, isBoss);
+        float damageBonus = damage - BASE_DAMAGE;
+
+        if (attacker.getWorld() instanceof ServerWorld serverWorld) {
+            target.damage(serverWorld, attacker.getDamageSources().playerAttack(player), damage);
+            FreezeHelper.freezeEntity(target, isBoss ? 200 : 60 * (charges + 1));
+        }
+
+        if (charges > 0) {
+            player.sendMessage(buildHitMessage(stack, isBoss, charges, damageBonus), true);
+            // 攻击后重置蓄力状态（包括charges）
+
+//FreezeSwordHud.resetMaxChargesState();
+            stack.set(ModDataComponentTypes.FREEZING_SWORD,
+                    new FreezingSwordComponent(0, false, 0));
+        }
+    } else {
+        World world = attacker.getWorld();
+        if (world instanceof ServerWorld serverWorld) {
+            target.damage(serverWorld,
+                    attacker.getDamageSources().playerAttack(attacker.getAttackingPlayer()),
+                    BASE_DAMAGE);
+        }
+        FreezeHelper.freezeEntity(target, 60);
+    }
+    super.postHit(stack, target, attacker);
+}
+
+/*
     @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
         if (!(entity instanceof PlayerEntity player)) return;
@@ -128,7 +203,7 @@ public static void handleKeyInput(PlayerEntity player) {
                     new FreezingSwordComponent(newProgress, isCharging, charges));
         }
         super.inventoryTick(stack, world, entity, slot);
-    }
+    }*/
 
     public static Text buildChargeMessage(int charges) {
         float damage = calculateDamage(charges, false);
@@ -169,7 +244,7 @@ public static void handleKeyInput(PlayerEntity player) {
         }
         return super.getName(stack);
     }
-
+/*
     @Override
     public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
@@ -202,7 +277,7 @@ public static void handleKeyInput(PlayerEntity player) {
             FreezeHelper.freezeEntity(target, 60);
         }
         super.postHit(stack, target, attacker);
-    }
+    }*/
 
     private Text buildHitMessage(ItemStack stack, boolean isBoss, int charges, float damageBonus) {
         Text swordName = Text.translatable(stack.getItem().getTranslationKey()).formatted(Formatting.AQUA);
