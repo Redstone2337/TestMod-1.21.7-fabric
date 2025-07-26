@@ -66,6 +66,10 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("msg.freezesword.max_charges", "§a[Freeze Sword]§r MAX CHARGES REACHED!");
         translationBuilder.add("msg.freezesword.hit_with_charges", "§e[Freeze Sword]§r Attack with %d charges!");
 
+        translationBuilder.add("msg.freezesword.charge_start", "§b[Freeze Sword]§r Charging started!");
+
+        translationBuilder.add("msg.freezesword.charge_progress", "Charge: [%s]");
+
         // HUD Messages
         translationBuilder.add("msg.freezesword.hud_charge", "Charge: [%s]");
         translationBuilder.add("msg.freezesword.progress_value", "Progress[");
