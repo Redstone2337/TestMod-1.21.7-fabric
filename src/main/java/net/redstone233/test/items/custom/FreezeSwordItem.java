@@ -172,6 +172,11 @@ FreezeSwordHud.resetMaxChargesState();
     super.postHit(stack, target, attacker);
 }
 
+    public static Text buildHudText(FreezingSwordComponent component) {
+    return Text.translatable("item.freeze.freezing_sword.charging",
+        String.format("%.0f%%", component.getChargePercent() * 100)
+    ).formatted(Formatting.AQUA);
+    }
 
     private Text buildHitMessage(ItemStack stack, boolean isBoss, int charges, float damageBonus) {
         Text swordName = Text.translatable(stack.getItem().getTranslationKey()).formatted(Formatting.AQUA);
