@@ -116,69 +116,6 @@ public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nu
             new FreezingSwordComponent(newProgress, isCharging, charges));
     }
     super.inventoryTick(stack, world, entity, slot);
-}public static void handleKeyInput(PlayerEntity player) {
-    if (player.getWorld().isClient) {
-        ItemStack stack = player.getMainHandStack();
-        if (stack.getItem() instanceof FreezeSwordItem) {
-            boolean isKeyPressed = ModKeys.isChargeKeyPressed();
-            FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
-            boolean isCharging = component != null && component.isCharging();
-            int charges = component != null ? component.charges() : 0;
-
-            // 按键状态变化处理
-            if (isKeyPressed != isCharging) {
-                stack.set(ModDataComponentTypes.FREEZING_SWORD, 
-                    new FreezingSwordComponent(
-                        isKeyPressed ? 0 : component.chargeProgress(),
-                        isKeyPressed,
-                        charges
-                    ));
-                
-                if (isKeyPressed) {
-                    player.sendMessage(
-                        Text.translatable("msg.freezesword.charge_start")
-                            .formatted(Formatting.AQUA),
-                        true);
-                }
-            }
-        }
-    }
-}
-
-@Override
-public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-    if (!(entity instanceof PlayerEntity player)) return;
-
-    FreezingSwordComponent component = stack.getOrDefault(ModDataComponentTypes.FREEZING_SWORD,
-            FreezingSwordComponent.DEFAULT);
-    
-    // 只在蓄力状态且未达最大蓄力时增加进度
-    if (component.isCharging() && component.charges() < MAX_CHARGES) {
-        int newProgress = component.chargeProgress() + 1;
-        int charges = component.charges();
-        boolean isCharging = component.isCharging();
-
-        // 完成一次蓄力
-        if (newProgress >= CHARGE_TIME) {
-            newProgress = 0;
-            charges = Math.min(charges + 1, MAX_CHARGES);
-            
-            player.sendMessage(buildChargeMessage(charges), true);
-            
-            if (charges >= MAX_CHARGES) {
-                isCharging = false;
-                player.sendMessage(
-                    Text.translatable("msg.freezesword.max_charges")
-                        .formatted(Formatting.GREEN, Formatting.BOLD),
-                    true);
-            }
-        }
-
-        // 更新组件状态
-        stack.set(ModDataComponentTypes.FREEZING_SWORD,
-            new FreezingSwordComponent(newProgress, isCharging, charges));
-    }
-    super.inventoryTick(stack, world, entity, slot);
 }
     
 @Override
