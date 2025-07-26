@@ -82,6 +82,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Formatting;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.redstone233.test.core.component.FreezingSwordComponent;
