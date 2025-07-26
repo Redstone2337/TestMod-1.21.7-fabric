@@ -63,7 +63,7 @@ HudElementRegistry.attachElementBefore(VanillaHudElements.HELD_ITEM_TOOLTIP, Ide
  });
 	    */
 
-HudElementRegistry.attachElementBefore(VanillaHudElements.BOSS_BAR, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
+HudElementRegistry.attachElementBefore(VanillaHudElements.CROSSHAIR, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
 			FreezeSwordHud.render(context);
  });    
 
