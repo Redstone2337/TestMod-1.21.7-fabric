@@ -21,12 +21,13 @@ import net.redstone233.test.core.until.FreezeHelper;
 import net.redstone233.test.core.until.ModKeys;
 import net.redstone233.test.core.until.ModToolMaterial;
 import net.redstone233.test.client.hud.FreezeSwordHud;
+import net.redstone233.test.items.ModItems;
 import org.jetbrains.annotations.Nullable;
 
 public class FreezeSwordItem extends Item {
     public static final int CHARGE_TIME = 140;
     public static final int MAX_CHARGES = 5;
-    public static final float BASE_DAMAGE = ModToolMaterial.SILICON.attackDamageBonus();
+    public static final float BASE_DAMAGE = ModToolMaterial.SILICON.attackDamageBonus() + ModItems.ATTACK_DAMAGE - 1;
     public static final float BOSS_DAMAGE = BASE_DAMAGE * 10;
     public static final float NON_BOSS_DAMAGE = BASE_DAMAGE * 3;
     public static final float CHARGE_DAMAGE_MULTIPLIER = 2.0f;
