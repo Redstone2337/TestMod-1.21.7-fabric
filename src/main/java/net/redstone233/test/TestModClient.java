@@ -33,9 +33,10 @@ public class TestModClient implements ClientModInitializer {
         ComponentTooltipAppenderRegistry.addAfter(DataComponentTypes.LORE, ModDataComponentTypes.FREEZING_SWORD);
 
         // 注册HUD渲染
-        HudElementRegistry.addLast(Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> {
+/*        HudElementRegistry.addLast(Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> {
             FreezeSwordHud.render(context);
         });
+*/
 
 HudElementRegistry.attachElementBefore(VanillaHudElements.MISC_OVERLAYS, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
 			FreezeSwordHud.render(context);
