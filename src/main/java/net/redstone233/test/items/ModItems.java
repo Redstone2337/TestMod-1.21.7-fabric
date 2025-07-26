@@ -18,13 +18,11 @@ private static final int CUSTOM_MAX_COUNT = SetValueCountCommand.getCustomMaxSiz
 
 public static final float ATTACK_DAMAGE = 10.0f;
 
-public static final float ATTACK_SPEED = 2.5f;
-
     public static final Item SILICON = register("silicon", new Item.Settings().maxCount(CUSTOM_MAX_COUNT));
     public static final Item RAW_SILICON = register("raw_silicon",new Item.Settings().maxCount(CUSTOM_MAX_COUNT));
     public static final Item SILICON_INGOT = register("silicon_ingot", new Item.Settings().maxCount(CUSTOM_MAX_COUNT));
     public static final Item FREEZE_SWORD = register("freeze_sword",
-            settings -> new FreezeSwordItem(ModToolMaterial.SILICON,ATTACK_DAMAGE, ATTACK_SPEED,settings),
+            settings -> new FreezeSwordItem(ModToolMaterial.SILICON,ATTACK_DAMAGE, 2.5f ,settings),
             new Item.Settings().maxDamage(300000)
                     /*.attributeModifiers(FreezeSwordItem.createAttributeModifiers())*/
     );
