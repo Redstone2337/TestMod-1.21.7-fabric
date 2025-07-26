@@ -44,15 +44,18 @@ HudElementRegistry.attachElementBefore(VanillaHudElements.MISC_OVERLAYS, Identif
  });
 */
 
+/*
 HudElementRegistry.attachElementBefore(VanillaHudElements.SUBTITLES, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
 			FreezeSwordHud.render(context);
  });
+*/
 
-/*
+
+
 HudElementRegistry.attachElementBefore(VanillaHudElements.HOTBAR, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
 			FreezeSwordHud.render(context);
  });
-*/
+
 
 /*
 HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
