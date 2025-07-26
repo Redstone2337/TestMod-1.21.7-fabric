@@ -39,7 +39,7 @@ public class TestModClient implements ClientModInitializer {
 */
 
 /*
-HudElementRegistry.attachElementBefore(VanillaHudElements.MISC_OVERLAYS, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
+HudElementRegistry./*attachElementBefore*/attachElementAfter(VanillaHudElements.MISC_OVERLAYS, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
 			FreezeSwordHud.render(context);
  });
 */
