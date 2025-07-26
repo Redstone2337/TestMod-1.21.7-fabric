@@ -25,39 +25,20 @@ public class FreezeSwordHud {
 
     public static void render(DrawContext context) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.player == null) {
-            hasMaxCharges = false; // 重置状态
-            return;
-        }
+        if (client == null || client.player == null) return;
 
         PlayerEntity player = client.player;
         ItemStack mainHandStack = player.getMainHandStack();
-        var component = mainHandStack.get(ModDataComponentTypes.FREEZING_SWORD);
-        
-        // 检查是否应该显示HUD
-        boolean shouldShowHud = false;
-        float chargePercent = 0f;
-        
-        if (component != null) {
-            // 如果已经有5次蓄力，或者正在蓄力，或者有未使用的蓄力次数
-            if (component.charges() >= FreezeSwordItem.MAX_CHARGES) {
-                hasMaxCharges = true;
-                chargePercent = 1.0f; // 显示满进度
-                shouldShowHud = true;
-            } else if (component.isCharging() || component.charges() > 0) {
-                chargePercent = component.getChargePercent();
-                shouldShowHud = true;
-                hasMaxCharges = false;
-            }
-        }
-        
-        // 如果玩家切换了物品，重置状态
-        if (!(mainHandStack.getItem() instanceof FreezeSwordItem)) {
-            hasMaxCharges = false;
-            return;
-        }
 
-        if (shouldShowHud || hasMaxCharges) {
+        // 检查是否持有寒冰剑
+        if (!(mainHandStack.getItem() instanceof FreezeSwordItem)) return;
+
+        var component = mainHandStack.get(ModDataComponentTypes.FREEZING_SWORD);
+        if (component == null) return;
+
+        // 只要正在蓄力或有蓄力次数就显示HUD
+        if (component.isCharging() || component.charges() > 0) {
+            float chargePercent = component.isCharging() ? component.getChargePercent() : 1.0f;
             int windowWidth = client.getWindow().getScaledWidth();
             int x = (windowWidth - BAR_WIDTH) / 2;
             int y = client.getWindow().getScaledHeight() - HUD_OFFSET_Y;
@@ -65,8 +46,9 @@ public class FreezeSwordHud {
             renderChargeBar(context, x, y, chargePercent);
             renderChargeText(context, windowWidth, y, component);
 
-            // 蓄满时添加闪烁效果
-            if (chargePercent >= 1.0f && (System.currentTimeMillis() / 200) % 2 == 0) {
+            // 蓄满时闪烁效果
+            if (component.charges() >= FreezeSwordItem.MAX_CHARGES && 
+                (System.currentTimeMillis() / 200) % 2 == 0) {
                 context.fill(x, y, x + BAR_WIDTH, y + BAR_HEIGHT, 0x20FFFFFF);
             }
         }
