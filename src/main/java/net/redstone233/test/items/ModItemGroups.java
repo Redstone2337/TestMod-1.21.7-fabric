@@ -42,7 +42,7 @@ public class ModItemGroups {
                 ItemGroup.create(
                                 ItemGroup.Row.TOP, 0)
                         .displayName(Text.translatable("itemGroup.mtc.silicon_futures"))
-                        .icon(() -> new ItemStack(ModItems.SILICON)).entries((displayContext, entries) -> {
+                        .icon(() -> new ItemStack(ModBlocks.SILICON_ORE)).entries((displayContext, entries) -> {
 //                            entries.add(ModItems.RAW_SILICON);
 //                            entries.add(ModItems.SILICON);
 //                            entries.add(ModBlocks.SILICON_BLOCK);
