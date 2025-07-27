@@ -89,11 +89,7 @@ translationBuilder.add("msg.freezesword.max_charges_hud", "MAX CHARGES READY!");
         translationBuilder.add("category.freezesword", "Freeze Sword Mod");
 
 
-// Freeze Sword 动态名称和多语言支持
-        translationBuilder.add("item.modid.freezing_sword", "Freeze Sword"); // 基础名称
-        translationBuilder.add("msg.freezesword.charge_start", "Charging started...");
-        translationBuilder.add("msg.freezesword.charging_progress", "Charge %d/%d complete! Damage: %s");
-        translationBuilder.add("msg.freezesword.max_charges", "MAX CHARGES REACHED!");
+// Freeze Sword 动态名称和多语言支持        translationBuilder.add("msg.freezesword.max_charges", "MAX CHARGES REACHED!");
         translationBuilder.add("msg.freezesword.boss_target", "BOSS TARGET!");
         translationBuilder.add("msg.freezesword.invalid_target", "Normal Target");
         translationBuilder.add("msg.freezesword.damage_plus", "+");
