@@ -407,7 +407,7 @@ public class FreezeSwordItem extends Item {
                     .append(String.format("%.0f", damageBonus))
                 .append(" ")
                 .append(Text.translatable("msg.freezesword.charges_value")
-                    .append(charges + "/" + MAX_CHARGES));
+                    .append(charges + "/" + MAX_CHARGES))));
     }
 
     public static float calculateDamage(int charges, boolean isBoss) {
