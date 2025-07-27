@@ -52,7 +52,7 @@ public class FreezeSwordItem extends Item {
             return Text.empty()
                 .append(baseName)
                 .append(Text.literal(" [" + charges + "/" + MAX_CHARGES + "]")
-                .formatted(Formatting.AQUA);
+                .formatted(Formatting.AQUA));
         }
         return baseName;
     }
