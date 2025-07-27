@@ -9,6 +9,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Formatting;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.ModDataComponentTypes;
 import net.redstone233.test.items.custom.FreezeSwordItem;
