@@ -87,5 +87,27 @@ translationBuilder.add("msg.freezesword.max_charges_hud", "MAX CHARGES READY!");
         // Key Bindings
         translationBuilder.add("key.freezesword.charge", "Activate Freeze Sword Charge");
         translationBuilder.add("category.freezesword", "Freeze Sword Mod");
+
+
+// Freeze Sword 动态名称和多语言支持
+        translationBuilder.add("item.modid.freezing_sword", "Freeze Sword"); // 基础名称
+        translationBuilder.add("msg.freezesword.charge_start", "Charging started...");
+        translationBuilder.add("msg.freezesword.charging_progress", "Charge %d/%d complete! Damage: %s");
+        translationBuilder.add("msg.freezesword.max_charges", "MAX CHARGES REACHED!");
+        translationBuilder.add("msg.freezesword.boss_target", "BOSS TARGET!");
+        translationBuilder.add("msg.freezesword.invalid_target", "Normal Target");
+        translationBuilder.add("msg.freezesword.damage_plus", "+");
+        translationBuilder.add("msg.freezesword.charges_value", "Charges: ");
+
+        // 新增 HUD 和状态提示
+        translationBuilder.add("item.freeze.freezing_sword.charging", "Charging: %s%%");
+        translationBuilder.add("item.freeze.freezing_sword.charged", "Charged: [%d/%d]");
+        translationBuilder.add("msg.freezesword.hud_charge", "Charge Progress: %s%%");
+        translationBuilder.add("msg.freezesword.hit_with_charges", "Attacked with %d charges!");
+
+        // 键位提示
+        translationBuilder.add("key.freezesword.charge", "Charge Freeze Sword");
+        translationBuilder.add("category.freezesword", "Freeze Sword Controls");
+
     }
 }
