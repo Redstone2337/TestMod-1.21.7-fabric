@@ -1,4 +1,3 @@
-// FreezeSwordItem.java
 package net.redstone233.test.items.custom;
 
 import net.minecraft.component.type.AttributeModifierSlot;
@@ -14,6 +13,7 @@ import net.minecraft.item.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.ModDataComponentTypes;
@@ -25,7 +25,7 @@ import net.redstone233.test.items.ModItems;
 import org.jetbrains.annotations.Nullable;
 
 public class FreezeSwordItem extends Item {
-    public static final int CHARGE_TIME = 140;
+    public static final int CHARGE_TIME = 140; // 7 seconds (20 ticks/second * 7)
     public static final int MAX_CHARGES = 5;
     public static final float BASE_DAMAGE = ModToolMaterial.SILICON.attackDamageBonus() + ModItems.ATTACK_DAMAGE + 1;
     public static final float BOSS_DAMAGE = BASE_DAMAGE * 10;
@@ -37,6 +37,29 @@ public class FreezeSwordItem extends Item {
                 .sword(material, attackDamage, attackSpeed)
                 .component(ModDataComponentTypes.FREEZING_SWORD, FreezingSwordComponent.DEFAULT)
         );
+    }
+
+    @Override
+    public Text getName(ItemStack stack) {
+        FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
+        int charges = component != null ? component.charges() : 0;
+        
+        // Base name translation
+        Text baseName = Text.translatable(this.getTranslationKey());
+        
+        // If there are charges, append the charge count
+        if (charges > 0) {
+            return Text.empty()
+                .append(baseName)
+                .append(Text.literal(" [" + charges + "/" + MAX_CHARGES + "]")
+                .formatted(Formatting.AQUA);
+        }
+        return baseName;
+    }
+
+    @Override
+    public UseAction getUseAction(ItemStack stack) {
+        return UseAction.BLOCK; // Makes the animation look like the player is holding the sword defensively
     }
 
     public static AttributeModifiersComponent createAttributeModifiers() {
@@ -52,121 +75,125 @@ public class FreezeSwordItem extends Item {
                 .build();
     }
 
+    public static void handleKeyInput(PlayerEntity player) {
+        if (player.getWorld().isClient) {
+            ItemStack stack = player.getMainHandStack();
+            if (stack.getItem() instanceof FreezeSwordItem) {
+                boolean isKeyPressed = ModKeys.isChargeKeyPressed();
+                FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
+                boolean isCharging = component != null && component.isCharging();
+                int charges = component != null ? component.charges() : 0;
 
-public static void handleKeyInput(PlayerEntity player) {
-    if (player.getWorld().isClient) {
-        ItemStack stack = player.getMainHandStack();
-        if (stack.getItem() instanceof FreezeSwordItem) {
-            boolean isKeyPressed = ModKeys.isChargeKeyPressed();
-            FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
-            boolean isCharging = component != null && component.isCharging();
-            int charges = component != null ? component.charges() : 0;
+                // Only allow charging if not at max charges
+                if (isKeyPressed && charges >= MAX_CHARGES) {
+                    return;
+                }
 
-            // 按键状态变化处理
-            if (isKeyPressed != isCharging) {
-                stack.set(ModDataComponentTypes.FREEZING_SWORD, 
-                    new FreezingSwordComponent(
-                        isKeyPressed ? 0 : component.chargeProgress(),
-                        isKeyPressed,
-                        charges
-                    ));
-                
-                if (isKeyPressed) {
-                    player.sendMessage(
-                        Text.translatable("msg.freezesword.charge_start")
-                            .formatted(Formatting.AQUA),
-                        true);
+                // Key state change handling
+                if (isKeyPressed != isCharging) {
+                    stack.set(ModDataComponentTypes.FREEZING_SWORD, 
+                        new FreezingSwordComponent(
+                            isKeyPressed ? 0 : component.chargeProgress(),
+                            isKeyPressed,
+                            charges
+                        ));
+
+                    if (isKeyPressed) {
+                        player.sendMessage(
+                            Text.translatable("msg.freezesword.charge_start")
+                                .formatted(Formatting.AQUA),
+                            true);
+                    }
                 }
             }
         }
     }
-}
 
-@Override
-public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-    if (!(entity instanceof PlayerEntity player)) return;
+    @Override
+    public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
+        if (!(entity instanceof PlayerEntity player)) return;
 
-    FreezingSwordComponent component = stack.getOrDefault(ModDataComponentTypes.FREEZING_SWORD,
-            FreezingSwordComponent.DEFAULT);
-    
-    // 只在蓄力状态且未达最大蓄力时增加进度
-    if (component.isCharging() && component.charges() < MAX_CHARGES) {
-        int newProgress = component.chargeProgress() + 1;
-        int charges = component.charges();
-        boolean isCharging = component.isCharging();
+        FreezingSwordComponent component = stack.getOrDefault(ModDataComponentTypes.FREEZING_SWORD,
+                FreezingSwordComponent.DEFAULT);
 
-        // 完成一次蓄力
-        if (newProgress >= CHARGE_TIME) {
-            newProgress = 0;
-            charges = Math.min(charges + 1, MAX_CHARGES);
-            
-            player.sendMessage(buildChargeMessage(charges), true);
-            
-            if (charges >= MAX_CHARGES) {
-                isCharging = false;
-                player.sendMessage(
-                    Text.translatable("msg.freezesword.max_charges")
-                        .formatted(Formatting.GREEN, Formatting.BOLD),
-                    true);
+        // Only increase progress when charging and not at max charges
+        if (component.isCharging() && component.charges() < MAX_CHARGES) {
+            int newProgress = component.chargeProgress() + 1;
+            int charges = component.charges();
+            boolean isCharging = component.isCharging();
+
+            // Complete one charge (7 seconds)
+            if (newProgress >= CHARGE_TIME) {
+                newProgress = 0;
+                charges = Math.min(charges + 1, MAX_CHARGES);
+
+                player.sendMessage(buildChargeMessage(charges), true);
+
+                if (charges >= MAX_CHARGES) {
+                    isCharging = false;
+                    player.sendMessage(
+                        Text.translatable("msg.freezesword.max_charges")
+                            .formatted(Formatting.GREEN, Formatting.BOLD),
+                        true);
+                }
             }
-        }
 
-        // 更新组件状态
-        stack.set(ModDataComponentTypes.FREEZING_SWORD,
-            new FreezingSwordComponent(newProgress, isCharging, charges));
-    }
-    super.inventoryTick(stack, world, entity, slot);
-}
-    
-@Override
-public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-    FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
-    int charges = component != null ? component.charges() : 0;
-
-    if (!attacker.getWorld().isClient() && attacker instanceof PlayerEntity player) {
-        boolean isBoss = target instanceof WardenEntity ||
-                target instanceof EnderDragonEntity ||
-                target instanceof WitherEntity;
-        float damage = calculateDamage(charges, isBoss);
-        float damageBonus = damage - BASE_DAMAGE;
-
-        if (attacker.getWorld() instanceof ServerWorld serverWorld) {
-            target.damage(serverWorld, attacker.getDamageSources().playerAttack(player), damage);
-            FreezeHelper.freezeEntity(target, isBoss ? 200 : 60 * (charges + 1));
-        }
-
-        if (charges > 0) {
-            player.sendMessage(buildHitMessage(stack, isBoss, charges, damageBonus), true);
-            // 攻击后重置蓄力状态（包括charges）
-
-            FreezeSwordHud.resetMaxChargesState();
+            // Update component state
             stack.set(ModDataComponentTypes.FREEZING_SWORD,
-                    new FreezingSwordComponent(0, false, 0));
+                new FreezingSwordComponent(newProgress, isCharging, charges));
         }
-    } else {
-        World world = attacker.getWorld();
-        if (world instanceof ServerWorld serverWorld) {
-            target.damage(serverWorld,
-                    attacker.getDamageSources().playerAttack(attacker.getAttackingPlayer()),
-                    BASE_DAMAGE);
-        }
-        FreezeHelper.freezeEntity(target, 60);
+        super.inventoryTick(stack, world, entity, slot);
     }
-    super.postHit(stack, target, attacker);
-}
+
+    @Override
+    public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
+        int charges = component != null ? component.charges() : 0;
+
+        if (!attacker.getWorld().isClient() && attacker instanceof PlayerEntity player) {
+            boolean isBoss = target instanceof WardenEntity ||
+                    target instanceof EnderDragonEntity ||
+                    target instanceof WitherEntity;
+            float damage = calculateDamage(charges, isBoss);
+            float damageBonus = damage - BASE_DAMAGE;
+
+            if (attacker.getWorld() instanceof ServerWorld serverWorld) {
+                target.damage(serverWorld, attacker.getDamageSources().playerAttack(player), damage);
+                FreezeHelper.freezeEntity(target, isBoss ? 200 : 60 * (charges + 1));
+            }
+
+            if (charges > 0) {
+                player.sendMessage(buildHitMessage(stack, isBoss, charges, damageBonus), true);
+                // Reset charging state after attack
+                FreezeSwordHud.resetMaxChargesState();
+                stack.set(ModDataComponentTypes.FREEZING_SWORD,
+                        new FreezingSwordComponent(0, false, 0));
+            }
+        } else {
+            World world = attacker.getWorld();
+            if (world instanceof ServerWorld serverWorld) {
+                target.damage(serverWorld,
+                        attacker.getDamageSources().playerAttack(attacker.getAttackingPlayer()),
+                        BASE_DAMAGE);
+            }
+            FreezeHelper.freezeEntity(target, 60);
+        }
+        super.postHit(stack, target, attacker);
+    }
 
     public static Text buildChargeMessage(int charges) {
-    float damage = calculateDamage(charges, false);
-    return Text.translatable("msg.freezesword.charging_progress",
-        String.format("%.0f", 100f), // 进度百分比
-        String.format("%.0f", damage) // 伤害值
-    ).formatted(Formatting.AQUA);
+        float damage = calculateDamage(charges, false);
+        return Text.translatable("msg.freezesword.charging_progress",
+            charges, // Current charges
+            MAX_CHARGES, // Max charges
+            String.format("%.0f", damage) // Damage value
+        ).formatted(Formatting.AQUA);
     }
 
     public static Text buildHudText(FreezingSwordComponent component) {
-    return Text.translatable("item.freeze.freezing_sword.charging",
-        String.format("%.0f%%", component.getChargePercent() * 100)
-    ).formatted(Formatting.AQUA);
+        return Text.translatable("item.freeze.freezing_sword.charging",
+            String.format("%.0f%%", component.getChargePercent() * 100)
+        ).formatted(Formatting.AQUA);
     }
 
     private Text buildHitMessage(ItemStack stack, boolean isBoss, int charges, float damageBonus) {
