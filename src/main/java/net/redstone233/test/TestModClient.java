@@ -62,10 +62,27 @@ HudElementRegistry.attachElementBefore(VanillaHudElements.HELD_ITEM_TOOLTIP, Ide
                         FreezeSwordHud.render(context);
  });
 	    */
-
+/*
 HudElementRegistry./*attachElementBefore*/attachElementAfter(VanillaHudElements.CROSSHAIR, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
 			FreezeSwordHud.render(context);
- });    
+ });    */
+
+ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player == null) return;
+            
+            // 只检测主手物品
+            ItemStack mainHand = client.player.getMainHandStack();
+            if (mainHand.getItem() instanceof FreezeSwordItem) {
+                FreezingSwordComponent component = mainHand.get(ModDataComponentTypes.FREEZING_SWORD);
+                if (component != null) {
+                    FreezeSwordHud.updateState(
+                        component.charges(),
+                        component.chargeProgress(),
+                        component.isCharging()
+                    );
+                }
+            }
+        });
 
 /*
 HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
