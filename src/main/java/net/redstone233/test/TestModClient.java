@@ -63,10 +63,10 @@ HudElementRegistry.attachElementBefore(VanillaHudElements.HELD_ITEM_TOOLTIP, Ide
  });
 	    */
 
-/*	    
-HudElementRegistry.attachElementBefore/*attachElementAfter*/(VanillaHudElements.SLEEP, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
-			FreezeSwordHud.render(context);
- });*/
+	    
+//HudElementRegistry.attachElementBefore/*attachElementAfter*/(VanillaHudElements.SLEEP, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
+			//FreezeSwordHud.render(context);
+ //});
 
 	FreezeSwordHud.register();
 
