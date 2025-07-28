@@ -143,7 +143,7 @@ public class FreezeSwordHud {
         if (charges >= FreezeSwordItem.MAX_CHARGES) {
             // 动态金色脉冲效果
             float pulse = (float)Math.sin(System.currentTimeMillis() / 200f) * 0.25f + 0.75f;
-            int gold = ColorHelper.Argb.getArgb(255, 
+            int gold = ColorHelper.getArgb(255, 
                 (int)(255 * pulse), 
                 (int)(215 * pulse), 
                 0);
