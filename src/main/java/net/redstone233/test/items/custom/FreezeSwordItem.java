@@ -154,41 +154,43 @@ public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nu
                 new FreezingSwordComponent(newProgress, isCharging, charges));
         }
     }
-    @Override
-    public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
-        int charges = component != null ? component.charges() : 0;
 
-        if (!attacker.getWorld().isClient() && attacker instanceof PlayerEntity player) {
-            boolean isBoss = target instanceof WardenEntity ||
-                    target instanceof EnderDragonEntity ||
-                    target instanceof WitherEntity;
-            float damage = calculateDamage(charges, isBoss);
-            float damageBonus = damage - BASE_DAMAGE;
+    
+    
+@Override
+public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
+    int charges = component != null ? component.charges() : 0;
 
-            if (attacker.getWorld() instanceof ServerWorld serverWorld) {
-                target.damage(serverWorld, attacker.getDamageSources().playerAttack(player), damage);
-                FreezeHelper.freezeEntity(target, isBoss ? 200 : 60 * (charges + 1));
-            }
+    if (!attacker.getWorld().isClient() && attacker instanceof PlayerEntity player) {
+        boolean isBoss = target instanceof WardenEntity ||
+                target instanceof EnderDragonEntity ||
+                target instanceof WitherEntity;
+        float damage = calculateDamage(charges, isBoss);
+        float damageBonus = damage - BASE_DAMAGE;
 
-            if (charges > 0) {
-                player.sendMessage(buildHitMessage(stack, isBoss, charges, damageBonus), true);
-                stack.set(ModDataComponentTypes.FREEZING_SWORD,
-                        new FreezingSwordComponent(0, false, 0));
-            }
-        } else {
-            World world = attacker.getWorld();
-            if (world instanceof ServerWorld serverWorld) {
-                target.damage(serverWorld,
-                        attacker.getDamageSources().playerAttack(attacker.getAttackingPlayer()),
-                        BASE_DAMAGE);
-            }
-            FreezeHelper.freezeEntity(target, 60);
+        if (attacker.getWorld() instanceof ServerWorld serverWorld) {
+            target.damage(serverWorld, attacker.getDamageSources().playerAttack(player), damage);
+            FreezeHelper.freezeEntity(target, isBoss ? 200 : 60 * (charges + 1));
         }
-        FreezeSwordHud.resetMaxChargesState();
-        super.postHit(stack, target, attacker);
-    }
 
+        if (charges > 0) {
+            player.sendMessage(buildHitMessage(stack, isBoss, charges, damageBonus), true);
+            stack.set(ModDataComponentTypes.FREEZING_SWORD,
+                    new FreezingSwordComponent(0, false, 0));
+        }
+    } else {
+        World world = attacker.getWorld();
+        if (world instanceof ServerWorld serverWorld) {
+            target.damage(serverWorld,
+                    attacker.getDamageSources().playerAttack(attacker.getAttackingPlayer()),
+                    BASE_DAMAGE);
+        }
+        FreezeHelper.freezeEntity(target, 60);
+    }
+    FreezeSwordHud.resetState(); // 现在可以正常调用公有方法
+    super.postHit(stack, target, attacker);
+}
     public static Text buildChargeMessage(int charges) {
         float damage = calculateDamage(charges, false);
         return Text.translatable("msg.freezesword.charging_progress",
