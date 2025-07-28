@@ -38,33 +38,9 @@ public class FreezeSwordHud {
     private static int charges = 0;
     private static float progress = 0;
     private static boolean isCharging = false;
-    private static long lastRenderTime = 0;
+    private static boolean hasFreezeSword = false;
 
-    public static void register() {
-        ClientTickEvents.START_CLIENT_TICK.register(client -> {
-            if (client.player == null) return;
-
-            ItemStack mainHand = client.player.getMainHandStack();
-            ItemStack offHand = client.player.getOffHandStack();
-            
-            checkAndUpdateState(mainHand);
-            if (charges == 0 && !isCharging) {
-                checkAndUpdateState(offHand);
-            }
-        });
-
-        HudRenderCallback.EVENT.register((context, tickDelta) -> {
-            if (shouldRender()) render(context);
-        });
-
-        HudElementRegistry.attachElementBefore(
-            VanillaHudElements.SLEEP, 
-            Identifier.of(TestMod.MOD_ID, "freeze_hud"),
-            (context, tickCounter) -> render(context)
-        );
-    }
-
-    private static void checkAndUpdateState(ItemStack stack) {
+    public static void checkAndUpdateState(ItemStack stack) {
         if (stack.getItem() instanceof FreezeSwordItem) {
             FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
             if (component != null) {
@@ -81,15 +57,35 @@ public class FreezeSwordHud {
         charges = newCharges;
         progress = newProgress;
         isCharging = charging;
-        lastRenderTime = System.currentTimeMillis();
+    }
+
+    public static void updatePlayerItems(PlayerEntity player) {
+        if (player == null) {
+            hasFreezeSword = false;
+            return;
+        }
+
+        ItemStack mainHand = player.getMainHandStack();
+        ItemStack offHand = player.getOffHandStack();
+
+        hasFreezeSword = mainHand.getItem() instanceof FreezeSwordItem || 
+                        offHand.getItem() instanceof FreezeSwordItem;
+
+        if (hasFreezeSword) {
+            checkAndUpdateState(mainHand);
+            if (charges == 0 && !isCharging) {
+                checkAndUpdateState(offHand);
+            }
+        }
     }
 
     private static boolean shouldRender() {
-        return (isCharging || charges > 0) && 
-               (System.currentTimeMillis() - lastRenderTime < 300);
+        return hasFreezeSword && (isCharging || charges > 0);
     }
 
-    private static void render(DrawContext context) {
+    public static void render(DrawContext context) {
+        if (!shouldRender()) return;
+        
         MinecraftClient client = MinecraftClient.getInstance();
         int screenWidth = client.getWindow().getScaledWidth();
         int x = (screenWidth - BAR_WIDTH) / 2;
