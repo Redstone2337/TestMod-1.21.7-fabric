@@ -178,6 +178,7 @@ public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker)
             player.sendMessage(buildHitMessage(stack, isBoss, charges, damageBonus), true);
             stack.set(ModDataComponentTypes.FREEZING_SWORD,
                     new FreezingSwordComponent(0, false, 0));
+            FreezeSwordHud.resetState();
         }
     } else {
         World world = attacker.getWorld();
@@ -188,16 +189,8 @@ public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker)
         }
         FreezeHelper.freezeEntity(target, 60);
     }
-    FreezeSwordHud.resetState(); // 现在可以正常调用公有方法
     super.postHit(stack, target, attacker);
 }
-    public static Text buildChargeMessage(int charges) {
-        float damage = calculateDamage(charges, false);
-        return Text.translatable("msg.freezesword.charging_progress",
-            String.format("%.0f", 100f),
-            String.format("%.0f", damage)
-        ).formatted(Formatting.AQUA);
-    }
 
     public static Text buildHudText(FreezingSwordComponent component) {
         return Text.translatable("item.freeze.freezing_sword.charging",
