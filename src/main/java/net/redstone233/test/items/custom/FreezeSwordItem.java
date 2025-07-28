@@ -14,6 +14,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
+import net.minecraft.network.PacketByteBuf;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.ModDataComponentTypes;
 import net.redstone233.test.core.until.FreezeHelper;
@@ -147,6 +149,16 @@ public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nu
                         Identifier.of(TestMod.MOD_ID, "charge_update"), buf);
                 }
             }
+
+	if (component.isCharging() || component.charges() > 0) {
+        // 强制同步到客户端
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeInt(component.charges());
+        buf.writeFloat(component.chargeProgress());
+        buf.writeBoolean(component.isCharging());
+        ServerPlayNetworking.send((ServerPlayerEntity)player, 
+            Identifier.of(TestMod.MOD_ID, "hud_update"), buf);
+	}
 
             stack.set(ModDataComponentTypes.FREEZING_SWORD,
                 new FreezingSwordComponent(newProgress, isCharging, newCharges));
