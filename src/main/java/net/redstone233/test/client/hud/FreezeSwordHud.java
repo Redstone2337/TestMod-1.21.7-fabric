@@ -181,6 +181,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.ColorHelper;
+import net.minecraft.entity.player.PlayerEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.redstone233.test.core.component.FreezingSwordComponent;
