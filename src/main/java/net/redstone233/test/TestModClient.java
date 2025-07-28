@@ -3,6 +3,7 @@ package net.redstone233.test;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
@@ -32,66 +33,23 @@ public class TestModClient implements ClientModInitializer {
         //ComponentTooltipAppenderRegistry.addLast(ModDataComponentTypes.FREEZING_SWORD);
         ComponentTooltipAppenderRegistry.addAfter(DataComponentTypes.LORE, ModDataComponentTypes.FREEZING_SWORD);
 
-        // 注册HUD渲染
-/*        HudElementRegistry.addLast(Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> {
+        
+// 注册HUD渲染
+        HudRenderCallback.EVENT.register((context, tickDelta) -> {
             FreezeSwordHud.render(context);
         });
-*/
 
-/*
-HudElementRegistry.attachElementBefore(VanillaHudElements.MISC_OVERLAYS, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
-			FreezeSwordHud.render(context);
- });
-*/
-
-/*
-HudElementRegistry.attachElementBefore(VanillaHudElements.SUBTITLES, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
-			FreezeSwordHud.render(context);
- });
-*/
-
-
-/*
-HudElementRegistry.attachElementBefore(VanillaHudElements.HOTBAR, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
-			FreezeSwordHud.render(context);
- });
-*/
-
-	    /*
-HudElementRegistry.attachElementBefore(VanillaHudElements.HELD_ITEM_TOOLTIP, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> {         
-                        FreezeSwordHud.render(context);
- });
-	    */
-
-	    
-//HudElementRegistry.attachElementBefore/*attachElementAfter*/(VanillaHudElements.SLEEP, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
-			//FreezeSwordHud.render(context);
- //});
-
-	FreezeSwordHud.register();
-
-ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player == null) return;
-            
-            // 只检测主手物品
-            ItemStack mainHand = client.player.getMainHandStack();
-            if (mainHand.getItem() instanceof FreezeSwordItem) {
-                FreezingSwordComponent component = mainHand.get(ModDataComponentTypes.FREEZING_SWORD);
-                if (component != null) {
-                    FreezeSwordHud.updateState(
-                        component.charges(),
-                        component.chargeProgress(),
-                        component.isCharging()
-                    );
-                }
-            }
+        // 注册客户端tick事件
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            FreezeSwordHud.updatePlayerItems(MinecraftClient.getInstance().player);
         });
 
-/*
-HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
-			FreezeSwordHud.render(context);
- });
-*/
+ HudElementRegistry.attachElementBefore(
+            VanillaHudElements.SLEEP, 
+            Identifier.of(TestMod.MOD_ID, "freeze_hud"),
+            (context, tickCounter) -> FreezeSwordHud.render(context)
+        );
+    }
 
         ModKeys.register(); // 注册键位
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
