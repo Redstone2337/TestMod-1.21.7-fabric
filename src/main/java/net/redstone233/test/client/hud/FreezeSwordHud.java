@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.ModDataComponentTypes;
 import net.redstone233.test.items.custom.FreezeSwordItem;
+import net.redstone233.test.TestMod;
 
 @Environment(EnvType.CLIENT)
 public class FreezeSwordHud {
@@ -58,7 +59,7 @@ public class FreezeSwordHud {
 
         HudElementRegistry.attachElementBefore(
             VanillaHudElements.SLEEP, 
-            new Identifier("test", "freeze_hud"),
+            Identifier.of(TestMod.MOD_ID, "freeze_hud"),
             (context, tickCounter) -> render(context)
         );
     }
