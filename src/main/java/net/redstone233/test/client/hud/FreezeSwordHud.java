@@ -27,11 +27,11 @@ public class FreezeSwordHud {
     private static final int TEXT_OFFSET_Y = 18;
 
     // 使用ColorHelper定义颜色（ARGB格式）
-    private static final int BLUE = ColorHelper.Argb.getArgb(255, 51, 102, 255);   // 0xFF3366FF
-    private static final int CYAN = ColorHelper.Argb.getArgb(255, 51, 255, 255);   // 0xFF33FFFF
-    private static final int GREEN = ColorHelper.Argb.getArgb(255, 51, 255, 102);  // 0xFF33FF66
-    private static final int YELLOW = ColorHelper.Argb.getArgb(255, 255, 204, 51); // 0xFFFFCC33
-    private static final int RED = ColorHelper.Argb.getArgb(255, 255, 51, 51);     // 0xFFFF3333
+    private static final int BLUE = ColorHelper.getArgb(255, 51, 102, 255);   // 0xFF3366FF
+    private static final int CYAN = ColorHelper.getArgb(255, 51, 255, 255);   // 0xFF33FFFF
+    private static final int GREEN = ColorHelper.getArgb(255, 51, 255, 102);  // 0xFF33FF66
+    private static final int YELLOW = ColorHelper.getArgb(255, 255, 204, 51); // 0xFFFFCC33
+    private static final int RED = ColorHelper.getArgb(255, 255, 51, 51);     // 0xFFFF3333
 
     // 渲染状态
     private static int charges = 0;
@@ -125,13 +125,13 @@ public class FreezeSwordHud {
     private static int calculateGradientColor(float ratio) {
         // 五段式渐变
         if (ratio < 0.25f) {
-            return ColorHelper.Argb.lerp(ratio / 0.25f, BLUE, CYAN);
+            return ColorHelper.lerp(ratio / 0.25f, BLUE, CYAN);
         } else if (ratio < 0.5f) {
-            return ColorHelper.Argb.lerp((ratio - 0.25f) / 0.25f, CYAN, GREEN);
+            return ColorHelper.lerp((ratio - 0.25f) / 0.25f, CYAN, GREEN);
         } else if (ratio < 0.75f) {
-            return ColorHelper.Argb.lerp((ratio - 0.5f) / 0.25f, GREEN, YELLOW);
+            return ColorHelper.lerp((ratio - 0.5f) / 0.25f, GREEN, YELLOW);
         } else {
-            return ColorHelper.Argb.lerp((ratio - 0.75f) / 0.25f, YELLOW, RED);
+            return ColorHelper.lerp((ratio - 0.75f) / 0.25f, YELLOW, RED);
         }
     }
 
