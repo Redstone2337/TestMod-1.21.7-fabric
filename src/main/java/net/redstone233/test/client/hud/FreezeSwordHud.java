@@ -14,6 +14,10 @@ import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.ModDataComponentTypes;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicFloat;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 /*
 @Environment(EnvType.CLIENT)
