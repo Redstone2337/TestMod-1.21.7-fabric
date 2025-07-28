@@ -11,6 +11,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.ModDataComponentTypes;
 import net.redstone233.test.items.custom.FreezeSwordItem;
@@ -39,26 +41,36 @@ public class FreezeSwordHud {
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
 
+            // 检测主手和副手物品
             ItemStack mainHand = client.player.getMainHandStack();
-            if (mainHand.getItem() instanceof FreezeSwordItem) {
-                FreezingSwordComponent component = mainHand.get(ModDataComponentTypes.FREEZING_SWORD);
-                if (component != null) {
-                    updateState(
-                        component.charges(),
-                        component.chargeProgress(),
-                        component.isCharging()
-                    );
-                    return;
-                }
+            ItemStack offHand = client.player.getOffHandStack();
+            
+            checkAndUpdateState(mainHand);
+            if (charges == 0 && !isCharging) {
+                checkAndUpdateState(offHand);
             }
-            resetState();
         });
 
         HudRenderCallback.EVENT.register((context, tickDelta) -> {
-            if (shouldRender()) {
-                render(context);
-            }
+            if (shouldRender()) render(context);
         });
+
+        HudElementRegistry.attachElementBefore(VanillaHudElements.SLEEP, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> {         
+                render(context);
+         });
+    }
+
+    private static void checkAndUpdateState(ItemStack stack) {
+        if (stack.getItem() instanceof FreezeSwordItem) {
+            FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
+            if (component != null) {
+                updateState(
+                    component.charges(),
+                    component.chargeProgress(),
+                    component.isCharging()
+                );
+            }
+        }
     }
 
     public static void updateState(int newCharges, float newProgress, boolean charging) {
