@@ -213,6 +213,14 @@ public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker)
                     .append(charges + "/" + MAX_CHARGES))));
     }
 
+    public static Text buildChargeMessage(int charges) {
+        float damage = calculateDamage(charges, false);
+        return Text.translatable("msg.freezesword.charging_progress",
+            String.format("%.0f", 100f),
+            String.format("%.0f", damage)
+        ).formatted(Formatting.AQUA);
+    }
+
     public static float calculateDamage(int charges, boolean isBoss) {
         float damageMultiplier = 1.0f + (CHARGE_DAMAGE_MULTIPLIER * charges);
         return isBoss ? BOSS_DAMAGE * damageMultiplier : NON_BOSS_DAMAGE * damageMultiplier;
