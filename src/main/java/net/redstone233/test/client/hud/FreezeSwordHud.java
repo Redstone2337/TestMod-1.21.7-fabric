@@ -5,38 +5,40 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.ColorHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.util.math.MathHelper;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.redstone233.test.core.component.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.ModDataComponentTypes;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 
-import java.awt.Color;
-
 @Environment(EnvType.CLIENT)
 public class FreezeSwordHud {
+    // 尺寸配置
     private static final int BAR_WIDTH = 102;
     private static final int BAR_HEIGHT = 14;
     private static final int HUD_OFFSET_Y = 50;
     private static final int TEXT_OFFSET_Y = 18;
 
-    // 使用volatile保证多线程可见性
-    private static volatile int charges = 0;
-    private static volatile float progress = 0;
-    private static volatile boolean isCharging = false;
-    private static volatile long lastUpdateTime = 0;
+    // 颜色定义（ARGB格式）
+    private static final int BLUE = 0xFF3366FF;
+    private static final int GREEN = 0xFF33FF66;
+    private static final int YELLOW = 0xFFFFCC33;
+    private static final int RED = 0xFFFF3333;
+
+    // 渲染状态
+    private static int charges = 0;
+    private static float progress = 0;
+    private static boolean isCharging = false;
+    private static long lastRenderTime = 0;
 
     public static void register() {
-        // 注册客户端tick事件
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
 
-            // 主手物品检测
             ItemStack mainHand = client.player.getMainHandStack();
             if (mainHand.getItem() instanceof FreezeSwordItem) {
                 FreezingSwordComponent component = mainHand.get(ModDataComponentTypes.FREEZING_SWORD);
@@ -46,41 +48,35 @@ public class FreezeSwordHud {
                         component.chargeProgress(),
                         component.isCharging()
                     );
+                    return;
                 }
             }
+            resetState();
         });
 
-        // 注册HUD渲染
         HudRenderCallback.EVENT.register((context, tickDelta) -> {
             if (shouldRender()) {
                 render(context);
             }
         });
-
-        // 注册网络包监听
-        ClientPlayNetworking.registerGlobalReceiver(
-            new Identifier("test", "hud_update"),
-            (client, handler, buf, responseSender) -> {
-                int newCharges = buf.readInt();
-                float newProgress = buf.readFloat();
-                boolean charging = buf.readBoolean();
-                
-                client.execute(() -> {
-                    updateState(newCharges, newProgress, charging);
-                });
-            });
     }
 
-    public static void updateState(int newCharges, float newProgress, boolean charging) {
+    private static void updateState(int newCharges, float newProgress, boolean charging) {
         charges = newCharges;
         progress = newProgress;
         isCharging = charging;
-        lastUpdateTime = System.currentTimeMillis();
+        lastRenderTime = System.currentTimeMillis();
+    }
+
+    private static void resetState() {
+        charges = 0;
+        progress = 0;
+        isCharging = false;
     }
 
     private static boolean shouldRender() {
         return (isCharging || charges > 0) && 
-               (System.currentTimeMillis() - lastUpdateTime < 300);
+               (System.currentTimeMillis() - lastRenderTime < 300);
     }
 
     private static void render(DrawContext context) {
@@ -94,33 +90,45 @@ public class FreezeSwordHud {
     }
 
     private static void renderGradientBar(DrawContext context, int x, int y) {
-        // 背景（带透明度渐变）
-        context.fillGradient(x, y, x + BAR_WIDTH, y + BAR_HEIGHT, 0x80000000, 0x90000000);
+        // 背景
+        context.fill(x, y, x + BAR_WIDTH, y + BAR_HEIGHT, 0x80000000);
         
-        // 平滑进度计算
-        float smoothProgress = MathHelper.lerp(0.2f, 
-            progress / FreezeSwordItem.CHARGE_TIME, 
+        // 计算当前进度
+        float smoothProgress = MathHelper.lerp(0.3f,
+            progress / FreezeSwordItem.CHARGE_TIME,
             charges / (float)FreezeSwordItem.MAX_CHARGES
         );
         int filledWidth = (int)(BAR_WIDTH * smoothProgress);
 
-        // 分段渲染（优化性能）
-        int segmentSize = Math.max(2, BAR_WIDTH / 50);
-        for (int i = 0; i < filledWidth; i += segmentSize) {
-            int segmentEnd = Math.min(i + segmentSize, filledWidth);
-            float segmentRatio = (i + segmentSize/2f) / BAR_WIDTH;
-            int color = calculateGradientColor(segmentRatio);
+        // 分段颜色过渡
+        int segmentCount = 10;
+        for (int i = 0; i < filledWidth; i += BAR_WIDTH / segmentCount) {
+            int segmentEnd = Math.min(i + BAR_WIDTH / segmentCount, filledWidth);
+            float segmentRatio = (i + (BAR_WIDTH / segmentCount)/2f) / BAR_WIDTH;
+            int color = getSegmentColor(segmentRatio);
             context.fill(x + i, y + 1, x + segmentEnd, y + BAR_HEIGHT - 1, color);
         }
 
-        // 边框效果
+        // 边框
         context.drawBorder(x - 1, y - 1, BAR_WIDTH + 2, BAR_HEIGHT + 2, 0xAAFFFFFF);
     }
 
-    private static int calculateGradientColor(float ratio) {
-        // HSV色彩空间实现蓝->青->绿->黄->红渐变
-        float hue = 0.66f * (1 - ratio); // 从蓝色(0.66)到红色(0.0)
-        return Color.HSVToRGB(hue, 0.9f, 1.0f) | 0xFF000000;
+    private static int getSegmentColor(float ratio) {
+        // 四色渐变：蓝 -> 绿 -> 黄 -> 红
+        if (ratio < 0.33f) {
+            return blendColors(BLUE, GREEN, ratio / 0.33f);
+        } else if (ratio < 0.66f) {
+            return blendColors(GREEN, YELLOW, (ratio - 0.33f) / 0.33f);
+        } else {
+            return blendColors(YELLOW, RED, (ratio - 0.66f) / 0.34f);
+        }
+    }
+
+    private static int blendColors(int color1, int color2, float progress) {
+        int r = (int)(ColorHelper.Argb.getRed(color1) * (1 - progress) + ColorHelper.Argb.getRed(color2) * progress);
+        int g = (int)(ColorHelper.Argb.getGreen(color1) * (1 - progress) + ColorHelper.Argb.getGreen(color2) * progress);
+        int b = (int)(ColorHelper.Argb.getBlue(color1) * (1 - progress) + ColorHelper.Argb.getBlue(color2) * progress);
+        return ColorHelper.Argb.getArgb(255, r, g, b);
     }
 
     private static void renderChargeText(DrawContext context, int screenWidth, int y) {
@@ -128,13 +136,17 @@ public class FreezeSwordHud {
         
         Text text;
         if (charges >= FreezeSwordItem.MAX_CHARGES) {
-            // 满蓄力闪烁效果
-            float pulse = (float)Math.sin(System.currentTimeMillis() / 200f) * 0.2f + 0.8f;
-            int gold = (int)(255 * pulse) << 16 | 0xA5 << 8 | 0x00;
-            text = Text.literal("MAX POWER!").styled(style -> 
+            // 动态金色闪烁
+            float pulse = (float)Math.sin(System.currentTimeMillis() / 200f) * 0.25f + 0.75f;
+            int gold = ColorHelper.Argb.getArgb(255, 
+                (int)(255 * pulse), 
+                (int)(200 * pulse), 
+                0);
+            text = Text.literal("MAX!").styled(style -> 
                 style.withColor(gold).withBold(true));
         } else {
-            text = Text.translatable("hud.test.charges", charges, FreezeSwordItem.MAX_CHARGES)
+            text = Text.translatable("hud.test.charges", 
+                    charges, FreezeSwordItem.MAX_CHARGES)
                 .formatted(Formatting.AQUA);
         }
 
@@ -145,11 +157,5 @@ public class FreezeSwordHud {
             y,
             0xFFFFFF
         );
-    }
-
-    public static void resetMaxChargesState() {
-        charges = 0;
-        progress = 0;
-        isCharging = false;
     }
 }
