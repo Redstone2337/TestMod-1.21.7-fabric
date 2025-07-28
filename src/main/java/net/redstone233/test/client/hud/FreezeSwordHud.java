@@ -61,14 +61,14 @@ public class FreezeSwordHud {
         });
     }
 
-    private static void updateState(int newCharges, float newProgress, boolean charging) {
+    public static void updateState(int newCharges, float newProgress, boolean charging) {
         charges = newCharges;
         progress = newProgress;
         isCharging = charging;
         lastRenderTime = System.currentTimeMillis();
     }
 
-    private static void resetState() {
+    public static void resetState() {
         charges = 0;
         progress = 0;
         isCharging = false;
