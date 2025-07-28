@@ -123,49 +123,37 @@ public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nu
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
         if (!(entity instanceof PlayerEntity player)) return;
         
-        // 只处理手持状态
+        // 只在主手或副手时处理（模拟原selected参数）
         if (slot != EquipmentSlot.MAINHAND && slot != EquipmentSlot.OFFHAND) return;
 
         FreezingSwordComponent component = stack.getOrDefault(ModDataComponentTypes.FREEZING_SWORD,
                 FreezingSwordComponent.DEFAULT);
 
+        // 蓄力逻辑保持不变
         if (component.isCharging() && component.charges() < MAX_CHARGES) {
             int newProgress = component.chargeProgress() + 1;
-            int newCharges = component.charges();
+            int charges = component.charges();
             boolean isCharging = component.isCharging();
 
             if (newProgress >= CHARGE_TIME) {
                 newProgress = 0;
-                newCharges = Math.min(newCharges + 1, MAX_CHARGES);
-                if (newCharges >= MAX_CHARGES) isCharging = false;
-                
-                // 同步到客户端
-                if (!world.isClient()) {
-                    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-                    buf.writeInt(newCharges);
-                    buf.writeFloat(0);
-                    buf.writeBoolean(isCharging);
-                    ServerPlayNetworking.send((ServerPlayerEntity)player, 
-                        Identifier.of(TestMod.MOD_ID, "charge_update"), buf);
+                charges = Math.min(charges + 1, MAX_CHARGES);
+
+                player.sendMessage(buildChargeMessage(charges), true);
+
+                if (charges >= MAX_CHARGES) {
+                    isCharging = false;
+                    player.sendMessage(
+                        Text.translatable("msg.freezesword.max_charges")
+                            .formatted(Formatting.GREEN, Formatting.BOLD),
+                        true);
                 }
             }
 
-	if (component.isCharging() || component.charges() > 0) {
-        // 强制同步到客户端
-        PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeInt(component.charges());
-        buf.writeFloat(component.chargeProgress());
-        buf.writeBoolean(component.isCharging());
-        ServerPlayNetworking.send((ServerPlayerEntity)player, 
-            Identifier.of(TestMod.MOD_ID, "hud_update"), buf);
-	}
-
             stack.set(ModDataComponentTypes.FREEZING_SWORD,
-                new FreezingSwordComponent(newProgress, isCharging, newCharges));
+                new FreezingSwordComponent(newProgress, isCharging, charges));
         }
-		super.inventoryTick(stack, world, entity, slot);
     }
-
     @Override
     public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
