@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.client.MinecraftClient;
 import net.redstone233.test.client.hud.FreezeSwordHud;
 import net.redstone233.test.client.tooltip.FreezeSwordTooltipComponent;
 import net.redstone233.test.core.component.FreezingSwordComponent;
