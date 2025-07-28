@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.ColorHelper;
 import net.fabricmc.api.EnvType;
@@ -25,11 +26,12 @@ public class FreezeSwordHud {
     private static final int HUD_OFFSET_Y = 50;
     private static final int TEXT_OFFSET_Y = 18;
 
-    // 颜色定义（ARGB格式）
-    private static final int BLUE = 0xFF3366FF;
-    private static final int GREEN = 0xFF33FF66;
-    private static final int YELLOW = 0xFFFFCC33;
-    private static final int RED = 0xFFFF3333;
+    // 使用ColorHelper定义颜色（ARGB格式）
+    private static final int BLUE = ColorHelper.Argb.getArgb(255, 51, 102, 255);   // 0xFF3366FF
+    private static final int CYAN = ColorHelper.Argb.getArgb(255, 51, 255, 255);   // 0xFF33FFFF
+    private static final int GREEN = ColorHelper.Argb.getArgb(255, 51, 255, 102);  // 0xFF33FF66
+    private static final int YELLOW = ColorHelper.Argb.getArgb(255, 255, 204, 51); // 0xFFFFCC33
+    private static final int RED = ColorHelper.Argb.getArgb(255, 255, 51, 51);     // 0xFFFF3333
 
     // 渲染状态
     private static int charges = 0;
@@ -41,7 +43,6 @@ public class FreezeSwordHud {
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
 
-            // 检测主手和副手物品
             ItemStack mainHand = client.player.getMainHandStack();
             ItemStack offHand = client.player.getOffHandStack();
             
@@ -55,9 +56,11 @@ public class FreezeSwordHud {
             if (shouldRender()) render(context);
         });
 
-        HudElementRegistry.attachElementBefore(VanillaHudElements.SLEEP, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> {         
-                render(context);
-         });
+        HudElementRegistry.attachElementBefore(
+            VanillaHudElements.SLEEP, 
+            new Identifier("test", "freeze_hud"),
+            (context, tickCounter) -> render(context)
+        );
     }
 
     private static void checkAndUpdateState(ItemStack stack) {
@@ -80,12 +83,6 @@ public class FreezeSwordHud {
         lastRenderTime = System.currentTimeMillis();
     }
 
-    public static void resetState() {
-        charges = 0;
-        progress = 0;
-        isCharging = false;
-    }
-
     private static boolean shouldRender() {
         return (isCharging || charges > 0) && 
                (System.currentTimeMillis() - lastRenderTime < 300);
@@ -102,45 +99,40 @@ public class FreezeSwordHud {
     }
 
     private static void renderGradientBar(DrawContext context, int x, int y) {
-        // 背景
+        // 背景（带透明度）
         context.fill(x, y, x + BAR_WIDTH, y + BAR_HEIGHT, 0x80000000);
         
-        // 计算当前进度
+        // 计算平滑进度（0.0-1.0）
         float smoothProgress = MathHelper.lerp(0.3f,
             progress / FreezeSwordItem.CHARGE_TIME,
             charges / (float)FreezeSwordItem.MAX_CHARGES
         );
         int filledWidth = (int)(BAR_WIDTH * smoothProgress);
 
-        // 分段颜色过渡
-        int segmentCount = 10;
-        for (int i = 0; i < filledWidth; i += BAR_WIDTH / segmentCount) {
-            int segmentEnd = Math.min(i + BAR_WIDTH / segmentCount, filledWidth);
-            float segmentRatio = (i + (BAR_WIDTH / segmentCount)/2f) / BAR_WIDTH;
-            int color = getSegmentColor(segmentRatio);
+        // 五段式渐变渲染（蓝→青→绿→黄→红）
+        int segmentSize = Math.max(5, BAR_WIDTH / 20); // 每段5像素
+        for (int i = 0; i < filledWidth; i += segmentSize) {
+            int segmentEnd = Math.min(i + segmentSize, filledWidth);
+            float segmentRatio = (i + segmentSize/2f) / BAR_WIDTH;
+            int color = calculateGradientColor(segmentRatio);
             context.fill(x + i, y + 1, x + segmentEnd, y + BAR_HEIGHT - 1, color);
         }
 
-        // 边框
+        // 高光边框
         context.drawBorder(x - 1, y - 1, BAR_WIDTH + 2, BAR_HEIGHT + 2, 0xAAFFFFFF);
     }
 
-    private static int getSegmentColor(float ratio) {
-        // 四色渐变：蓝 -> 绿 -> 黄 -> 红
-        if (ratio < 0.33f) {
-            return blendColors(BLUE, GREEN, ratio / 0.33f);
-        } else if (ratio < 0.66f) {
-            return blendColors(GREEN, YELLOW, (ratio - 0.33f) / 0.33f);
+    private static int calculateGradientColor(float ratio) {
+        // 五段式渐变
+        if (ratio < 0.25f) {
+            return ColorHelper.Argb.lerp(ratio / 0.25f, BLUE, CYAN);
+        } else if (ratio < 0.5f) {
+            return ColorHelper.Argb.lerp((ratio - 0.25f) / 0.25f, CYAN, GREEN);
+        } else if (ratio < 0.75f) {
+            return ColorHelper.Argb.lerp((ratio - 0.5f) / 0.25f, GREEN, YELLOW);
         } else {
-            return blendColors(YELLOW, RED, (ratio - 0.66f) / 0.34f);
+            return ColorHelper.Argb.lerp((ratio - 0.75f) / 0.25f, YELLOW, RED);
         }
-    }
-
-    private static int blendColors(int color1, int color2, float progress) {
-        int r = (int)(ColorHelper.Argb.getRed(color1) * (1 - progress) + ColorHelper.Argb.getRed(color2) * progress);
-        int g = (int)(ColorHelper.Argb.getGreen(color1) * (1 - progress) + ColorHelper.Argb.getGreen(color2) * progress);
-        int b = (int)(ColorHelper.Argb.getBlue(color1) * (1 - progress) + ColorHelper.Argb.getBlue(color2) * progress);
-        return ColorHelper.Argb.getArgb(255, r, g, b);
     }
 
     private static void renderChargeText(DrawContext context, int screenWidth, int y) {
@@ -148,18 +140,21 @@ public class FreezeSwordHud {
         
         Text text;
         if (charges >= FreezeSwordItem.MAX_CHARGES) {
-            // 动态金色闪烁
+            // 动态金色脉冲效果
             float pulse = (float)Math.sin(System.currentTimeMillis() / 200f) * 0.25f + 0.75f;
             int gold = ColorHelper.Argb.getArgb(255, 
                 (int)(255 * pulse), 
-                (int)(200 * pulse), 
+                (int)(215 * pulse), 
                 0);
-            text = Text.literal("MAX!").styled(style -> 
+            text = Text.literal("✦ MAX POWER ✦").styled(style -> 
                 style.withColor(gold).withBold(true));
-        } else {
-            text = Text.translatable("hud.test.charges", 
-                    charges, FreezeSwordItem.MAX_CHARGES)
+        } else if (isCharging) {
+            text = Text.translatable("hud.test.charging", 
+                    (int)(progress * 100f / FreezeSwordItem.CHARGE_TIME))
                 .formatted(Formatting.AQUA);
+        } else {
+            text = Text.translatable("hud.test.charges", charges, FreezeSwordItem.MAX_CHARGES)
+                .formatted(Formatting.BLUE);
         }
 
         context.drawCenteredTextWithShadow(
@@ -169,5 +164,11 @@ public class FreezeSwordHud {
             y,
             0xFFFFFF
         );
+    }
+
+    public static void resetState() {
+        charges = 0;
+        progress = 0;
+        isCharging = false;
     }
 }
