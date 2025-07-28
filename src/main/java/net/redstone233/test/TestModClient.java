@@ -64,9 +64,9 @@ HudElementRegistry.attachElementBefore(VanillaHudElements.HELD_ITEM_TOOLTIP, Ide
 	    */
 
 	    
-//HudElementRegistry./*attachElementBefore*/attachElementAfter(VanillaHudElements.CROSSHAIR, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
-			//FreezeSwordHud.render(context);
-// });  
+HudElementRegistry.attachElementBefore/*attachElementAfter*/(VanillaHudElements.BOSS_BAR, Identifier.of(TestMod.MOD_ID, "freeze_hud"), (context, tickCounter) -> { 	
+			FreezeSwordHud.render(context);
+ });  
 
 ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
