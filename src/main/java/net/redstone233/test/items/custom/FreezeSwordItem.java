@@ -54,6 +54,7 @@ public class FreezeSwordItem extends Item {
                 .build();
     }
 
+/*
     public static void handleKeyInput(PlayerEntity player) {
         if (player.getWorld().isClient) {
             ItemStack stack = player.getMainHandStack();
@@ -77,6 +78,31 @@ public class FreezeSwordItem extends Item {
                                 .formatted(Formatting.AQUA),
                             true);
                     }
+                }
+            }
+        }
+    }*/
+
+// 修改为点击检测逻辑
+    public static void handleKeyInput(PlayerEntity player) {
+        if (player.getWorld().isClient) {
+            ItemStack stack = player.getMainHandStack();
+            if (stack.getItem() instanceof FreezeSwordItem) {
+                boolean isKeyPressed = ModKeys.isChargeKeyPressed();
+                FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
+                boolean isCharging = component != null && component.isCharging();
+
+                // Only toggle charging state when key is pressed (not held)
+                if (isKeyPressed && !isCharging) {
+                    stack.set(ModDataComponentTypes.FREEZING_SWORD, new FreezingSwordComponent(0, true));
+                    Text keyName = ModKeys.CHARGE_KEY.getBoundKeyLocalizedText();
+                    player.sendMessage(
+                            Text.literal("\n")
+                                    .append(Text.translatable("msg.freezesword.start_charging", keyName)
+                                            .formatted(Formatting.AQUA, Formatting.BOLD))
+                                    .append("\n"),
+                            true
+                    );
                 }
             }
         }
