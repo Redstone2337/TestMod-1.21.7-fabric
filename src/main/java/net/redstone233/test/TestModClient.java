@@ -49,7 +49,7 @@ public class TestModClient implements ClientModInitializer {
             VanillaHudElements.SLEEP, 
             Identifier.of(TestMod.MOD_ID, "freeze_hud"),
             (context, tickCounter) -> {
-FreezeSwordHud.render(context)
+FreezeSwordHud.render(context);
         });
 
         ModKeys.register(); // 注册键位
