@@ -48,8 +48,9 @@ public class TestModClient implements ClientModInitializer {
  HudElementRegistry.attachElementBefore(
             VanillaHudElements.SLEEP, 
             Identifier.of(TestMod.MOD_ID, "freeze_hud"),
-            (context, tickCounter) -> FreezeSwordHud.render(context)
-        );
+            (context, tickCounter) -> {
+FreezeSwordHud.render(context)
+        });
 
         ModKeys.register(); // 注册键位
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
