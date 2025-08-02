@@ -36,9 +36,9 @@ public class TestModClient implements ClientModInitializer {
 
         
 // 注册HUD渲染
-        HudRenderCallback.EVENT.register((context, tickDelta) -> {
+/*        HudRenderCallback.EVENT.register((context, tickDelta) -> {
             FreezeSwordHud.render(context);
-        });
+        });*/
 
         // 注册客户端tick事件
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
