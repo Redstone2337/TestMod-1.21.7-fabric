@@ -46,7 +46,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         // Freeze Sword Tooltips
         translationBuilder.add("tooltip.freezing_sword.desc", "A legendary sword that freezes enemies with each hit.");
         translationBuilder.add("tooltip.freezing_sword.charge", "Freeze Charge:");
-        translationBuilder.add("tooltip.freezing_sword.charge_instruction", "Press %s to charge, then left-click for massive damage!");
+        translationBuilder.add("tooltip.freezing_sword.charge_instruction", "Click %s to charge, then left-click for massive damage!");
         translationBuilder.add("tooltip.freezing_sword.charging", "Charging: %d%%");
         translationBuilder.add("tooltip.freezing_sword.ready", "READY! Left-click to unleash power!");
         translationBuilder.add("tooltip.freezing_sword.damage.normal", "Base Damage: §a+%.1f");
