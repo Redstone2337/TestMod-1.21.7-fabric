@@ -41,7 +41,7 @@
 		"msg.freezesword.charge_start": "§b[Freeze Sword]§r Charging started!",
 		"msg.freezesword.charge_progress": "§b[Freeze Sword]§r%s",
   "tooltip.freezing_sword.charge": "Freeze Charge:",
-  "tooltip.freezing_sword.charge_instruction": "Press %s to charge, then left-click for massive damage!",
+  "tooltip.freezing_sword.charge_instruction": "Click %s to charge, then left-click for massive damage!",
   "tooltip.freezing_sword.charging": "Charging: %d%%",
   "tooltip.freezing_sword.damage.charged": "Charged vs Bosses: §c+%.1f",
   "tooltip.freezing_sword.damage.non_boss": "Charged vs Others: §d+%.1f",
