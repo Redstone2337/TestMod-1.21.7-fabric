@@ -3,6 +3,7 @@ package net.redstone233.test.data;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.BlockTags;
 import net.redstone233.test.blocks.ModBlocks;
 import net.redstone233.test.core.tags.ModBlockTags;
 
@@ -29,5 +30,26 @@ public class ModBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                         ModBlocks.SILICON_TRAPDOOR
                 );
         valueLookupBuilder(ModBlockTags.INCORRECT_FOR_SILICON_TOOL);
+// 台阶
+valueLookupBuilder(BlockTags.SLABS)
+			.add(ModBlocks.SILICON_BLOCK_SLAB);
+// 楼梯
+valueLookupBuilder(BlockTags.STAIRS)
+			.add(ModBlocks.SILICON_BLOCK_STAIRS);
+// 门
+valueLookupBuilder(BlockTags.DOORS)
+			.add(ModBlocks.SILICON_DOOR);
+// 活板门
+valueLookupBuilder(BlockTags.TRAPDOORS)
+			.add(ModBlocks.SILICON_TRAPDOOR);
+// 墙壁
+valueLookupBuilder(BlockTags.WALLS)
+			.add(ModBlocks.SILICON_WALL);
+// 栅栏
+valueLookupBuilder(BlockTags.FENCES)
+			.add(ModBlocks.SILICON_FENCE);
+// 栅栏门
+valueLookupBuilder(BlockTags.FENCE_GATES)
+			.add(ModBlocks.SILICON_FENCE_GATE);
     }
 }
