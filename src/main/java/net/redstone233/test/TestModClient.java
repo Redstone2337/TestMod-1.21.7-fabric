@@ -44,13 +44,21 @@ public class TestModClient implements ClientModInitializer {
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             FreezeSwordHud.updatePlayerItems(MinecraftClient.getInstance().player);
         });
-
+/*
  HudElementRegistry.attachElementBefore(
             VanillaHudElements.SLEEP, 
             Identifier.of(TestMod.MOD_ID, "freeze_hud"),
             (context, tickCounter) -> {
 FreezeSwordHud.render(context);
-        });
+        });*/
+
+
+ HudElementRegistry.attachElementBefore(
+         VanillaHudElements.MISC_OVERLAYS,
+         Identifier.of(TestMod.MOD_ID, "freeze_hud"),
+                (context, tickCounter) -> {
+                    FreezeSwordHud.render(context);
+         });
 
         ModKeys.register(); // 注册键位
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
