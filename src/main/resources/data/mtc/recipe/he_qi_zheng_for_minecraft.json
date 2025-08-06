@@ -1,0 +1,14 @@
+{
+  "type": "mtc:brewing",
+  "group": "potion",
+  "input": {
+    "id": "minecraft:awkward_bottle"
+  },
+  "addition": {
+    "id": "minecraft:potato"
+  },
+  "output": {
+    "id": "mtc:herbal_tea",
+    "count": 1
+  }
+}

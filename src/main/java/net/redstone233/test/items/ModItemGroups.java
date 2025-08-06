@@ -34,6 +34,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.DEEPSLATE_SILICON_ORE);
                             entries.add(ModItems.SILICON_INGOT);
                             entries.add(ModItems.FREEZE_SWORD);
+                            entries.add(ModItems.HE_QI_ZHENG);
                         })
                         .build()
         );

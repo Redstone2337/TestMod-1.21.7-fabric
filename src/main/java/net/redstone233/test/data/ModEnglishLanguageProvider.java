@@ -20,6 +20,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(ModItems.SILICON, "Silicon");
         translationBuilder.add(ModItems.SILICON_INGOT, "Silicon Ingot");
         translationBuilder.add(ModItems.FREEZE_SWORD, "Freeze Sword");
+        translationBuilder.add(ModItems.HE_QI_ZHENG, "Chinese Herb Tea");
 
         // Blocks
         translationBuilder.add(ModBlocks.SILICON_BLOCK, "Block of Silicon");
@@ -70,7 +71,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
 
         translationBuilder.add("msg.freezesword.charge_progress", "§b[Freeze Sword]§r%s");
 
-translationBuilder.add("msg.freezesword.max_charges_hud", "MAX CHARGES READY!");
+        translationBuilder.add("msg.freezesword.max_charges_hud", "MAX CHARGES READY!");
 
         // HUD Messages
         translationBuilder.add("msg.freezesword.hud_charge", "Charge: [%s]");

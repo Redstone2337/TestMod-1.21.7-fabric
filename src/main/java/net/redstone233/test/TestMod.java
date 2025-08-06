@@ -12,6 +12,8 @@ import net.minecraft.util.Identifier;
 import net.redstone233.test.blocks.ModBlockFamilies;
 import net.redstone233.test.blocks.ModBlocks;
 import net.redstone233.test.core.commands.SetValueCountCommand;
+import net.redstone233.test.core.food.ModConsumableComponents;
+import net.redstone233.test.core.food.ModFoodComponents;
 import net.redstone233.test.core.recipe.BrewingRecipeManager;
 import net.redstone233.test.core.recipe.BrewingRecipeType;
 import net.redstone233.test.core.tags.ModBlockTags;
@@ -42,6 +44,8 @@ public class TestMod implements ModInitializer {
 		ModBlockFamilies.init();
 		ModBlockTags.init();
 		ModItemTags.init();
+		ModConsumableComponents.init();
+		ModFoodComponents.init();
 		ModToolMaterial.register();
 		ModWorldGeneration.generateModWorldGen();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
