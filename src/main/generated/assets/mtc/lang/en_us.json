@@ -27,6 +27,8 @@
   "msg.freezesword.boss_hit": "§6[Freeze Sword]§r Critical hit on Boss! Charges[%d/%d] Damage +%.0f",
   "msg.freezesword.charge_added": "§b[Freeze Sword]§r Charge added! Current: %d/%d",
   "msg.freezesword.charge_canceled": "§7[Freeze Sword]§r Charge canceled (released [%s])",
+  "msg.freezesword.charge_progress": "§b[Freeze Sword]§r%s",
+  "msg.freezesword.charge_start": "§b[Freeze Sword]§r Charging started!",
   "msg.freezesword.charges_value": "] Charges[",
   "msg.freezesword.charging_progress": "§3[Freeze Sword]§r Charge Progress: %s%% (%s seconds remaining)",
   "msg.freezesword.damage_plus": "Damage +",
@@ -36,12 +38,12 @@
   "msg.freezesword.hud_charge": "Charge: [%s]",
   "msg.freezesword.invalid_target": "§c[Freeze Sword]§r Invalid target! Charges[%d/%d] Damage +%.0f",
   "msg.freezesword.max_charges": "§a[Freeze Sword]§r MAX CHARGES REACHED!",
+  "msg.freezesword.max_charges_hud": "MAX CHARGES READY!",
   "msg.freezesword.progress_value": "Progress[",
   "msg.freezesword.start_charging": "§b[Freeze Sword]§r Charging started! Hold [%s] to continue...",
-		"msg.freezesword.charge_start": "§b[Freeze Sword]§r Charging started!",
-		"msg.freezesword.charge_progress": "§b[Freeze Sword]§r%s",
   "tooltip.freezing_sword.charge": "Freeze Charge:",
   "tooltip.freezing_sword.charge_instruction": "Click %s to charge, then left-click for massive damage!",
+  "tooltip.freezing_sword.charges": "Charging: %s%%",
   "tooltip.freezing_sword.charging": "Charging: %d%%",
   "tooltip.freezing_sword.damage.charged": "Charged vs Bosses: §c+%.1f",
   "tooltip.freezing_sword.damage.non_boss": "Charged vs Others: §d+%.1f",
@@ -49,7 +51,5 @@
   "tooltip.freezing_sword.desc": "A legendary sword that freezes enemies with each hit.",
   "tooltip.freezing_sword.loot_only": "Can be synthesized by Recipe's formula.",
   "tooltip.freezing_sword.max_charges": "MAX CHARGES REACHED!",
-  "tooltip.freezing_sword.ready": "READY! Left-click to unleash power!",
-
-"msg.freezesword.max_charges_hud": "MAX CHARGES READY!"
+  "tooltip.freezing_sword.ready": "READY! Left-click to unleash power!"
 }

@@ -1,3 +1,10 @@
 // 1.21.7	-999999999-01-01T00:00:00	Test Mod/Tags for minecraft:block
+ebc6a2a0613440925a1bfec3f0dcf341935d10c8 data/minecraft/tags/block/doors.json
+bf03df3a3e749fab64d88bcce68676a6400a1cc0 data/minecraft/tags/block/fence_gates.json
+4cbcbbe7e4d821d2ce95e8e258035b61d1e1c894 data/minecraft/tags/block/fences.json
+9f35a70ca89763bf8438a748d6cadb0133921908 data/minecraft/tags/block/slabs.json
+286471f65463a596b4482e18279aafd472832e98 data/minecraft/tags/block/stairs.json
+693226b8ba9ec5d62195128cf03251ffa22f14d1 data/minecraft/tags/block/trapdoors.json
+949793d1bb05e3dda10a5be966d45537a7da1a0c data/minecraft/tags/block/walls.json
 497eeff01dfff08367d5cdd13f305ae83f477b2d data/mtc/tags/block/building_blocks.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/mtc/tags/block/incorrect_for_silicon_tool.json

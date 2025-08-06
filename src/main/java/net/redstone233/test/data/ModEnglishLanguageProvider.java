@@ -81,6 +81,7 @@ translationBuilder.add("msg.freezesword.max_charges_hud", "MAX CHARGES READY!");
 
         // Item Status
         translationBuilder.add("item.freeze.freezing_sword.charging", "Charging: %s%%");
+        translationBuilder.add("tooltip.freezing_sword.charges", "Charging: %s%%");
         translationBuilder.add("item.freeze.freezing_sword.charged", "Freezing energy fully charged!");
         translationBuilder.add("item.freeze.freezing_sword.power_attack", "Unleashed frozen fury!");
 
