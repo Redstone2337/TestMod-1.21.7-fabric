@@ -2,7 +2,12 @@
   "type": "mtc:brewing",
   "group": "potion",
   "input": {
-    "id": "minecraft:awkward_bottle"
+    "id": "minecraft:potion",
+    "count": 1,
+    "components": {
+      "minecraft:potion_contents":
+        {"potion":  "minecraft:awkward"}
+    }
   },
   "addition": {
     "id": "minecraft:potato"
