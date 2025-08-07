@@ -3,7 +3,13 @@ package net.redstone233.test.recipe.input;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.input.RecipeInput;
 
+import java.util.Objects;
+
 public record BrewingRecipeInput(ItemStack input, ItemStack addition) implements RecipeInput {
+    public BrewingRecipeInput(ItemStack input, ItemStack addition) {
+        this.input = Objects.requireNonNull(input, "Input stack cannot be null");
+        this.addition = Objects.requireNonNull(addition, "Addition stack cannot be null");
+    }
 
     @Override
     public ItemStack getStackInSlot(int slot) {

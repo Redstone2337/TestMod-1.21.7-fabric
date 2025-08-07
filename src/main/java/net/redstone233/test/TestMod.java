@@ -58,13 +58,23 @@ public class TestMod implements ModInitializer {
 				}
 		);
 
-		Registry.register(Registries.RECIPE_TYPE,
-				Identifier.of(MOD_ID, "brewing"),
-				BrewingRecipeType.INSTANCE);
+		try {
+			// 注册配方类型
+			Registry.register(Registries.RECIPE_TYPE,
+					Identifier.of(MOD_ID, "brewing"),
+					BrewingRecipeType.INSTANCE);
 
-		Registry.register(Registries.RECIPE_SERIALIZER,
-				Identifier.of(MOD_ID, "brewing"),
-				BrewingRecipeSerializer.INSTANCE);
+			// 注册配方序列化器
+			Registry.register(Registries.RECIPE_SERIALIZER,
+					Identifier.of(MOD_ID, "brewing"),
+					BrewingRecipeSerializer.INSTANCE);
+
+			LOGGER.info("BrewingMod initialized successfully");
+		} catch (Exception e) {
+			LOGGER.error("Failed to initialize BrewingMod", e);
+			throw e;
+		}
+
 
 		// 注册服务器启动事件
 		ServerLifecycleEvents.SERVER_STARTED.register(BrewingRecipeManager::registerRecipes);
