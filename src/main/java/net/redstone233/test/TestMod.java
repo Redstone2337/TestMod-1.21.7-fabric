@@ -16,8 +16,8 @@ import net.redstone233.test.blocks.ModBlocks;
 import net.redstone233.test.core.commands.SetValueCountCommand;
 import net.redstone233.test.core.food.ModConsumableComponents;
 import net.redstone233.test.core.food.ModFoodComponents;
+import net.redstone233.test.core.loader.BrewingRecipeLoader;
 import net.redstone233.test.core.loot.FreezeSwordLoot;
-import net.redstone233.test.core.recipe.BrewingRecipeLoader;
 import net.redstone233.test.core.tags.ModBlockTags;
 import net.redstone233.test.core.tags.ModItemTags;
 import net.redstone233.test.core.until.ModToolMaterial;
@@ -51,6 +51,7 @@ public class TestMod implements ModInitializer {
 		ModToolMaterial.register();
 		ModWorldGeneration.generateModWorldGen();
 		FreezeSwordLoot.init();
+		BrewingRecipeLoader.register();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
@@ -65,7 +66,7 @@ public class TestMod implements ModInitializer {
 			builder.registerPotionRecipe(Potions.AWKWARD,ModItems.SILICON, (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG);
 		});
 
-		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
-				.registerReloadListener(new BrewingRecipeLoader());
+//		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
+//				.registerReloadListener(new BrewingRecipeLoader());
 	}
 }
