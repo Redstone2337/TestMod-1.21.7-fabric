@@ -4,7 +4,12 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
+import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.item.Items;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.Potions;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.resource.ResourceType;
 import net.redstone233.test.blocks.ModBlockFamilies;
 import net.redstone233.test.blocks.ModBlocks;
@@ -19,6 +24,8 @@ import net.redstone233.test.core.until.ModToolMaterial;
 import net.redstone233.test.core.world.gen.ModWorldGeneration;
 import net.redstone233.test.items.ModItemGroups;
 import net.redstone233.test.items.ModItems;
+import net.redstone233.test.recipe.BrewingRecipe;
+import net.redstone233.test.recipe.BrewingRecipeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +60,10 @@ public class TestMod implements ModInitializer {
 					commandDispatcher.register(SetValueCountCommand.register());
 				}
 		);
+
+		FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+			builder.registerPotionRecipe(Potions.AWKWARD,ModItems.SILICON, (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG);
+		});
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
 				.registerReloadListener(new BrewingRecipeLoader());
