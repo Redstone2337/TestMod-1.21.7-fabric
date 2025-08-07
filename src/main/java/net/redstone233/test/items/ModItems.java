@@ -5,6 +5,7 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Rarity;
 import net.redstone233.test.TestMod;
 import net.redstone233.test.core.food.ModConsumableComponents;
 import net.redstone233.test.core.food.ModFoodComponents;
@@ -25,7 +26,7 @@ public static final float ATTACK_DAMAGE = 10.0f;
     public static final Item SILICON_INGOT = register("silicon_ingot", new Item.Settings().maxCount(CUSTOM_MAX_COUNT));
     public static final Item FREEZE_SWORD = register("freeze_sword",
             settings -> new FreezeSwordItem(ModToolMaterial.SILICON,ATTACK_DAMAGE, 2.5f ,settings),
-            new Item.Settings().maxDamage(300000)
+            new Item.Settings().maxDamage(300000).rarity(Rarity.RARE)
                     /*.attributeModifiers(FreezeSwordItem.createAttributeModifiers())*/
     );
     public static final Item HE_QI_ZHENG = register(

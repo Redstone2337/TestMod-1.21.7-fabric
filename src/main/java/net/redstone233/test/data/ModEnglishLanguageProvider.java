@@ -53,7 +53,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("tooltip.freezing_sword.damage.normal", "Base Damage: §a+%.1f");
         translationBuilder.add("tooltip.freezing_sword.damage.charged", "Charged vs Bosses: §c+%.1f");
         translationBuilder.add("tooltip.freezing_sword.damage.non_boss", "Charged vs Others: §d+%.1f");
-        translationBuilder.add("tooltip.freezing_sword.loot_only", "Can be synthesized by Recipe's formula.");
+        translationBuilder.add("tooltip.freezing_sword.loot_only", "There is a chance to get it in the relic treasure chest.");
         translationBuilder.add("tooltip.freezing_sword.max_charges", "MAX CHARGES REACHED!");
 
         // Freeze Sword In-Game Messages
