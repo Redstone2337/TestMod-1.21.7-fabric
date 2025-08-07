@@ -45,16 +45,16 @@ public class ModRecipesProvider extends FabricRecipeProvider {
 //                        .criterion("has_raw_silicon", conditionsFromItem(ModItems.RAW_SILICON))
 //                        .offerTo(recipeExporter);
 
-                createShaped(RecipeCategory.COMBAT,ModItems.FREEZE_SWORD)
-                        .pattern(" A ")
-                        .pattern("BAB")
-                        .pattern(" C ")
-                        .input('A', Items.PACKED_ICE)
-                        .input('B', Items.BLUE_ICE)
-                        .input('C', Items.STICK)
-                        .criterion("has_packed_ice", conditionsFromItem(Items.PACKED_ICE))
-                        .criterion("has_blue_ice", conditionsFromItem(Items.BLUE_ICE))
-                        .offerTo(recipeExporter);
+//                createShaped(RecipeCategory.COMBAT,ModItems.FREEZE_SWORD)
+//                        .pattern(" A ")
+//                        .pattern("BAB")
+//                        .pattern(" C ")
+//                        .input('A', Items.PACKED_ICE)
+//                        .input('B', Items.BLUE_ICE)
+//                        .input('C', Items.STICK)
+//                        .criterion("has_packed_ice", conditionsFromItem(Items.PACKED_ICE))
+//                        .criterion("has_blue_ice", conditionsFromItem(Items.BLUE_ICE))
+//                        .offerTo(recipeExporter);
 
                 createShapeless(RecipeCategory.MISC, ModItems.SILICON_INGOT, 9)
                         .input(Ingredient.ofItem(ModBlocks.SILICON_BLOCK))

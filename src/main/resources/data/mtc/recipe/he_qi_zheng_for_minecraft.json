@@ -10,7 +10,8 @@
     }
   },
   "addition": {
-    "id": "minecraft:potato"
+    "id": "minecraft:potato",
+    "count": 1
   },
   "output": {
     "id": "mtc:herbal_tea",

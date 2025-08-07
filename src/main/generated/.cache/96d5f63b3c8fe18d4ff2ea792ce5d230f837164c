@@ -3,7 +3,6 @@
 1a3601e3f24593c11debdf21fcb1f372f71f6e66 data/mtc/advancement/recipes/building_blocks/silicon_block.json
 f0ca42489310006de911c993f571c8d738052f8e data/mtc/advancement/recipes/building_blocks/silicon_block_slab.json
 8c731ddb1e7396c4f3c28c83ebf5d1448201ae09 data/mtc/advancement/recipes/building_blocks/silicon_block_stairs.json
-cc147cc03b2a8d2f8e062813404889336958e782 data/mtc/advancement/recipes/combat/freeze_sword.json
 a3248923f7d26b1bdb01fda5861c6bb303528a93 data/mtc/advancement/recipes/decorations/silicon_fence.json
 d3652a47f05576886eb549fd991197e489e2d9f8 data/mtc/advancement/recipes/misc/raw_silicon.json
 775fa84c1d3be40a5ed5038705b34e187ea597b0 data/mtc/advancement/recipes/misc/silicon_from_blasting_deepslate_silicon_ore.json
@@ -15,7 +14,6 @@ c5613fe666d9e64b65f30640d0589f11b3e9f012 data/mtc/advancement/recipes/redstone/s
 c1cfa504aad30cb5378bb29841d877d0bbaa268f data/mtc/advancement/recipes/redstone/silicon_door.json
 65befe90fa0273f034fa5aa9c148046e33fbe864 data/mtc/advancement/recipes/redstone/silicon_fence_gate.json
 fa981cbfc65e299c5150ba1bb752a7ea38afe4a0 data/mtc/advancement/recipes/redstone/silicon_trapdoor.json
-db558ab5579f936e5c92362a88fe499e86206bb5 data/mtc/recipe/freeze_sword.json
 75bc463aee7020565fe18195be11b14ab93594cc data/mtc/recipe/raw_silicon.json
 2bd4d05c17ae4279c5ad71524fb0a89138064a19 data/mtc/recipe/raw_silicon_block.json
 04ce7e5cc9752cf8ece763591fa9314b6ce0fa23 data/mtc/recipe/silicon_block.json
