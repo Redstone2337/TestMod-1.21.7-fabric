@@ -75,5 +75,5 @@ builder.registerItemRecipe(
 
 //		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
 //				.registerReloadListener(new BrewingRecipeLoader());
-	//}
+	}
 }
