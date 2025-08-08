@@ -30,12 +30,12 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
     private static final String PATH = "brewing";
     public static final Map<Identifier, CustomBrewingRecipe> RECIPES = new HashMap<>();
     public static final Map<Identifier, BrewingItemRecipe> ITEM_RECIPES = new HashMap<>();
+    private static int loadedCount = 0;
+    private static int loadedCount1 = 0;
 
     @Override
     public void reload(ResourceManager manager) {
         RECIPES.clear();
-        int loadedCount = 0;
-        int loadedCount1 = 0;
 
         // 清除现有配方（Fabric API没有提供直接清除方法，需要重新构建）
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
@@ -50,7 +50,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
                 TestMod.LOGGER.error("Resource not found: {}", resourceId);
                 continue;
             }
-FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+    FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {  
             try (InputStream stream = resourceOpt.get().getInputStream();
                  Reader reader = new InputStreamReader(stream)) {
 
