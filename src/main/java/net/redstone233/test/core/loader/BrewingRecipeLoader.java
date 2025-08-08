@@ -114,12 +114,12 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
     public static void register() {
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BrewingRecipeLoader());
 
-        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+/*        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
             builder.registerItemRecipe(
                     Items.GLASS_BOTTLE,
                     ModItems.SILICON_INGOT,
                     ModItems.HE_QI_ZHENG
             );
-        });
+        });*/
     }
 }
