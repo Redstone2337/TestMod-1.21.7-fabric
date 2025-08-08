@@ -62,17 +62,18 @@ public class TestMod implements ModInitializer {
 				}
 		);
 
-		FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+		//FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
 /*			builder.registerPotionRecipe(Potions.AWKWARD,ModItems.SILICON, (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG);*/
 
+/*
 builder.registerItemRecipe(
 	Items.GLASS_BOTTLE,
 	ModItems.SILICON_INGOT,
 	ModItems.HE_QI_ZHENG
 );
-		});
+		});*/
 
 //		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
 //				.registerReloadListener(new BrewingRecipeLoader());
-	}
+	//}
 }
