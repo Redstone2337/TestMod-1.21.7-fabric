@@ -119,7 +119,7 @@ FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
     public static void register() {
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BrewingRecipeLoader());
       FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
-         registerDefaults(builder)   
+         registerDefaults(builder);   
         });
     }
 }
