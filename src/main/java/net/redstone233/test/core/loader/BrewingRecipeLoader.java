@@ -12,6 +12,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.item.Items;
 import net.minecraft.item.Item;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.potion.Potions;
 import net.redstone233.test.TestMod;
 import net.redstone233.test.items.ModItems;
@@ -106,7 +107,7 @@ FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
     public static void registerDefaults(FabricBrewingRecipeRegistryBuilder builder) {
         builder.registerItemRecipe(
                     (Item)Potions.WATER,
-                    ModItems.SILICON_INGOT,
+                    Ingredient.ofItem(ModItems.SILICON_INGOT),
                     ModItems.HE_QI_ZHENG
             );
     }
