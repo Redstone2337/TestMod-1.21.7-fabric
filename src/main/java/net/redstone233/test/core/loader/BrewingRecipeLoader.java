@@ -35,6 +35,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
     public void reload(ResourceManager manager) {
         RECIPES.clear();
         int loadedCount = 0;
+        int loadedCount1 = 0;
 
         // 清除现有配方（Fabric API没有提供直接清除方法，需要重新构建）
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
@@ -77,7 +78,7 @@ FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
                     );
                     ITEM_RECIPES.put(recipeId, recipe1);
                     registerRecipe(recipe1, builder);
-                    loadedCount++;
+                    loadedCount1++;
                 }
             } catch (Exception e) {
                 TestMod.LOGGER.error("Failed to load recipe {}: {}", resourceId, e.getMessage());
