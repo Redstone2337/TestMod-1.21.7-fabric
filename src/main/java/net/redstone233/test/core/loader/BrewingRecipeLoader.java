@@ -122,5 +122,4 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
             );
         });
     }
-    }
 }
