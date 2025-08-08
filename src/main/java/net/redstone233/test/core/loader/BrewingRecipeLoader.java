@@ -11,6 +11,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.item.Items;
+import net.minecraft.potion.Potions;
 import net.redstone233.test.TestMod;
 import net.redstone233.test.items.ModItems;
 import net.redstone233.test.core.recipe.BrewingItemRecipe;
@@ -113,13 +114,12 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
 
     public static void register() {
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BrewingRecipeLoader());
-
-/*        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+      FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
             builder.registerItemRecipe(
-                    Items.GLASS_BOTTLE,
+                    (Item)Potions.WATER,
                     ModItems.SILICON_INGOT,
                     ModItems.HE_QI_ZHENG
             );
-        });*/
+        });
     }
 }
