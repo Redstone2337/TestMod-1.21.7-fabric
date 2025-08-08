@@ -11,6 +11,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.item.Items;
+import net.minecraft.item.Item;
 import net.minecraft.potion.Potions;
 import net.redstone233.test.TestMod;
 import net.redstone233.test.items.ModItems;
