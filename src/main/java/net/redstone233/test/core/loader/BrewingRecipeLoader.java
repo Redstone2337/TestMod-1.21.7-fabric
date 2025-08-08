@@ -48,7 +48,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
                 TestMod.LOGGER.error("Resource not found: {}", resourceId);
                 continue;
             }
-
+FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
             try (InputStream stream = resourceOpt.get().getInputStream();
                  Reader reader = new InputStreamReader(stream)) {
 
@@ -65,7 +65,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
                             resourceId.getPath().replace(PATH + "/", "").replace(".json", "")
                     );
                     RECIPES.put(recipeId, recipe);
-                    registerRecipe(recipe);
+                    registerRecipe(recipe, builder);
                     loadedCount++;
                 }
 
@@ -75,37 +75,40 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
                             resourceId.getPath().replace(PATH + "/", "").replace(".json", "")
                     );
                     ITEM_RECIPES.put(recipeId, recipe1);
-                    registerRecipe(recipe1);
+                    registerRecipe(recipe1, builder);
                     loadedCount++;
                 }
             } catch (Exception e) {
                 TestMod.LOGGER.error("Failed to load recipe {}: {}", resourceId, e.getMessage());
             }
-
-
+            });
         }
 
         TestMod.LOGGER.info("Loaded {} brewing recipes", loadedCount);
     }
 
-    private void registerRecipe(CustomBrewingRecipe recipe) {
-        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+    private void registerRecipe(CustomBrewingRecipe recipe, FabricBrewingRecipeRegistryBuilder builder) {
             builder.registerPotionRecipe(
                     recipe.input(),
                     recipe.addition(),
                     recipe.output()
             );
-        });
     }
 
-    private void registerRecipe(BrewingItemRecipe recipe) {
-        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+    private void registerRecipe(BrewingItemRecipe recipe, FabricBrewingRecipeRegistryBuilder builder) {
             builder.registerItemRecipe(
                     recipe.input().value(),
                     recipe.addition(),
                     recipe.output().value()
             );
-        });
+    }
+
+    public static void registerDefaults(FabricBrewingRecipeRegistryBuilder builder) {
+        builder.registerItemRecipe(
+                    (Item)Potions.WATER,
+                    ModItems.SILICON_INGOT,
+                    ModItems.HE_QI_ZHENG
+            );
     }
 
     @Override
@@ -116,11 +119,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
     public static void register() {
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BrewingRecipeLoader());
       FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
-            builder.registerItemRecipe(
-                    (Item)Potions.WATER,
-                    ModItems.SILICON_INGOT,
-                    ModItems.HE_QI_ZHENG
-            );
+         registerDefaults(builder)   
         });
     }
 }
