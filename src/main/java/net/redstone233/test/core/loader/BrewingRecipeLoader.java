@@ -40,7 +40,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
     @Override
     public void reload(ResourceManager manager) {
         RECIPES.clear();
-        registerDefaults(builder);
+        //registerDefaults(builder);
         
         // 清除现有配方（Fabric API没有提供直接清除方法，需要重新构建）
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
@@ -110,14 +110,14 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
                     recipe.output().value()
             );
     }
-
+/*
     public static void registerDefaults(BrewingRecipeRegistry.Builder builder) {
         builder.registerItemRecipe(
                     (Item)Potions.WATER,
                     Ingredient.ofItem(ModItems.SILICON_INGOT),
                     ModItems.HE_QI_ZHENG
             );
-    }
+    }*/
 
     @Override
     public Identifier getFabricId() {
