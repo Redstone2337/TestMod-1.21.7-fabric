@@ -35,7 +35,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
     public static final Map<Identifier, BrewingItemRecipe> ITEM_RECIPES = new HashMap<>();
     private static int loadedCount = 0;
     private static int loadedCount1 = 0;
-    private static BrewingRecipeRegistry.Builder builder = new BrewingRecipeRegistry.Builder(enabledFeatures);
+    private final BrewingRecipeRegistry.Builder builder = new BrewingRecipeRegistry.Builder(enabledFeatures);
 
     @Override
     public void reload(ResourceManager manager) {
