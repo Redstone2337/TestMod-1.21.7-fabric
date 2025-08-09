@@ -53,12 +53,21 @@ FreezeSwordHud.render(context);
         });*/
 
 
+/*
  HudElementRegistry.attachElementBefore(
          VanillaHudElements.MISC_OVERLAYS,
          Identifier.of(TestMod.MOD_ID, "freeze_hud"),
                 (context, tickCounter) -> {
                     FreezeSwordHud.render(context);
+         });*/
+
+ HudElementRegistry.attachElementBefore(
+         VanillaHudElements.CHAT,
+         Identifier.of(TestMod.MOD_ID, "freeze_hud"),
+                (context, tickCounter) -> {
+                    FreezeSwordHud.render(context);
          });
+
 
         ModKeys.register(); // 注册键位
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
