@@ -135,6 +135,4 @@ public static BrewingRecipeRegistry create(FeatureSet enabledFeatures) {
 	return builder.build();
 }
 */
-    
-    }
 }
