@@ -1,3 +1,4 @@
+/*
 package net.redstone233.test.core.loader;
 
 import com.google.gson.JsonElement;
@@ -136,4 +137,86 @@ public static BrewingRecipeRegistry create(FeatureSet enabledFeatures) {
 	return builder.build();
 }
 
+}*/
+
+package net.redstone233.test.core.loader;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.util.Identifier;
+import net.redstone233.test.TestMod;
+import net.redstone233.test.core.recipe.BrewingItemRecipe;
+import net.redstone233.test.core.recipe.CustomBrewingRecipe;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListener {
+    private static final String PATH = "brewing";
+    public static final Map<Identifier, CustomBrewingRecipe> RECIPES = new HashMap<>();
+    public static final Map<Identifier, BrewingItemRecipe> ITEM_RECIPES = new HashMap<>();
+
+    @Override
+    public void reload(ResourceManager manager) {
+        RECIPES.clear();
+        ITEM_RECIPES.clear();
+
+        for (Identifier resourceId : manager.findResources(PATH, path -> path.getPath().endsWith(".json")).keySet()) {
+            Optional<Resource> resourceOpt = manager.getResource(resourceId);
+            if (resourceOpt.isEmpty()) {
+                TestMod.LOGGER.error("Resource not found: {}", resourceId);
+                continue;
+            }
+
+            try (InputStream stream = resourceOpt.get().getInputStream();
+                 Reader reader = new InputStreamReader(stream)) {
+
+                JsonElement json = JsonParser.parseReader(reader);
+                CustomBrewingRecipe recipe = CustomBrewingRecipe.CODEC.parse(JsonOps.INSTANCE, json)
+                        .getOrThrow();
+
+                BrewingItemRecipe recipe1 = BrewingItemRecipe.CODEC.parse(JsonOps.INSTANCE, json)
+                        .getOrThrow();
+
+                if ("cmr:brewing".equals(recipe.type()) && "potion".equals(recipe.group())) {
+                    Identifier recipeId = Identifier.of(
+                            resourceId.getNamespace(),
+                            resourceId.getPath().replace(PATH + "/", "").replace(".json", "")
+                    );
+                    RECIPES.put(recipeId, recipe);
+                }
+
+                if ("item".equals(recipe1.group())) {
+                    Identifier recipeId = Identifier.of(
+                            resourceId.getNamespace(),
+                            resourceId.getPath().replace(PATH + "/", "").replace(".json", "")
+                    );
+                    ITEM_RECIPES.put(recipeId, recipe1);
+                }
+            } catch (Exception e) {
+                TestMod.LOGGER.error("Failed to load recipe {}: {}", resourceId, e.getMessage());
+            }
+        }
+
+        TestMod.LOGGER.info("Loaded {} brewing recipes", RECIPES.size() + ITEM_RECIPES.size());
+    }
+
+    @Override
+    public Identifier getFabricId() {
+        return Identifier.of(TestMod.MOD_ID, "brewing_recipe_loader");
+    }
+
+    public static void register() {
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BrewingRecipeLoader());
+    }
 }
