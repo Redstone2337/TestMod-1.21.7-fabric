@@ -2,6 +2,8 @@ package net.redstone233.test.mixin;
 
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
+import net.minecraft.potion.Potion;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.recipe.Ingredient;
 import net.redstone233.test.items.ModItems;
@@ -17,10 +19,18 @@ public class BrewingRecipeRegistryMixin {
     @Inject(method = "registerDefaults", at = @At("RETURN"))
     private static void registerDefaults(BrewingRecipeRegistry.Builder builder, CallbackInfo ci) {
         // 注册默认配方
+        /*
         builder.registerItemRecipe(
             Items.POTION,
             Ingredient.ofItems(ModItems.SILICON_INGOT),
             ModItems.HE_QI_ZHENG
+        );
+        */
+        builder.registerPotionType(ModItems.HE_QI_ZHENG);
+        builder.registerPotionRecipe(
+            Potions.AWKWARD, 
+            Ingredient.ofItems(Items.REDSTONE),
+            (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG
         );
 
         // 加载动态配方（从资源包）
