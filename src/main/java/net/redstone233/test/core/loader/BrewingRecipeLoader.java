@@ -9,6 +9,8 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.recipe.BrewingRecipeRegistry;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.item.Items;
 import net.minecraft.item.Item;
@@ -28,15 +30,18 @@ import java.util.Optional;
 
 public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListener {
     private static final String PATH = "brewing";
+    private final FeatureSet enabledFeatures;
     public static final Map<Identifier, CustomBrewingRecipe> RECIPES = new HashMap<>();
     public static final Map<Identifier, BrewingItemRecipe> ITEM_RECIPES = new HashMap<>();
     private static int loadedCount = 0;
     private static int loadedCount1 = 0;
+    private static BrewingRecipeRegistry.Builder builder = new BrewingRecipeRegistry.Builder(enabledFeatures);
 
     @Override
     public void reload(ResourceManager manager) {
         RECIPES.clear();
-
+        registerDefaults(builder);
+        
         // 清除现有配方（Fabric API没有提供直接清除方法，需要重新构建）
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
             // 清空构建器（实际Fabric API会自动合并而不是覆盖）
@@ -50,7 +55,8 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
                 TestMod.LOGGER.error("Resource not found: {}", resourceId);
                 continue;
             }
-    FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {  
+
+            
             try (InputStream stream = resourceOpt.get().getInputStream();
                  Reader reader = new InputStreamReader(stream)) {
 
@@ -83,13 +89,13 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
             } catch (Exception e) {
                 TestMod.LOGGER.error("Failed to load recipe {}: {}", resourceId, e.getMessage());
             }
-            });
+            
         }
 
         TestMod.LOGGER.info("Loaded {} brewing recipes", loadedCount);
     }
 
-    private void registerRecipe(CustomBrewingRecipe recipe, FabricBrewingRecipeRegistryBuilder builder) {
+    private void registerRecipe(CustomBrewingRecipe recipe, BrewingRecipeRegistry.Builder builder) {
             builder.registerPotionRecipe(
                     recipe.input(),
                     recipe.addition(),
@@ -97,7 +103,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
             );
     }
 
-    private void registerRecipe(BrewingItemRecipe recipe, FabricBrewingRecipeRegistryBuilder builder) {
+    private void registerRecipe(BrewingItemRecipe recipe, BrewingRecipeRegistry.Builder builder) {
             builder.registerItemRecipe(
                     recipe.input().value(),
                     recipe.addition(),
@@ -105,7 +111,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
             );
     }
 
-    public static void registerDefaults(FabricBrewingRecipeRegistryBuilder builder) {
+    public static void registerDefaults(BrewingRecipeRegistry.Builder builder) {
         builder.registerItemRecipe(
                     (Item)Potions.WATER,
                     Ingredient.ofItem(ModItems.SILICON_INGOT),
@@ -120,8 +126,15 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
 
     public static void register() {
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BrewingRecipeLoader());
-      FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
-         registerDefaults(builder);   
-        });
+        //create(enabledFeatures)
+    }
+/*
+public static BrewingRecipeRegistry create(FeatureSet enabledFeatures) {
+	BrewingRecipeRegistry.Builder builder = new BrewingRecipeRegistry.Builder(enabledFeatures);
+	registerDefaults(builder);
+	return builder.build();
+}
+*/
+    
     }
 }
