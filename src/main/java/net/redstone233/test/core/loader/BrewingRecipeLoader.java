@@ -110,14 +110,14 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
                     recipe.output().value()
             );
     }
-/*
+
     public static void registerDefaults(BrewingRecipeRegistry.Builder builder) {
         builder.registerItemRecipe(
                     (Item)Potions.WATER,
                     Ingredient.ofItem(ModItems.SILICON_INGOT),
                     ModItems.HE_QI_ZHENG
             );
-    }*/
+    }
 
     @Override
     public Identifier getFabricId() {
@@ -128,11 +128,11 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BrewingRecipeLoader());
         //create(enabledFeatures)
     }
-/*
+
 public static BrewingRecipeRegistry create(FeatureSet enabledFeatures) {
 	BrewingRecipeRegistry.Builder builder = new BrewingRecipeRegistry.Builder(enabledFeatures);
 	registerDefaults(builder);
 	return builder.build();
 }
-*/
+
 }
