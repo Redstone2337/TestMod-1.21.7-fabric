@@ -39,7 +39,6 @@ public class TestMod implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	private static FeatureSet enabledFeatures;
-	private final BrewingRecipeRegistry.Builder builder = new BrewingRecipeRegistry.Builder(enabledFeatures);
 
 	
 	@Override
@@ -67,7 +66,7 @@ public class TestMod implements ModInitializer {
 				}
 		);
 
-		BrewingRecipeLoader.registerDefaults(builder);
+		BrewingRecipeLoader.create(enabledFeatures);
 
 		//FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
 /*			builder.registerPotionRecipe(Potions.AWKWARD,ModItems.SILICON, (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG);*/
