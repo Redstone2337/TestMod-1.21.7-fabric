@@ -10,11 +10,11 @@
     }
   },
   "addition": {
-    "id": "minecraft:potato",
+    "id": "minecraft:carrot",
     "count": 1
   },
   "output": {
     "id": "mtc:herbal_tea",
-    "count": 1
+    "count": 3
   }
 }
