@@ -38,7 +38,7 @@ public class TestMod implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	private static FeatureSet enabledFeatures;
+	//private static FeatureSet enabledFeatures;
 
 	
 	@Override
@@ -66,7 +66,7 @@ public class TestMod implements ModInitializer {
 				}
 		);
 
-		BrewingRecipeLoader.create(enabledFeatures);
+	//	BrewingRecipeLoader.create(enabledFeatures);
 
 		//FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
 /*			builder.registerPotionRecipe(Potions.AWKWARD,ModItems.SILICON, (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG);*/
