@@ -1,6 +1,7 @@
 package net.redstone233.test.items;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.PotionItem;
 import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -31,6 +32,7 @@ public static final float ATTACK_DAMAGE = 10.0f;
     );
     public static final Item HE_QI_ZHENG = register(
             "herbal_tea",
+													PotionItem::new,
             new Item.Settings()
                     .recipeRemainder(Items.GLASS_BOTTLE)
                     .food(ModFoodComponents.HE_QI_ZHENG, ModConsumableComponents.HE_QI_ZHENG)
