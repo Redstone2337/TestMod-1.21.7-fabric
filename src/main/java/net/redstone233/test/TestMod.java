@@ -27,7 +27,7 @@ import net.redstone233.test.core.world.gen.ModWorldGeneration;
 import net.redstone233.test.items.ModItemGroups;
 import net.redstone233.test.items.ModItems;
 import net.redstone233.test.recipe.BrewingRecipe;
-import net.redstone233.test.recipe.BrewingRecipeRegistry;
+import net.redstone233.test.recipe.ModBrewingRecipeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +39,10 @@ public class TestMod implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-private static FeatureSet enabledFeatures;
+	private static FeatureSet enabledFeatures;
+	private final BrewingRecipeRegistry.Builder builder = new BrewingRecipeRegistry.Builder(enabledFeatures);
 
-private final BrewingRecipeRegistry.Builder builder = new BrewingRecipeRegistry.Builder(enabledFeatures);
-
+	
 	@Override
 	public void onInitialize() {
 
