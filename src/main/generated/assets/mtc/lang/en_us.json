@@ -50,7 +50,7 @@
   "tooltip.freezing_sword.damage.non_boss": "Charged vs Others: §d+%.1f",
   "tooltip.freezing_sword.damage.normal": "Base Damage: §a+%.1f",
   "tooltip.freezing_sword.desc": "A legendary sword that freezes enemies with each hit.",
-  "tooltip.freezing_sword.loot_only": "Can be synthesized by Recipe's formula.",
+  "tooltip.freezing_sword.loot_only": "There is a chance to get it in the relic treasure chest.",
   "tooltip.freezing_sword.max_charges": "MAX CHARGES REACHED!",
   "tooltip.freezing_sword.ready": "READY! Left-click to unleash power!"
 }
