@@ -30,7 +30,7 @@ import java.util.Optional;
 
 public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListener {
     private static final String PATH = "brewing";
-    private final FeatureSet enabledFeatures;
+    private static FeatureSet enabledFeatures;
     public static final Map<Identifier, CustomBrewingRecipe> RECIPES = new HashMap<>();
     public static final Map<Identifier, BrewingItemRecipe> ITEM_RECIPES = new HashMap<>();
     private static int loadedCount = 0;
