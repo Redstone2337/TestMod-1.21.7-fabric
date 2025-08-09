@@ -27,7 +27,6 @@ import net.redstone233.test.core.world.gen.ModWorldGeneration;
 import net.redstone233.test.items.ModItemGroups;
 import net.redstone233.test.items.ModItems;
 import net.redstone233.test.recipe.BrewingRecipe;
-import net.redstone233.test.recipe.ModBrewingRecipeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +67,7 @@ public class TestMod implements ModInitializer {
 				}
 		);
 
-BrewingRecipeLoader.registerDefaults(builder);
+		BrewingRecipeLoader.registerDefaults(builder);
 
 		//FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
 /*			builder.registerPotionRecipe(Potions.AWKWARD,ModItems.SILICON, (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG);*/
