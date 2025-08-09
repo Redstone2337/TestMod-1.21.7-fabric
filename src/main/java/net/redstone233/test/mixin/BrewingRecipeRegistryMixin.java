@@ -17,12 +17,11 @@ public class BrewingRecipeRegistryMixin {
     @Inject(method = "registerDefaults", at = @At("RETURN"))
     private static void registerDefaults(BrewingRecipeRegistry.Builder builder, CallbackInfo ci) {
         // 注册默认配方
-        /*
         builder.registerItemRecipe(
-            Potions.WATER,
+            Items.POTION,
             Ingredient.ofItems(ModItems.SILICON_INGOT),
             ModItems.HE_QI_ZHENG
-        );*/
+        );
 
         // 加载动态配方（从资源包）
         BrewingRecipeLoader.RECIPES.forEach((id, recipe) -> {
