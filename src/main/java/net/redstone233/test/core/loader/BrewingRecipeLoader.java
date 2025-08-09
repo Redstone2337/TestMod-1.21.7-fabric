@@ -36,7 +36,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
     private static int loadedCount = 0;
     private static int loadedCount1 = 0;
    // private final BrewingRecipeRegistry.Builder builder = new BrewingRecipeRegistry.Builder(enabledFeatures);
-	private final BrewingRecipeRegistry.Builder builder = create(enabledFeatures);
+	private final BrewingRecipeRegistry.Builder builder = create(enabledFeatures).Builder;
 
     @Override
     public void reload(ResourceManager manager) {
