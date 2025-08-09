@@ -26,7 +26,7 @@ public class BrewingRecipeRegistryMixin {
             ModItems.HE_QI_ZHENG
         );
         */
-        builder.registerPotionType(ModItems.HE_QI_ZHENG);
+       // builder.registerPotionType(ModItems.HE_QI_ZHENG);
         builder.registerPotionRecipe(
             Potions.AWKWARD, 
             Ingredient.ofItems(Items.REDSTONE),
