@@ -9,6 +9,8 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
+import net.minecraft.recipe.BrewingRecipeRegistry;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.resource.ResourceType;
 import net.redstone233.test.blocks.ModBlockFamilies;
@@ -37,6 +39,10 @@ public class TestMod implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+private static FeatureSet enabledFeatures;
+
+private final BrewingRecipeRegistry.Builder builder = new BrewingRecipeRegistry.Builder(enabledFeatures);
+
 	@Override
 	public void onInitialize() {
 
@@ -61,6 +67,8 @@ public class TestMod implements ModInitializer {
 					commandDispatcher.register(SetValueCountCommand.register());
 				}
 		);
+
+BrewingRecipeLoader.registerDefaults(builder);
 
 		//FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
 /*			builder.registerPotionRecipe(Potions.AWKWARD,ModItems.SILICON, (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG);*/
