@@ -23,7 +23,7 @@ public class BrewingRecipeRegistryMixin {
 
         builder.registerPotionRecipe(
                 Potions.AWKWARD,
-                ModItems.HE_QI_ZHENG,
+                Ingredient.ofItem(ModItems.HE_QI_ZHENG),
                 ModPotions.HE_QI_ZHENG
         );
 
