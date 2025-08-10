@@ -8,6 +8,7 @@ import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.recipe.Ingredient;
 import net.redstone233.test.items.ModItems;
 import net.redstone233.test.core.loader.BrewingRecipeLoader;
+import net.redstone233.test.potion.ModPotions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,19 +20,19 @@ public class BrewingRecipeRegistryMixin {
     @Inject(method = "registerDefaults", at = @At("RETURN"))
     private static void registerDefaults(BrewingRecipeRegistry.Builder builder, CallbackInfo ci) {
         // 注册默认配方
-        /*
-        builder.registerItemRecipe(
-            Items.POTION,
-            Ingredient.ofItems(ModItems.SILICON_INGOT),
-            ModItems.HE_QI_ZHENG
-        );
-        */
-       // builder.registerPotionType(ModItems.HE_QI_ZHENG);
+
         builder.registerPotionRecipe(
-            Potions.AWKWARD, 
-            Ingredient.ofItems(Items.REDSTONE),
-            (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG
+                Potions.AWKWARD,
+                ModItems.HE_QI_ZHENG,
+                ModPotions.HE_QI_ZHENG
         );
+
+       // builder.registerPotionType(ModItems.HE_QI_ZHENG);
+//        builder.registerPotionRecipe(
+//            Potions.AWKWARD,
+//            Ingredient.ofItems(Items.REDSTONE),
+//            (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG
+//        );
 
         // 加载动态配方（从资源包）
         BrewingRecipeLoader.RECIPES.forEach((id, recipe) -> {

@@ -9,8 +9,6 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
-import net.minecraft.recipe.BrewingRecipeRegistry;
-import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.resource.ResourceType;
 import net.redstone233.test.blocks.ModBlockFamilies;
@@ -27,6 +25,7 @@ import net.redstone233.test.core.world.gen.ModWorldGeneration;
 import net.redstone233.test.items.ModItemGroups;
 import net.redstone233.test.items.ModItems;
 import net.redstone233.test.recipe.BrewingRecipe;
+import net.redstone233.test.recipe.BrewingRecipeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +37,6 @@ public class TestMod implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	//private static FeatureSet enabledFeatures;
-
-	
 	@Override
 	public void onInitialize() {
 
@@ -65,19 +61,6 @@ public class TestMod implements ModInitializer {
 					commandDispatcher.register(SetValueCountCommand.register());
 				}
 		);
-
-	//	BrewingRecipeLoader.create(enabledFeatures);
-
-		//FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
-/*			builder.registerPotionRecipe(Potions.AWKWARD,ModItems.SILICON, (RegistryEntry<Potion>) ModItems.HE_QI_ZHENG);*/
-
-/*
-builder.registerItemRecipe(
-	Items.GLASS_BOTTLE,
-	ModItems.SILICON_INGOT,
-	ModItems.HE_QI_ZHENG
-);
-		});*/
 
 //		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
 //				.registerReloadListener(new BrewingRecipeLoader());
