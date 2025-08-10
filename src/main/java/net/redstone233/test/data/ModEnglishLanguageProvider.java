@@ -2,8 +2,10 @@ package net.redstone233.test.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.registry.RegistryWrapper;
 import net.redstone233.test.blocks.ModBlocks;
+import net.redstone233.test.core.potion.ModStatusEffects;
 import net.redstone233.test.items.ModItems;
 
 import java.util.concurrent.CompletableFuture;
@@ -38,6 +40,11 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(ModBlocks.SILICON_PRESSURE_PLATE, "Silicon Block Pressure Plate");
         translationBuilder.add(ModBlocks.SILICON_TRAPDOOR, "Silicon Block Trapdoor");
         translationBuilder.add(ModBlocks.SILICON_WALL, "Silicon Block Wall");
+
+        translationBuilder.add("effect.mtc.test_status_effect","Herbal Tea Effect");
+        translationBuilder.add("item.minecraft.potion.effect.test_status_effect","Potion of Herbal Tea");
+        translationBuilder.add("item.minecraft.lingering_potion.effect.test_status_effect", "Lingering Potion of Herbal Tea");
+        translationBuilder.add("item.minecraft.splash_potion.effect.test_status_effect", "Splash Potion of Herbal Tea");
 
         // Creative Tabs
         translationBuilder.add("itemGroup.mtc.silicon_items", "Silicon | Items");

@@ -13,7 +13,9 @@ import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.RegistryWrapper;
 import net.redstone233.test.TestMod;
 import net.redstone233.test.blocks.ModBlocks;
+import net.redstone233.test.core.tags.ModItemTags;
 import net.redstone233.test.items.ModItems;
+import org.joml.Matrix3d;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -35,6 +37,12 @@ public class ModRecipesProvider extends FabricRecipeProvider {
                         .pattern("###")
                         .input('#', ModItems.SILICON_INGOT)
                         .criterion("has_silicon", conditionsFromItem(ModItems.SILICON))
+                        .offerTo(recipeExporter);
+
+                createShapeless(RecipeCategory.FOOD, ModItems.HE_QI_ZHENG)
+                        .input(Ingredient.ofItem(Items.GLASS_BOTTLE))
+                        .input(Ingredient.ofItem(ModItems.SILICON))
+                        .criterion("has_glass",conditionsFromItem(Items.GLASS))
                         .offerTo(recipeExporter);
 
 //                createShaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.RAW_SILICON_BLOCK)

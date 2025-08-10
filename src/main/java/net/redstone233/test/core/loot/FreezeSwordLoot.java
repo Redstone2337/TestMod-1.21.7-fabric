@@ -16,7 +16,7 @@ public class FreezeSwordLoot {
                             .bonusRolls(UniformLootNumberProvider.create(0, 1))
                             .with(ItemEntry.builder(ModItems.FREEZE_SWORD)
                                     .weight(3)
-                            );
+                            ).getThisFunctionConsumingBuilder();
                     tableBuilder.pool(pool);
                 } else if (key.equals(LootTables.VILLAGE_FISHER_CHEST)) {
                     LootPool.Builder pool = LootPool.builder()
@@ -24,7 +24,7 @@ public class FreezeSwordLoot {
                             .with(ItemEntry.builder(ModItems.HE_QI_ZHENG)
                                     .weight(3)
                                     .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(3,5)))
-                            );
+                            ).getThisFunctionConsumingBuilder();
                     tableBuilder.pool(pool);
                 } else if (key.equals(LootTables.DESERT_PYRAMID_ARCHAEOLOGY)) {
                     LootPool.Builder pool = LootPool.builder()
@@ -32,7 +32,7 @@ public class FreezeSwordLoot {
                             .with(ItemEntry.builder(ModItems.SILICON_INGOT)
                                     .weight(3)
                                     .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(3,5)))
-                            );
+                            ).getThisFunctionConsumingBuilder();
                     tableBuilder.pool(pool);
                 } else if (key.equals(LootTables.WOODLAND_MANSION_CHEST)) {
                     LootPool.Builder pool = LootPool.builder()
@@ -40,7 +40,7 @@ public class FreezeSwordLoot {
                             .with(ItemEntry.builder(ModItems.SILICON_INGOT)
                                     .weight(3)
                                     .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(3,5)))
-                            );
+                            ).getThisFunctionConsumingBuilder();
                     tableBuilder.pool(pool);
                 }
             });

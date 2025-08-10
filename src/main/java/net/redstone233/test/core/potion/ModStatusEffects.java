@@ -11,7 +11,9 @@ import net.redstone233.test.core.potion.status.TestStatusEffect;
 
 public class ModStatusEffects {
 
-    public static final RegistryEntry<StatusEffect> TEST_STATUS_EFFECT = register("test_status_effect",new TestStatusEffect(StatusEffectCategory.BENEFICIAL, 0x8B8B7A));
+    public static final RegistryEntry<StatusEffect> TEST_STATUS_EFFECT = register("test_status_effect",
+            new TestStatusEffect(StatusEffectCategory.BENEFICIAL, 0x696969)
+    );
 
     private static RegistryEntry<StatusEffect> register(String id, StatusEffect statusEffect) {
         return Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(TestMod.MOD_ID,id), statusEffect);

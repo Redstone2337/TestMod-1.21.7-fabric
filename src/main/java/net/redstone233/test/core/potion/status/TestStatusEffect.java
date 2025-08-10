@@ -7,7 +7,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.redstone233.test.core.until.RandomNumber;
@@ -70,6 +69,8 @@ public class TestStatusEffect extends StatusEffect {
 
            }
 
+           applyRandomEffect(player,random);
+
             return true;
         } else if (entity instanceof LivingEntity livingEntity) {
 //            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,600, 3));
@@ -98,7 +99,6 @@ public class TestStatusEffect extends StatusEffect {
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 600, 3));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.LUCK, 300, 5));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 6));
-
     }
 
     private static void applyTestEffect(PlayerEntity player) {
@@ -141,13 +141,9 @@ public class TestStatusEffect extends StatusEffect {
                 );
                 break;
             default:
-
+                applyDefaultEffect(player);
                 break;
         }
-    }
-
-    public int getRandom() {
-        return random;
     }
 
     @Override
