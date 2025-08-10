@@ -96,7 +96,7 @@ public class TestStatusEffect extends StatusEffect {
     }
 
     private static void applyDefaultEffect(PlayerEntity player) {
-        player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 600, 3));
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 600, 1));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.LUCK, 300, 5));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 6));
     }
