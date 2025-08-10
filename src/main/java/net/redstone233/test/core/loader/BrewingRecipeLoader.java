@@ -188,10 +188,11 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
                 BrewingItemRecipe recipe1 = BrewingItemRecipe.CODEC.parse(JsonOps.INSTANCE, json)
                         .getOrThrow();
 
+                String replace = resourceId.getPath().replace(PATH + "/", "").replace(".json", "");
                 if ("cmr:brewing".equals(recipe.type()) && "potion".equals(recipe.group())) {
                     Identifier recipeId = Identifier.of(
                             resourceId.getNamespace(),
-                            resourceId.getPath().replace(PATH + "/", "").replace(".json", "")
+                            replace
                     );
                     RECIPES.put(recipeId, recipe);
                 }
@@ -199,7 +200,7 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
                 if ("item".equals(recipe1.group())) {
                     Identifier recipeId = Identifier.of(
                             resourceId.getNamespace(),
-                            resourceId.getPath().replace(PATH + "/", "").replace(".json", "")
+                            replace
                     );
                     ITEM_RECIPES.put(recipeId, recipe1);
                 }

@@ -18,4 +18,8 @@ public class ModStatusEffects {
     private static RegistryEntry<StatusEffect> register(String id, StatusEffect statusEffect) {
         return Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(TestMod.MOD_ID,id), statusEffect);
     }
+
+    public static void init() {
+        TestMod.LOGGER.info("注册状态效果成功");
+    }
 }

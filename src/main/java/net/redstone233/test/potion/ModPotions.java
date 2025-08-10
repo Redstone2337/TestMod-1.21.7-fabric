@@ -19,4 +19,8 @@ public class ModPotions {
     private static RegistryEntry<Potion> register(String name, Potion potion) {
         return Registry.registerReference(Registries.POTION, Identifier.of(TestMod.MOD_ID,name), potion);
     }
+
+    public static void init() {
+        TestMod.LOGGER.info("药水注册成功");
+    }
 }
