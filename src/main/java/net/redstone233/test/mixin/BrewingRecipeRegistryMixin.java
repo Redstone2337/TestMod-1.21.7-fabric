@@ -1,9 +1,6 @@
 package net.redstone233.test.mixin;
 
-import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
-import net.minecraft.potion.Potion;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.recipe.Ingredient;
 import net.redstone233.test.items.ModItems;
@@ -24,6 +21,18 @@ public class BrewingRecipeRegistryMixin {
         builder.registerPotionRecipe(
                 Potions.AWKWARD,
                 Ingredient.ofItem(ModItems.HE_QI_ZHENG),
+                ModPotions.HE_QI_ZHENG
+        );
+
+        builder.registerPotionRecipe(
+                Potions.MUNDANE,
+                Ingredient.ofItem(ModItems.SILICON_INGOT),
+                ModPotions.HE_QI_ZHENG
+        );
+
+        builder.registerPotionRecipe(
+                Potions.THICK,
+                Ingredient.ofItem(ModItems.SILICON),
                 ModPotions.HE_QI_ZHENG
         );
 

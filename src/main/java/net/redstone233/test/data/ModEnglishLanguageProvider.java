@@ -42,9 +42,9 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(ModBlocks.SILICON_WALL, "Silicon Block Wall");
 
         translationBuilder.add("effect.mtc.test_status_effect","Herbal Tea Effect");
-        translationBuilder.add("item.minecraft.potion.effect.test_status_effect","Potion of Herbal Tea");
-        translationBuilder.add("item.minecraft.lingering_potion.effect.test_status_effect", "Lingering Potion of Herbal Tea");
-        translationBuilder.add("item.minecraft.splash_potion.effect.test_status_effect", "Splash Potion of Herbal Tea");
+        translationBuilder.add("item.minecraft.potion.effect.herbal_tea","Potion of Herbal Tea");
+        translationBuilder.add("item.minecraft.lingering_potion.effect.herbal_tea", "Lingering Potion of Herbal Tea");
+        translationBuilder.add("item.minecraft.splash_potion.effect.herbal_tea", "Splash Potion of Herbal Tea");
 
         // Creative Tabs
         translationBuilder.add("itemGroup.mtc.silicon_items", "Silicon | Items");
