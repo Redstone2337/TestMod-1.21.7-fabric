@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "category": "redstone",
   "ingredients": [
-    "mtc:silicon_block"
+    "mtc:silicon_ingot"
   ],
   "result": {
     "count": 1,

@@ -77,9 +77,13 @@ public class ModRecipesProvider extends FabricRecipeProvider {
                         .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
                         .offerTo(recipeExporter);
 
-                createButtonRecipe(ModBlocks.SILICON_BUTTON, Ingredient.ofItem(ModBlocks.SILICON_BLOCK))
-                        .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
+                createButtonRecipe(ModBlocks.SILICON_BUTTON, Ingredient.ofItem(ModItems.SILICON_INGOT))
+                        .criterion("has_silicon_ingot", conditionsFromItem(ModItems.SILICON_INGOT))
                         .offerTo(recipeExporter);
+
+                createPressurePlateRecipe(RecipeCategory.REDSTONE,ModBlocks.SILICON_PRESSURE_PLATE,Ingredient.ofItem(ModItems.SILICON_INGOT))
+                        .criterion("has_silicon_ingot", conditionsFromItem(ModItems.SILICON_INGOT))
+                                .offerTo(recipeExporter);
 
                 createDoorRecipe(ModBlocks.SILICON_DOOR, Ingredient.ofItem(ModBlocks.SILICON_BLOCK))
                         .criterion("has_silicon_block", conditionsFromItem(ModBlocks.SILICON_BLOCK))
