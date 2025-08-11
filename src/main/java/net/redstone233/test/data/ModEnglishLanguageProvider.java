@@ -46,6 +46,11 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("item.minecraft.lingering_potion.effect.herbal_tea", "Lingering Potion of Herbal Tea");
         translationBuilder.add("item.minecraft.splash_potion.effect.herbal_tea", "Splash Potion of Herbal Tea");
 
+        translationBuilder.add("item.minecraft.potion.effect.long_herbal_tea","Potion of Herbal Tea Ⅱ");
+        translationBuilder.add("item.minecraft.lingering_potion.effect.long_herbal_tea", "Lingering Potion of Herbal Tea Ⅱ");
+        translationBuilder.add("item.minecraft.splash_potion.effect.long_herbal_tea", "Splash Potion of Herbal Tea Ⅱ");
+
+
         // Creative Tabs
         translationBuilder.add("itemGroup.mtc.silicon_items", "Silicon | Items");
         translationBuilder.add("itemGroup.mtc.silicon_build", "Silicon | Build Blocks");

@@ -1,5 +1,6 @@
 package net.redstone233.test.mixin;
 
+import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
 import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.recipe.Ingredient;
@@ -34,6 +35,12 @@ public class BrewingRecipeRegistryMixin {
                 Potions.THICK,
                 Ingredient.ofItem(ModItems.SILICON),
                 ModPotions.HE_QI_ZHENG
+        );
+
+        builder.registerPotionRecipe(
+                ModPotions.HE_QI_ZHENG,
+                Ingredient.ofItem(Items.REDSTONE),
+                ModPotions.LONG_HE_QI_ZHENG
         );
 
        // builder.registerPotionType(ModItems.HE_QI_ZHENG);

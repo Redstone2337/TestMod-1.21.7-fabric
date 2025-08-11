@@ -12,7 +12,11 @@ import net.redstone233.test.core.potion.ModStatusEffects;
 public class ModPotions {
 
     public static final RegistryEntry<Potion> HE_QI_ZHENG = register(
-            "herbal_tea" , new Potion("herbal_tea", new StatusEffectInstance(ModStatusEffects.TEST_STATUS_EFFECT, 3600))
+            "herbal_tea" , new Potion("herbal_tea", new StatusEffectInstance(ModStatusEffects.TEST_STATUS_EFFECT, 300))
+    );
+
+    public static final RegistryEntry<Potion> LONG_HE_QI_ZHENG = register(
+            "long_herbal_tea" , new Potion("herbal_tea", new StatusEffectInstance(ModStatusEffects.TEST_STATUS_EFFECT, 600, 1, false, true, false))
     );
 
     private static RegistryEntry<Potion> register(String name, Potion potion) {
