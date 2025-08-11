@@ -14,7 +14,7 @@ import net.redstone233.test.core.until.RandomNumber;
 import java.util.List;
 
 public class TestStatusEffect extends StatusEffect {
-    private final int random = RandomNumber.nextInt(-1, 10);
+//    private final int random = RandomNumber.nextInt(-1, 10);
 
     public TestStatusEffect(StatusEffectCategory category, int color) {
         super(category, color);
@@ -23,6 +23,7 @@ public class TestStatusEffect extends StatusEffect {
     @Override
     public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
         if (entity instanceof PlayerEntity player) {
+            int random = getRandom();
 //            player.addStatusEffect(
 //                    (StatusEffectInstance) List.of(
 //                            new StatusEffectInstance(StatusEffects.NAUSEA, 600, 1),
@@ -144,6 +145,10 @@ public class TestStatusEffect extends StatusEffect {
                 applyDefaultEffect(player);
                 break;
         }
+    }
+
+    private static int getRandom() {
+        return RandomNumber.nextInt(-1,10);
     }
 
     @Override
