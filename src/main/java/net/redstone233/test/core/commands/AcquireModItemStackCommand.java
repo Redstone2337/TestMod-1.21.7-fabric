@@ -24,7 +24,7 @@ public class AcquireModItemStackCommand {
                                 )
                         )
                         .then(CommandManager.literal("modBlocks")
-                                .executes(null)
+                                .executes(run -> giveModBlocks(run.getSource()))
                         )
                 );
     }
