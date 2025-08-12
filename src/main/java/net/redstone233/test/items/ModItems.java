@@ -7,6 +7,8 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.redstone233.test.TestMod;
+import net.redstone233.test.core.component.ModDataComponentTypes;
+import net.redstone233.test.core.component.type.HerbalTeaComponent;
 import net.redstone233.test.core.food.ModConsumableComponents;
 import net.redstone233.test.core.food.ModFoodComponents;
 import net.redstone233.test.core.until.ModToolMaterial;
@@ -36,6 +38,7 @@ public static final float ATTACK_DAMAGE = 10.0f;
                     .food(ModFoodComponents.HE_QI_ZHENG, ModConsumableComponents.HE_QI_ZHENG)
                     .useRemainder(Items.GLASS_BOTTLE)
                     .maxCount(12)
+                    .component(ModDataComponentTypes.HE_QI_ZHENG, HerbalTeaComponent.DEFAULT)
     );
 
 

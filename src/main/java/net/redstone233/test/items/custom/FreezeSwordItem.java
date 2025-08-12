@@ -14,16 +14,13 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
-import net.minecraft.network.PacketByteBuf;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.redstone233.test.core.component.FreezingSwordComponent;
-import net.redstone233.test.core.component.type.ModDataComponentTypes;
+import net.redstone233.test.core.component.type.FreezingSwordComponent;
+import net.redstone233.test.core.component.ModDataComponentTypes;
 import net.redstone233.test.core.until.FreezeHelper;
 import net.redstone233.test.core.until.ModKeys;
 import net.redstone233.test.core.until.ModToolMaterial;
 import net.redstone233.test.client.hud.FreezeSwordHud;
 import net.redstone233.test.items.ModItems;
-import net.redstone233.test.TestMod;
 import org.jetbrains.annotations.Nullable;
 
 public class FreezeSwordItem extends Item {

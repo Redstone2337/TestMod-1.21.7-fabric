@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.client.MinecraftClient;
 import net.redstone233.test.client.hud.FreezeSwordHud;
 import net.redstone233.test.client.tooltip.FreezeSwordTooltipComponent;
-import net.redstone233.test.core.component.type.ModDataComponentTypes;
+import net.redstone233.test.core.component.ModDataComponentTypes;
 import net.redstone233.test.core.until.ModKeys;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 

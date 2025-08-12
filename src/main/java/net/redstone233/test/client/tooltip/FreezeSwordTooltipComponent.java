@@ -8,7 +8,7 @@ import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.util.Identifier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.redstone233.test.core.component.type.ModDataComponentTypes;
+import net.redstone233.test.core.component.ModDataComponentTypes;
 
 import java.util.Optional;
 

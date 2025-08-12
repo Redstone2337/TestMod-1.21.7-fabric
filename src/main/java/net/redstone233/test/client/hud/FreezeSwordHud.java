@@ -10,8 +10,8 @@ import net.minecraft.util.math.ColorHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.redstone233.test.core.component.FreezingSwordComponent;
-import net.redstone233.test.core.component.type.ModDataComponentTypes;
+import net.redstone233.test.core.component.type.FreezingSwordComponent;
+import net.redstone233.test.core.component.ModDataComponentTypes;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 
 @Environment(EnvType.CLIENT)
@@ -165,8 +165,8 @@ import net.minecraft.util.math.ColorHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.redstone233.test.core.component.FreezingSwordComponent;
-import net.redstone233.test.core.component.type.ModDataComponentTypes;
+import net.redstone233.test.core.component.type.FreezingSwordComponent;
+import net.redstone233.test.core.component.ModDataComponentTypes;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 
 @Environment(EnvType.CLIENT)

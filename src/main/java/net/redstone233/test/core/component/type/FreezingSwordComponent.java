@@ -112,7 +112,7 @@ public record FreezingSwordComponent(int chargeProgress, boolean isCharging, int
     }
 }*/
 
-package net.redstone233.test.core.component;
+package net.redstone233.test.core.component.type;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
