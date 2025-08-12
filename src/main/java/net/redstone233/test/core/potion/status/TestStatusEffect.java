@@ -11,8 +11,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.redstone233.test.core.until.RandomNumber;
 
-import java.util.List;
-
 public class TestStatusEffect extends StatusEffect {
 //    private final int random = RandomNumber.nextInt(-1, 10);
 
@@ -23,39 +21,20 @@ public class TestStatusEffect extends StatusEffect {
     @Override
     public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
         if (entity instanceof PlayerEntity player) {
-            int random = getRandom();
-//            player.addStatusEffect(
-//                    (StatusEffectInstance) List.of(
-//                            new StatusEffectInstance(StatusEffects.NAUSEA, 600, 1),
-//                            new StatusEffectInstance(StatusEffects.LUCK, 300, 4),
-//                            new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 5)
-//                    )
-//            );
+            int random = RandomNumber.nextInt(-1,10);
 
-           switch (amplifier) {
-               case 1 ->  player.addStatusEffect(
-                       (StatusEffectInstance) List.of(
-                               new StatusEffectInstance(StatusEffects.NAUSEA, 600, 1),
-                               new StatusEffectInstance(StatusEffects.LUCK, 300, 4),
-                               new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 5)
-                       )
-               );
-               case 2 -> player.addStatusEffect(
-                       (StatusEffectInstance) List.of(
-                               new StatusEffectInstance(StatusEffects.NAUSEA, 600, 2),
-                               new StatusEffectInstance(StatusEffects.LUCK, 300, 5),
-                               new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 6)
-                       )
-               );
-               case 3 ->  player.addStatusEffect(
-                       (StatusEffectInstance) List.of(
-                               new StatusEffectInstance(StatusEffects.NAUSEA, 600, 3),
-                               new StatusEffectInstance(StatusEffects.LUCK, 300, 5),
-                               new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 6)
-                       )
-               );
-               default -> player.sendMessage(Text.literal("没有任何效果！").formatted(Formatting.AQUA,Formatting.BOLD),false);
-           }
+            if (amplifier == 2) {
+                applyDefaultEffect(player);
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE,1200,4,false,true,true));
+                player.sendMessage(Text.literal("[GeneralMessage]")
+                                .formatted(Formatting.GRAY,Formatting.BOLD)
+                                .append(Text.literal("变化不大，只是多了一个药水而已")
+                                        .formatted(Formatting.BLUE,Formatting.BOLD))
+                        , true);
+            }
+
+
+            applyDefaultEffect(player);
 
 
            switch (random) {
@@ -78,7 +57,6 @@ public class TestStatusEffect extends StatusEffect {
             switch (amplifier) {
                 case 1 -> livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,600, 3));
                 case 2 -> livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,600, 4));
-                case 3 -> livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,600, 5));
                 default -> livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING,300, 3));
             }
             return true;
@@ -145,10 +123,6 @@ public class TestStatusEffect extends StatusEffect {
                 applyDefaultEffect(player);
                 break;
         }
-    }
-
-    private static int getRandom() {
-        return RandomNumber.nextInt(-1,10);
     }
 
     @Override
