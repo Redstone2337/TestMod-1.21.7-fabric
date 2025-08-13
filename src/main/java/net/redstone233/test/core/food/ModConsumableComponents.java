@@ -32,8 +32,53 @@ public class ModConsumableComponents {
                             4,
                             true,
                             false
-                    ),0.1F)
+                    ),0.5F)
             )
+            .build();
+
+    public static final ConsumableComponent DELICIOUS_BLACK_GARLIC = food()
+            .consumeSeconds(3.0f)
+            .consumeEffect(
+                    new ApplyEffectsConsumeEffect(
+                           new StatusEffectInstance(
+                                   StatusEffects.NAUSEA,
+                                   1200,
+                                   2,
+                                   true,
+                                   false
+                           )
+                    )
+            )
+            .consumeEffect(new ApplyEffectsConsumeEffect(
+                    new StatusEffectInstance(
+                            StatusEffects.SPEED,
+                            1200,
+                            2,
+                            true,
+                            false
+                    ),
+                    0.3f
+            ))
+            .consumeEffect( new ApplyEffectsConsumeEffect(
+                    new StatusEffectInstance(
+                            StatusEffects.JUMP_BOOST,
+                            1200,
+                            2,
+                            true,
+                            false
+                    ),
+                    0.4f
+            ))
+            .consumeEffect(new ApplyEffectsConsumeEffect(
+                    new StatusEffectInstance(
+                            StatusEffects.HEALTH_BOOST,
+                            1200,
+                            9,
+                            true,
+                            false
+                    ),
+                    0.2f
+            ))
             .build();
 
     public static void init() {

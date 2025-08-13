@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.redstone233.test.TestMod;
 import net.redstone233.test.core.component.ModDataComponentTypes;
+import net.redstone233.test.core.component.type.DeliciousBlackGarlicComponent;
 import net.redstone233.test.core.component.type.HerbalTeaComponent;
 import net.redstone233.test.core.food.ModConsumableComponents;
 import net.redstone233.test.core.food.ModFoodComponents;
@@ -39,6 +40,14 @@ public static final float ATTACK_DAMAGE = 10.0f;
                     .useRemainder(Items.GLASS_BOTTLE)
                     .maxCount(12)
                     .component(ModDataComponentTypes.HE_QI_ZHENG, HerbalTeaComponent.DEFAULT)
+    );
+
+    public static final Item DELICIOUS_BLACK_GARLIC = register(
+      "black_garlic",
+      new Item.Settings()
+              .food(ModFoodComponents.DELICIOUS_BLACK_GARLIC, ModConsumableComponents.DELICIOUS_BLACK_GARLIC)
+              .component(ModDataComponentTypes.DELICIOUS_BLACK_GARLIC, DeliciousBlackGarlicComponent.DEFAULT)
+              .maxCount(64)
     );
 
 

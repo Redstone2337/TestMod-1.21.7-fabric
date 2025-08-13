@@ -5,6 +5,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.redstone233.test.TestMod;
+import net.redstone233.test.core.component.type.DeliciousBlackGarlicComponent;
 import net.redstone233.test.core.component.type.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.HerbalTeaComponent;
 
@@ -22,6 +23,11 @@ public class ModDataComponentTypes {
     public static final ComponentType<HerbalTeaComponent> HE_QI_ZHENG = register(
             "herbal_tea",
             herbalTeaComponentBuilder -> herbalTeaComponentBuilder.codec(HerbalTeaComponent.CODEC)
+    );
+
+    public static final ComponentType<DeliciousBlackGarlicComponent> DELICIOUS_BLACK_GARLIC = register(
+            "black_garlic",
+            deliciousBlackGarlicComponentBuilder -> deliciousBlackGarlicComponentBuilder.codec(DeliciousBlackGarlicComponent.CODEC)
     );
 
     private static <T> ComponentType<T> register(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {

@@ -6,9 +6,6 @@ import net.minecraft.component.ComponentsAccess;
 import net.minecraft.item.Item;
 import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -44,8 +41,8 @@ public record HerbalTeaComponent(boolean isDisplay, Formatting color, Formatting
             textConsumer.accept(Text.literal("---喝一口会是什么情况呢？").formatted(color,font));
             
             textConsumer.accept(Text.literal("  >要喝一口吗？").formatted(Formatting.GREEN,Formatting.BOLD));
-            textConsumer.accept(Text.literal("  \n>非常美味。").formatted(Formatting.YELLOW,Formatting.BOLD));
-            textConsumer.accept(Text.literal("可通过配方直接合成").formatted(Formatting.GRAY,Formatting.BOLD));
+            textConsumer.accept(Text.literal("  >非常美味。").formatted(Formatting.YELLOW,Formatting.BOLD));
+            textConsumer.accept(Text.literal(" 可通过配方直接合成").formatted(Formatting.GRAY,Formatting.BOLD));
         }
     }
 }

@@ -14,6 +14,7 @@ import net.redstone233.test.core.loot.FreezeSwordLoot;
 import net.redstone233.test.core.potion.ModStatusEffects;
 import net.redstone233.test.core.tags.ModBlockTags;
 import net.redstone233.test.core.tags.ModItemTags;
+import net.redstone233.test.core.transaction.CustomTrades;
 import net.redstone233.test.core.until.ModToolMaterial;
 import net.redstone233.test.core.world.gen.ModWorldGeneration;
 import net.redstone233.test.items.ModItemGroups;
@@ -47,6 +48,7 @@ public class TestMod implements ModInitializer {
 		BrewingRecipeLoader.register();
 		ModPotions.init();
 		ModStatusEffects.init();
+		CustomTrades.init();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.

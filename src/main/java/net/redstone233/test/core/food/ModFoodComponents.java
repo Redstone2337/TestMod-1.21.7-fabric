@@ -6,6 +6,7 @@ import net.redstone233.test.TestMod;
 public class ModFoodComponents {
 
     public static final FoodComponent HE_QI_ZHENG = new FoodComponent.Builder().nutrition(6).saturationModifier(0.1F).alwaysEdible().build();
+    public static final FoodComponent DELICIOUS_BLACK_GARLIC = new FoodComponent.Builder().alwaysEdible().nutrition(4).saturationModifier(0.5f).build();
 
     public static void init() {
         TestMod.LOGGER.info("食品注册成功！");

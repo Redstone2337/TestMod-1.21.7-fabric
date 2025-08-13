@@ -23,6 +23,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(ModItems.SILICON_INGOT, "Silicon Ingot");
         translationBuilder.add(ModItems.FREEZE_SWORD, "Freeze Sword");
         translationBuilder.add(ModItems.HE_QI_ZHENG, "Chinese Herb Tea");
+        translationBuilder.add(ModItems.DELICIOUS_BLACK_GARLIC, "\"Delicious\" Black Garlic");
 
         // Blocks
         translationBuilder.add(ModBlocks.SILICON_BLOCK, "Block of Silicon");

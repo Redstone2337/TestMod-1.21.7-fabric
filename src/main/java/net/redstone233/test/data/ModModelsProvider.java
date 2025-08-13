@@ -36,5 +36,6 @@ public class ModModelsProvider extends FabricModelProvider {
         itemModelGenerator.register(ModItems.SILICON_INGOT ,Models.GENERATED);
         itemModelGenerator.register(ModItems.FREEZE_SWORD, Models.HANDHELD);
         itemModelGenerator.register(ModItems.HE_QI_ZHENG, Models.GENERATED);
+        itemModelGenerator.register(ModItems.DELICIOUS_BLACK_GARLIC,Models.GENERATED);
     }
 }
