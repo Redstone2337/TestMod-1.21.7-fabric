@@ -23,10 +23,13 @@ public class AcquireModItemStackCommand {
                                         run.getSource()
                                 )
                         )
-                        .then(CommandManager.literal("modBlocks")
-                                .executes(run -> giveModBlocks(run.getSource()))
-                        )
-                );
+                )
+            .then(CommandManager.literal("modBlocks")
+                                .executes(run -> giveModBlocks(
+                                    run.getSource()
+                                )
+                            )
+                        );
     }
 
     private static int giveModItems(ServerCommandSource source) {
