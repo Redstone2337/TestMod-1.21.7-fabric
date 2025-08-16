@@ -29,7 +29,18 @@ public class ModBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                         ModBlocks.SILICON_DOOR,
                         ModBlocks.SILICON_TRAPDOOR
                 );
+        valueLookupBuilder(ModBlockTags.FEATURE_BLOCKS)
+                .add(
+                        ModBlocks.SILICON_ORE,
+                        ModBlocks.DEEPSLATE_SILICON_ORE
+                );
         valueLookupBuilder(ModBlockTags.INCORRECT_FOR_SILICON_TOOL);
+        valueLookupBuilder(BlockTags.PICKAXE_MINEABLE)
+                .addTag(ModBlockTags.BUILDING_BLICKS)
+                .addTag(ModBlockTags.FEATURE_BLOCKS);
+        valueLookupBuilder(BlockTags.AXE_MINEABLE)
+                .add(ModBlocks.SILICON_FENCE_GATE);
+
 // 台阶
 valueLookupBuilder(BlockTags.SLABS)
 			.add(ModBlocks.SILICON_BLOCK_SLAB);
