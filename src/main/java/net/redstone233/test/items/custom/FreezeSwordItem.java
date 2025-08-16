@@ -301,7 +301,7 @@ public class FreezeSwordItem extends Item {
                     new FreezingSwordComponent(newProgress, true, currentCharges));
 
             // 当进度完成时增加充能点
-            if (newProgress >= CHARGE_TIME) {
+            if (newProgress == CHARGE_TIME) {
                 int newCharges = Math.min(currentCharges + 1, MAX_CHARGES);
 
                 // 创建新的组件状态

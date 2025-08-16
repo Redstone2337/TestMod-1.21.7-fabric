@@ -34,6 +34,7 @@
   "itemGroup.mtc.silicon_items": "Silicon | Items",
   "key.freezesword.charge": "Activate Freeze Sword Charge",
   "msg.freezesword.boss_hit": "§6[Freeze Sword]§r Critical hit on Boss! Charges[%d/%d] Damage +%.0f",
+  "msg.freezesword.boss_target": "§6[Freeze Sword]§r Found boss target damage increase!",
   "msg.freezesword.charge_added": "§b[Freeze Sword]§r Charge added! Current: %d/%d",
   "msg.freezesword.charge_canceled": "§7[Freeze Sword]§r Charge canceled (released [%s])",
   "msg.freezesword.charge_progress": "§b[Freeze Sword]§r%s",
