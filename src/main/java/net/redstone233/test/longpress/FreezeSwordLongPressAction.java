@@ -10,6 +10,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 import net.redstone233.test.items.custom.FreezeSwordItem;
+import net.redstone233.test.client.hud.FreezeSwordHud;
+import net.redstone233.test.core.component.type.FreezingSwordComponent;
 import net.redstone233.test.core.component.ModDataComponentTypes;
 
 public class FreezeSwordLongPressAction implements LongPressAction {
@@ -122,14 +124,15 @@ public class FreezeSwordLongPressAction implements LongPressAction {
             double offsetX = player.getRandom().nextGaussian() * 0.5;
             double offsetY = player.getRandom().nextGaussian() * 0.5 + 1;
             double offsetZ = player.getRandom().nextGaussian() * 0.5;
-            
+
+            /*
             player.getWorld().addParticle(
                 ParticleTypes.SNOWFLAKE,
                 player.getX() + offsetX,
                 player.getY() + offsetY,
                 player.getZ() + offsetZ,
                 0, 0.1, 0
-            );
+            );*/
         }
     }
     
