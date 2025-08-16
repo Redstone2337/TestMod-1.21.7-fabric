@@ -51,34 +51,6 @@ public class FreezeSwordItem extends Item {
                 .build();
     }
 
-/*
-    public static void handleKeyInput(PlayerEntity player) {
-        if (player.getWorld().isClient) {
-            ItemStack stack = player.getMainHandStack();
-            if (stack.getItem() instanceof FreezeSwordItem) {
-                FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
-                boolean isKeyPressed = ModKeys.isChargeKeyPressed();
-                boolean isCharging = component != null && component.isCharging();
-                int charges = component != null ? component.charges() : 0;
-
-                // 点击I键时开始蓄力
-                if (isKeyPressed && !isCharging) {
-                    stack.set(ModDataComponentTypes.FREEZING_SWORD, 
-                        new FreezingSwordComponent(0, true, charges));
-                    player.sendMessage(
-                        Text.translatable("msg.freezesword.charge_start")
-                            .formatted(Formatting.AQUA),
-                        true);
-                }
-                // 如果正在蓄力但按键被释放，停止蓄力
-                else if (isCharging && !isKeyPressed) {
-                    stack.set(ModDataComponentTypes.FREEZING_SWORD, 
-                        new FreezingSwordComponent(0, false, charges));
-                }
-            }
-        }
-    }*/
-
 public static void handleKeyInput(PlayerEntity player) {
     if (player.getWorld().isClient) {
         ItemStack stack = player.getMainHandStack();
