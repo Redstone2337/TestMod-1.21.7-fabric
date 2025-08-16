@@ -51,5 +51,11 @@ valueLookupBuilder(BlockTags.FENCES)
 // 栅栏门
 valueLookupBuilder(BlockTags.FENCE_GATES)
 			.add(ModBlocks.SILICON_FENCE_GATE);
+
+valueLookupBuilder(BlockTags.NEEDS_IRON_TOOL)
+        .add(
+                ModBlocks.SILICON_ORE,
+                ModBlocks.DEEPSLATE_SILICON_ORE
+        );
     }
 }

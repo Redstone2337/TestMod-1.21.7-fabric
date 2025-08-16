@@ -10,11 +10,14 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.client.MinecraftClient;
+import net.redstone233.test.client.ClientLongPressHandler;
 import net.redstone233.test.client.hud.FreezeSwordHud;
 import net.redstone233.test.client.tooltip.FreezeSwordTooltipComponent;
 import net.redstone233.test.core.component.ModDataComponentTypes;
 import net.redstone233.test.core.until.ModKeys;
 import net.redstone233.test.items.custom.FreezeSwordItem;
+import net.redstone233.test.longpress.FreezeSwordLongPressAction;
+import net.redstone233.test.longpress.LongPressManager;
 
 public class TestModClient implements ClientModInitializer {
 
@@ -32,6 +35,15 @@ public class TestModClient implements ClientModInitializer {
         //ComponentTooltipAppenderRegistry.addLast(ModDataComponentTypes.FREEZING_SWORD);
         ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.FREEZING_SWORD);
 
+
+        // 初始化长按处理器
+        ClientLongPressHandler.init();
+
+        // 注册冻结剑的长按动作
+        LongPressManager.registerAction("freeze_sword_charge", new FreezeSwordLongPressAction());
+
+        // 绑定按键到动作
+        LongPressManager.bindKeyToAction("charge_key", "freeze_sword_charge");
         
 // 注册HUD渲染
 /*        HudRenderCallback.EVENT.register((context, tickDelta) -> {
@@ -39,9 +51,9 @@ public class TestModClient implements ClientModInitializer {
         });*/
 
         // 注册客户端tick事件
-        ClientTickEvents.START_CLIENT_TICK.register(client -> {
-            FreezeSwordHud.updatePlayerItems(MinecraftClient.getInstance().player);
-        });
+//        ClientTickEvents.START_CLIENT_TICK.register(client -> {
+//            FreezeSwordHud.updatePlayerItems(MinecraftClient.getInstance().player);
+//        });
 /*
  HudElementRegistry.attachElementBefore(
             VanillaHudElements.SLEEP, 

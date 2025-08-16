@@ -31,7 +31,7 @@ public class ModPlacedFeatures {
         // HeightRangePlacementModifier.uniform参数是高度范围，另有trapezoid方法（梯形生成法）
         register(featureRegisterable, SILICON_ORE_PLACED_KEY, registryEntryLookup.getOrThrow(ModConfiguredFeatures.SILICON_ORE_KEY),
                 ModOrePlacements.modifiersWithCount(12,
-                        HeightRangePlacementModifier.uniform(YOffset.fixed(-80), YOffset.fixed(80))));
+                        HeightRangePlacementModifier.uniform(YOffset.fixed(-60), YOffset.fixed(30))));
         register(featureRegisterable, NETHER_SILICON_ORE_PLACED_KEY, registryEntryLookup.getOrThrow(ModConfiguredFeatures.NETHER_SILICON_ORE_KEY),
                 ModOrePlacements.modifiersWithCount(12,
                         HeightRangePlacementModifier.uniform(YOffset.fixed(-80), YOffset.fixed(80))));

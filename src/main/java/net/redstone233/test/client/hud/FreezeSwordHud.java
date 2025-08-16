@@ -204,7 +204,7 @@ public class FreezeSwordHud {
     public static void updateKeyState(boolean pressed) {
         keyPressed = pressed;
     }
-    
+
     public static void updateProgress(float progress) {
         longPressProgress = progress;
     }
@@ -218,14 +218,14 @@ public class FreezeSwordHud {
         ItemStack mainHand = player.getMainHandStack();
         ItemStack offHand = player.getOffHandStack();
 
-        hasFreezeSword = mainHand.getItem() instanceof FreezeSwordItem || 
-                         offHand.getItem() instanceof FreezeSwordItem;
+        hasFreezeSword = mainHand.getItem() instanceof FreezeSwordItem ||
+                offHand.getItem() instanceof FreezeSwordItem;
 
         if (hasFreezeSword) {
             LongPressManager.PressData pressData = LongPressManager.getPressData(player);
-            boolean isLongPressing = pressData != null && 
-                                   pressData.action.getName().equals("freeze_sword_charge");
-            
+            boolean isLongPressing = pressData != null &&
+                    pressData.action.getName().equals("freeze_sword_charge");
+
             if (mainHand.getItem() instanceof FreezeSwordItem) {
                 updateFromStack(mainHand, isLongPressing);
             } else if (offHand.getItem() instanceof FreezeSwordItem) {
@@ -233,7 +233,7 @@ public class FreezeSwordHud {
             }
         }
     }
-    
+
     private static void updateFromStack(ItemStack stack, boolean isLongPressing) {
         FreezingSwordComponent component = stack.get(ModDataComponentTypes.FREEZING_SWORD);
         if (component != null) {
@@ -243,10 +243,10 @@ public class FreezeSwordHud {
             } else {
                 progress = component.chargeProgress();
             }
-            
+
             charges = component.charges();
             isCharging = component.isCharging();
-            
+
             if (component.isCharging()) {
                 lastChargeTime = System.currentTimeMillis();
             }
@@ -255,18 +255,18 @@ public class FreezeSwordHud {
 
     private static boolean shouldRender() {
         // 显示条件：按下I键、正在充能、或充能完成3秒内
-        return hasFreezeSword && (keyPressed || isCharging || 
-               (System.currentTimeMillis() - lastChargeTime < 3000 && charges > 0));
+        return hasFreezeSword && (keyPressed || isCharging ||
+                (System.currentTimeMillis() - lastChargeTime < 3000 && charges > 0));
     }
 
     public static void render(DrawContext context) {
         MinecraftClient client = MinecraftClient.getInstance();
         PlayerEntity player = client.player;
-        
+
         if (player != null) {
             checkAndUpdateState(player);
         }
-        
+
         if (!shouldRender()) return;
 
         int screenWidth = client.getWindow().getScaledWidth();
@@ -314,18 +314,18 @@ public class FreezeSwordHud {
             text = Text.literal("MAX POWER!").formatted(Formatting.GOLD, Formatting.BOLD);
         } else if (isCharging) {
             text = Text.literal((int)(progressRatio * 100) + "%")
-                   .formatted(Formatting.AQUA);
+                    .formatted(Formatting.AQUA);
         } else {
             text = Text.literal(charges + "/" + FreezeSwordItem.MAX_CHARGES)
-                   .formatted(Formatting.BLUE);
+                    .formatted(Formatting.BLUE);
         }
 
         context.drawCenteredTextWithShadow(
-            client.textRenderer,
-            text,
-            screenWidth / 2,
-            y,
-            0xFFFFFF
+                client.textRenderer,
+                text,
+                screenWidth / 2,
+                y,
+                0xFFFFFF
         );
     }
 
