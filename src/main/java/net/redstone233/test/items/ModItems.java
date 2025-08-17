@@ -15,6 +15,7 @@ import net.redstone233.test.core.food.ModFoodComponents;
 import net.redstone233.test.core.until.ModToolMaterial;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 import net.redstone233.test.core.commands.SetValueCountCommand;
+import net.redstone233.test.items.custom.HerbalTeaItem;
 
 import java.util.function.Function;
 
@@ -34,12 +35,14 @@ public static final float ATTACK_DAMAGE = 10.0f;
     );
     public static final Item HE_QI_ZHENG = register(
             "herbal_tea",
+            HerbalTeaItem::new,
             new Item.Settings()
                     .recipeRemainder(Items.GLASS_BOTTLE)
                     .food(ModFoodComponents.HE_QI_ZHENG, ModConsumableComponents.HE_QI_ZHENG)
                     .useRemainder(Items.GLASS_BOTTLE)
                     .maxCount(12)
                     .component(ModDataComponentTypes.HE_QI_ZHENG, HerbalTeaComponent.DEFAULT)
+                    .attributeModifiers(HerbalTeaItem.createAttributeModifiers())
     );
 
     public static final Item DELICIOUS_BLACK_GARLIC = register(

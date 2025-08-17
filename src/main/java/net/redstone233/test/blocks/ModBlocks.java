@@ -15,13 +15,10 @@ import java.util.function.Function;
 
 public class ModBlocks {
 
-    //AbstractBlock.Settings.create()
-    // .mapColor(MapColor.STONE_GRAY)
-    // .instrument(NoteBlockInstrument.BASEDRUM)
-    // .requiresTool().strength(3.0F, 3.0F)
-
     public static final Block SILICON_BLOCK = register("silicon_block", AbstractBlock.Settings.copy(Blocks./*IRON_BLOCK*/AMETHYST_BLOCK));
-    public static final Block RAW_SILICON_BLOCK = register("raw_silicon_block", AbstractBlock.Settings.copy(Blocks.RAW_IRON_BLOCK)                    .sounds(BlockSoundGroup.AMETHYST_BLOCK));
+    public static final Block RAW_SILICON_BLOCK = register("raw_silicon_block",
+            AbstractBlock.Settings.copy(Blocks.RAW_IRON_BLOCK)
+            .sounds(BlockSoundGroup.AMETHYST_BLOCK));
     public static final Block SILICON_ORE = register(
             "silicon_ore",
             settings -> new ExperienceDroppingBlock(ConstantIntProvider.create(0),settings),
