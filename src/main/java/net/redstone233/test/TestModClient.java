@@ -34,6 +34,8 @@ public class TestModClient implements ClientModInitializer {
 
         //ComponentTooltipAppenderRegistry.addLast(ModDataComponentTypes.FREEZING_SWORD);
         ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.FREEZING_SWORD);
+        ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.HE_QI_ZHENG);
+        ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.DELICIOUS_BLACK_GARLIC);
 
 
         // 初始化长按处理器
@@ -44,40 +46,6 @@ public class TestModClient implements ClientModInitializer {
 
         // 绑定按键到动作
         LongPressManager.bindKeyToAction("charge_key", "freeze_sword_charge");
-        
-// 注册HUD渲染
-/*        HudRenderCallback.EVENT.register((context, tickDelta) -> {
-            FreezeSwordHud.render(context);
-        });*/
-
-        // 注册客户端tick事件
-//        ClientTickEvents.START_CLIENT_TICK.register(client -> {
-//            FreezeSwordHud.updatePlayerItems(MinecraftClient.getInstance().player);
-//        });
-/*
- HudElementRegistry.attachElementBefore(
-            VanillaHudElements.SLEEP, 
-            Identifier.of(TestMod.MOD_ID, "freeze_hud"),
-            (context, tickCounter) -> {
-FreezeSwordHud.render(context);
-        });*/
-
-
-/*
- HudElementRegistry.attachElementBefore(
-         VanillaHudElements.MISC_OVERLAYS,
-         Identifier.of(TestMod.MOD_ID, "freeze_hud"),
-                (context, tickCounter) -> {
-                    FreezeSwordHud.render(context);
-         });*/
-
-        /*
- HudElementRegistry.attachElementBefore(
-         VanillaHudElements.CHAT,
-         Identifier.of(TestMod.MOD_ID, "freeze_hud"),
-                (context, tickCounter) -> {
-                    FreezeSwordHud.render(context);
-         });*/
 
         HudElementRegistry.addFirst(
                 Identifier.of(TestMod.MOD_ID, "freeze_hud"),
