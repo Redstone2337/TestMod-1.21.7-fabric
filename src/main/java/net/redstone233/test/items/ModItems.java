@@ -1,5 +1,6 @@
 package net.redstone233.test.items;
 
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKey;
@@ -13,6 +14,7 @@ import net.redstone233.test.core.component.type.HerbalTeaComponent;
 import net.redstone233.test.core.food.ModConsumableComponents;
 import net.redstone233.test.core.food.ModFoodComponents;
 import net.redstone233.test.core.until.ModToolMaterial;
+import net.redstone233.test.items.custom.BlackGarlicItem;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 import net.redstone233.test.core.commands.SetValueCountCommand;
 import net.redstone233.test.items.custom.HerbalTeaItem;
@@ -30,8 +32,9 @@ public static final float ATTACK_DAMAGE = 10.0f;
     public static final Item SILICON_INGOT = register("silicon_ingot", new Item.Settings().maxCount(CUSTOM_MAX_COUNT));
     public static final Item FREEZE_SWORD = register("freeze_sword",
             settings -> new FreezeSwordItem(ModToolMaterial.SILICON,ATTACK_DAMAGE, 2.5f ,settings),
-            new Item.Settings().maxDamage(300000).rarity(Rarity.RARE)
-                    /*.attributeModifiers(FreezeSwordItem.createAttributeModifiers())*/
+            new Item.Settings()
+                    .maxDamage(300000)
+                    .rarity(Rarity.RARE)
     );
     public static final Item HE_QI_ZHENG = register(
             "herbal_tea",
@@ -42,14 +45,18 @@ public static final float ATTACK_DAMAGE = 10.0f;
                     .useRemainder(Items.GLASS_BOTTLE)
                     .maxCount(12)
                     .component(ModDataComponentTypes.HE_QI_ZHENG, HerbalTeaComponent.DEFAULT)
+                    .component(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true)
                     .attributeModifiers(HerbalTeaItem.createAttributeModifiers())
     );
 
     public static final Item DELICIOUS_BLACK_GARLIC = register(
       "black_garlic",
+      BlackGarlicItem::new,
       new Item.Settings()
               .food(ModFoodComponents.DELICIOUS_BLACK_GARLIC, ModConsumableComponents.DELICIOUS_BLACK_GARLIC)
               .component(ModDataComponentTypes.DELICIOUS_BLACK_GARLIC, DeliciousBlackGarlicComponent.DEFAULT)
+              .component(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE,true)
+              .attributeModifiers(BlackGarlicItem.createAttributeModifiers())
               .maxCount(64)
     );
 

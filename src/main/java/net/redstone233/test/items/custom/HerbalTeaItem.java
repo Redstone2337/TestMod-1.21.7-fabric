@@ -10,8 +10,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 
 public class HerbalTeaItem extends Item {
     public HerbalTeaItem(Settings settings) {
@@ -21,11 +19,11 @@ public class HerbalTeaItem extends Item {
     public static AttributeModifiersComponent createAttributeModifiers() {
         return AttributeModifiersComponent.builder()
                 .add(EntityAttributes.ATTACK_DAMAGE,
-                        new EntityAttributeModifier(BASE_ATTACK_DAMAGE_MODIFIER_ID, 4.0F,
+                        new EntityAttributeModifier(BASE_ATTACK_DAMAGE_MODIFIER_ID, 15.0F,
                                 EntityAttributeModifier.Operation.ADD_VALUE),
                         AttributeModifierSlot.MAINHAND)
                 .add(EntityAttributes.ATTACK_SPEED,
-                        new EntityAttributeModifier(BASE_ATTACK_SPEED_MODIFIER_ID, 3.5F,
+                        new EntityAttributeModifier(BASE_ATTACK_SPEED_MODIFIER_ID, 10.7F,
                                 EntityAttributeModifier.Operation.ADD_VALUE),
                         AttributeModifierSlot.MAINHAND)
                 .build();
