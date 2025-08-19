@@ -1,6 +1,7 @@
 package net.redstone233.test;
 
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -25,12 +26,15 @@ import net.redstone233.test.longpress.LongPressManager;
 
 public class TestModClient implements ClientModInitializer {
     public static ModConfig CONFIG;
+    private static ConfigHolder<ModConfig> configHolder;
 
 
     @Override
     public void onInitializeClient() {
 
         AutoConfig.register(ModConfig.class, Toml4jConfigSerializer::new);
+
+        refreshConfig();
 
         // 注册Tooltip组件
         TooltipComponentCallback.EVENT.register(data -> {
@@ -70,10 +74,26 @@ public class TestModClient implements ClientModInitializer {
 
            while (ModKeys.isAnnouncementKeyPressed()) {
                if (client.player != null) {
+                   refreshConfig();
                    client.setScreen(new AnnouncementScreen());
                }
            }
         });
+    }
+
+    // 安全获取配置的方法
+    public static void refreshConfig() {
+        try {
+            if (configHolder != null) {
+                CONFIG = configHolder.getConfig();
+            } else {
+                TestMod.LOGGER.error("Config holder is null, using default config");
+                CONFIG = new ModConfig();
+            }
+        } catch (Exception e) {
+            TestMod.LOGGER.error("Failed to load config, using default", e);
+            CONFIG = new ModConfig();
+        }
     }
 
     public static void saveConfig() {

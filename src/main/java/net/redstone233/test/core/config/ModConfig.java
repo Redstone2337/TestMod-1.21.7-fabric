@@ -6,6 +6,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Config(name = "announcementscreen")
@@ -66,7 +67,18 @@ public class ModConfig implements ConfigData {
 
     @Override
     public void validatePostLoad() throws ValidationException {
-        // 迁移旧版字符串颜色配置
+        // 确保字段不为null
+        if (mainTitle == null) mainTitle = "服务器公告";
+        if (subTitle == null) subTitle = "最新通知";
+        if (announcementContent == null) announcementContent = Collections.singletonList("默认公告内容");
+        if (buttonText == null) buttonText = "前往投递";
+        if (buttonLink == null) buttonLink = "https://example.com";
+
+        // 确保颜色值有效
+        if (mainTitleColor == 0) mainTitleColor = 0xFFD700;
+        if (subTitleColor == 0) subTitleColor = 0xFFFFFF;
+        if (contentColor == 0) contentColor = 0xCCCCCC;
+
         if (oldMainTitleColor != null && !oldMainTitleColor.isEmpty()) {
             try {
                 mainTitleColor = (int) Long.parseLong(oldMainTitleColor.replace("#", ""), 16);
