@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Config(name = "announcementscreen")
+@Config(name = "testmod")
 public class ModConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip(count = 2)
     @Comment("主标题文本")
@@ -47,22 +47,43 @@ public class ModConfig implements ConfigData {
     public int scrollSpeed = 30;
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("主标题颜色 (RGB十六进制)")
+    @Comment("主标题颜色 (RGB整数)")
     public int mainTitleColor = 0xFFD700;
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("副标题颜色 (RGB十六进制)")
+    @Comment("副标题颜色 (RGB整数)")
     public int subTitleColor = 0xFFFFFF;
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("公告内容颜色 (RGB十六进制)")
-    public int contentColor = 0xCCCCCC;
+    @Comment("公告内容颜色 (RGB整数)")
+    public int contentColor = 0x0610EA;
 
     @ConfigEntry.Gui.Tooltip
     @Comment("启用调试模式（显示UI边界等辅助信息）")
     public boolean debugMode = false;
 
-    // 向后兼容处理
+    // 新增配置选项
+    @ConfigEntry.Gui.Tooltip
+    @Comment("是否显示公告图标")
+    public boolean showIcon = false;
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("图标资源路径 (例如: testmod:textures/gui/icon.png)")
+    public String iconPath = "testmod:textures/gui/announcement_icon.png";
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("图标宽度 (像素)")
+    public int iconWidth = 32;
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("图标高度 (像素)")
+    public int iconHeight = 32;
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("图标与文本的间距 (像素)")
+    public int iconTextSpacing = 10;
+
+    // 向后兼容字段
     @Deprecated
     public String oldMainTitleColor;
     @Deprecated
@@ -78,38 +99,54 @@ public class ModConfig implements ConfigData {
         if (announcementContent == null) announcementContent = Collections.singletonList("默认公告内容");
         if (buttonText == null) buttonText = "前往投递";
         if (buttonLink == null) buttonLink = "https://example.com";
+        if (iconPath == null) iconPath = "testmod:textures/gui/announcement_icon.png";
 
         // 确保颜色值有效
         if (mainTitleColor == 0) mainTitleColor = 0xFFD700;
         if (subTitleColor == 0) subTitleColor = 0xFFFFFF;
         if (contentColor == 0) contentColor = 0xCCCCCC;
 
-        // 迁移旧版字符串颜色配置
-        if (oldMainTitleColor != null && !oldMainTitleColor.isEmpty()) {
-            try {
-                mainTitleColor = (int) Long.parseLong(oldMainTitleColor.replace("#", ""), 16);
-            } catch (Exception e) {
-                // 转换失败，保持默认值
-            }
-        }
+        // 确保图标尺寸有效
+        if (iconWidth < 16) iconWidth = 16;
+        if (iconWidth > 1024) iconWidth = 1024;
+        if (iconHeight < 16) iconHeight = 16;
+        if (iconHeight > 1024) iconHeight = 1024;
+        if (iconTextSpacing < 0) iconTextSpacing = 10;
 
-        if (oldSubTitleColor != null && !oldSubTitleColor.isEmpty()) {
-            try {
-                subTitleColor = (int) Long.parseLong(oldSubTitleColor.replace("#", ""), 16);
-            } catch (Exception e) {
-                // 转换失败，保持默认值
-            }
-        }
+        // 迁移旧版配置
+        migrateOldConfig();
 
-        if (oldContentColor != null && !oldContentColor.isEmpty()) {
-            try {
-                contentColor = (int) Long.parseLong(oldContentColor.replace("#", ""), 16);
-            } catch (Exception e) {
-                // 转换失败，保持默认值
-            }
-        }
-
-        // 同步调试模式状态
+        // 同步调试模式
         TestModClient.DEBUG_MODE = this.debugMode;
+    }
+
+    private void migrateOldConfig() {
+        try {
+            if (oldMainTitleColor != null && !oldMainTitleColor.isEmpty()) {
+                mainTitleColor = parseColor(oldMainTitleColor, 0xFFD700);
+                oldMainTitleColor = null;
+            }
+
+            if (oldSubTitleColor != null && !oldSubTitleColor.isEmpty()) {
+                subTitleColor = parseColor(oldSubTitleColor, 0xFFFFFF);
+                oldSubTitleColor = null;
+            }
+
+            if (oldContentColor != null && !oldContentColor.isEmpty()) {
+                contentColor = parseColor(oldContentColor, 0xCCCCCC);
+                oldContentColor = null;
+            }
+        } catch (Exception e) {
+            TestModClient.LOGGER.warn("配置迁移失败", e);
+        }
+    }
+
+    private int parseColor(String colorString, int defaultValue) {
+        try {
+            String cleanString = colorString.replace("#", "").trim();
+            return (int) Long.parseLong(cleanString, 16);
+        } catch (Exception e) {
+            return defaultValue;
+        }
     }
 }

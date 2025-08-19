@@ -76,7 +76,7 @@ public class ScrollableTextWidget extends ClickableWidget {
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         // 绘制背景
-        context.fill(getX(), getY(), getX() + width, getY() + height, 0x80000000);
+        context.fill(getX(), getY(), getX() + width, getY() + height, 0xE0FFFF);
 
         // 启用裁剪
         context.enableScissor(getX() + 1, getY() + 1, getX() + width - scrollbarWidth - 1, getY() + height - 1);
@@ -85,7 +85,7 @@ public class ScrollableTextWidget extends ClickableWidget {
         int yOffset = getY() + 5 - (int) scrollAmount;
         for (OrderedText line : wrappedLines) {
             if (yOffset + client.textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
-                context.drawText(client.textRenderer, line, getX() + 5, yOffset, 0xFFFFFF, false);
+                context.drawText(client.textRenderer, line, getX() + 5, yOffset, 0xBBFFFF, false);
             }
             yOffset += client.textRenderer.fontHeight;
         }
