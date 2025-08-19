@@ -1,9 +1,9 @@
 package net.redstone233.test.core.screen;
 
-
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -13,18 +13,26 @@ import net.redstone233.test.core.button.ScrollableTextWidget;
 import net.redstone233.test.core.config.ModConfig;
 
 import java.net.URI;
-import java.util.Objects;
+import java.util.Collections;
 
 public class AnnouncementScreen extends Screen {
     private final ModConfig config;
     private ScrollableTextWidget scrollableText;
     private int tickCount = 0;
 
+    // 添加文本组件引用
+    private TextWidget titleWidget;
+    private TextWidget subtitleWidget;
+
     public AnnouncementScreen() {
         super(Text.literal("Announcement Screen"));
         // 安全获取配置，如果为空则使用默认值
-        // 创建默认配置作为回退
-        this.config = Objects.requireNonNullElseGet(TestModClient.CONFIG, ModConfig::new);
+        if (TestModClient.CONFIG != null) {
+            this.config = TestModClient.CONFIG;
+        } else {
+            // 创建默认配置作为回退
+            this.config = new ModConfig();
+        }
     }
 
     @Override
@@ -44,7 +52,8 @@ public class AnnouncementScreen extends Screen {
                 .formatted(Formatting.BOLD)
                 .withColor(mainTitleColor);
 
-        TextWidget titleWidget = new TextWidget(centerX, 30, 200, 20, mainTitle, textRenderer);
+        // 使用类变量存储文本组件
+        titleWidget = new TextWidget(centerX, 30, 200, 20, mainTitle, textRenderer);
         titleWidget.alignCenter();
         addDrawableChild(titleWidget);
 
@@ -55,7 +64,8 @@ public class AnnouncementScreen extends Screen {
         Text subTitle = Text.literal(subTitleText)
                 .withColor(subTitleColor);
 
-        TextWidget subtitleWidget = new TextWidget(centerX, 55, 200, 20, subTitle, textRenderer);
+        // 使用类变量存储文本组件
+        subtitleWidget = new TextWidget(centerX, 55, 200, 20, subTitle, textRenderer);
         subtitleWidget.alignCenter();
         addDrawableChild(subtitleWidget);
 
@@ -100,8 +110,12 @@ public class AnnouncementScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // 修复背景渲染方法调用
-        renderBackground(context,mouseX,mouseY,20); // 移除多余的参数
+        // 修复背景渲染
+        renderInGameBackground(context);
+
+        // 手动渲染标题以确保显示
+        renderTitle(context);
+
         super.render(context, mouseX, mouseY, delta);
 
         // 自动滚动 - 添加空检查
@@ -113,6 +127,52 @@ public class AnnouncementScreen extends Screen {
                 scrollableText.scrollAmount = Math.min(scrollAmount, maxScroll);
             }
         }
+    }
+
+    // 新增方法：手动渲染标题以确保显示
+    private void renderTitle(DrawContext context) {
+        int mouseX = 0;
+        if (client != null) {
+            mouseX = (int)client.mouse.getX();
+
+        }
+        int mouseY = 0;
+        if (client != null) {
+            mouseY = (int)client.mouse.getY();
+        }
+
+        // 2. 计算增量时间（使用tickDelta近似值）
+        float delta = 0;
+        if (client != null) {
+            delta = client.getRenderTime();
+        }
+
+
+        if (TestModClient.DEBUG_MODE) {
+            // 绘制组件边界
+            if (titleWidget != null) {
+                drawDebugOutline(context, titleWidget, 0x40FF0000); // 红色半透明
+            }
+            if (subtitleWidget != null) {
+                drawDebugOutline(context, subtitleWidget, 0x4000FF00); // 绿色半透明
+            }
+        }
+
+        // 正常渲染
+        if (titleWidget != null) titleWidget.render(context, mouseX, mouseY, delta);
+        if (subtitleWidget != null) subtitleWidget.render(context, mouseX, mouseY, delta);
+    }
+
+
+    // 新增调试轮廓绘制方法
+    private void drawDebugOutline(DrawContext context, ClickableWidget widget, int color) {
+        context.fill(
+                widget.getX() - 1,
+                widget.getY() - 1,
+                widget.getX() + widget.getWidth() + 1,
+                widget.getY() + widget.getHeight() + 1,
+                color
+        );
     }
 
     @Override

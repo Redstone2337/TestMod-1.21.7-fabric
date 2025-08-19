@@ -4,6 +4,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
+import net.redstone233.test.TestModClient;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,6 +58,10 @@ public class ModConfig implements ConfigData {
     @Comment("公告内容颜色 (RGB十六进制)")
     public int contentColor = 0xCCCCCC;
 
+    @ConfigEntry.Gui.Tooltip
+    @Comment("启用调试模式（显示UI边界等辅助信息）")
+    public boolean debugMode = false;
+
     // 向后兼容处理
     @Deprecated
     public String oldMainTitleColor;
@@ -102,5 +107,7 @@ public class ModConfig implements ConfigData {
                 // 转换失败，保持默认值
             }
         }
+
+        TestModClient.DEBUG_MODE = this.debugMode;
     }
 }

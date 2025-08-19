@@ -21,10 +21,18 @@ public class ModKeys {
             "category.freezesword"
     );
 
+    public static KeyBinding DEBUG_MODE_KEY = new KeyBinding(
+            "key.mtc.debug",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_F12,
+            "category.freezesword"
+    );
+
     public static void register() {
         // 注册键位绑定
         KeyBindingHelper.registerKeyBinding(CHARGE_KEY);
         KeyBindingHelper.registerKeyBinding(ANNOUNCEMENT_KEY);
+        KeyBindingHelper.registerKeyBinding(DEBUG_MODE_KEY);
     }
 
     // 检查按键是否按下（客户端调用）
@@ -34,5 +42,9 @@ public class ModKeys {
 
     public static boolean isAnnouncementKeyPressed() {
         return ANNOUNCEMENT_KEY.isPressed();
+    }
+
+    public static boolean isDebugModPressed() {
+        return DEBUG_MODE_KEY.wasPressed();
     }
 }

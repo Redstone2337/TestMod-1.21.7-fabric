@@ -27,6 +27,7 @@ import net.redstone233.test.longpress.LongPressManager;
 public class TestModClient implements ClientModInitializer {
     public static ModConfig CONFIG;
     private static ConfigHolder<ModConfig> configHolder;
+    public static boolean DEBUG_MODE = false;
 
 
     @Override
@@ -78,8 +79,22 @@ public class TestModClient implements ClientModInitializer {
                    client.setScreen(new AnnouncementScreen());
                }
            }
+
+            while (ModKeys.isDebugModPressed()) {
+                DEBUG_MODE = !DEBUG_MODE;
+                syncDebugMode();
+                TestMod.LOGGER.info("调试模式 {}", DEBUG_MODE ? "已开启" : "已关闭");
+            }
         });
     }
+
+    public static void syncDebugMode() {
+        if (configHolder != null) {
+            CONFIG.debugMode = DEBUG_MODE;
+            saveConfig();
+        }
+    }
+
 
     // 安全获取配置的方法
     public static void refreshConfig() {
