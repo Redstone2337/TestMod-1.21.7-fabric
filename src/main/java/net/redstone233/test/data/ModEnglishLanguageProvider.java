@@ -2,10 +2,8 @@ package net.redstone233.test.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.registry.RegistryWrapper;
 import net.redstone233.test.blocks.ModBlocks;
-import net.redstone233.test.core.potion.ModStatusEffects;
 import net.redstone233.test.items.ModItems;
 
 import java.util.concurrent.CompletableFuture;
@@ -103,6 +101,8 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
 
         // Key Bindings
         translationBuilder.add("key.freezesword.charge", "Activate Freeze Sword Charge");
+        translationBuilder.add("key.mtc.announcement","Display the announcement.");
+        translationBuilder.add("key.mtc.debug","Display debugging.");
         translationBuilder.add("category.freezesword", "Debug Craft Mod");
     }
 }

@@ -33,6 +33,8 @@
   "itemGroup.mtc.silicon_futures": "Silicon | Futures Blocks",
   "itemGroup.mtc.silicon_items": "Silicon | Items",
   "key.freezesword.charge": "Activate Freeze Sword Charge",
+  "key.mtc.announcement": "Display the announcement.",
+  "key.mtc.debug": "Display debugging.",
   "msg.freezesword.boss_hit": "§6[Freeze Sword]§r Critical hit on Boss! Charges[%d/%d] Damage +%.0f",
   "msg.freezesword.boss_target": "§6[Freeze Sword]§r Found boss target damage increase!",
   "msg.freezesword.charge_added": "§b[Freeze Sword]§r Charge added! Current: %d/%d",

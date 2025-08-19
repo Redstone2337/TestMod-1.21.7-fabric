@@ -90,20 +90,35 @@ public class AnnouncementScreen extends Screen {
         );
         addDrawableChild(scrollableText);
 
-        // 确定按钮
+        // 确定按钮 - 修复关闭功能
         addDrawableChild(ButtonWidget.builder(Text.literal("确定"), button -> {
+            if (this.client != null && this.client.player != null) {
+                this.client.player.closeScreen();
+            }
             this.close();
         }).dimensions(centerX - buttonWidth - 5, buttonY, buttonWidth, buttonHeight).build());
 
-        // 前往投递按钮 - 添加空检查
+        // 前往投递按钮 - 修复链接打开功能
         String buttonText = config.buttonText != null ? config.buttonText : "前往投递";
         String buttonLink = config.buttonLink != null ? config.buttonLink : "https://example.com";
 
         addDrawableChild(ButtonWidget.builder(Text.literal(buttonText), button -> {
             try {
-                Util.getOperatingSystem().open(new URI(buttonLink));
+                // 确保链接格式正确
+                String url = buttonLink;
+                if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                    url = "https://" + url;
+                }
+                Util.getOperatingSystem().open(new URI(url));
             } catch (Exception e) {
+                // 打印错误信息到控制台
+                System.err.println("无法打开链接: " + buttonLink);
                 e.printStackTrace();
+
+                // 在游戏中显示错误消息
+                if (this.client != null && this.client.player != null) {
+                    this.client.player.sendMessage(Text.literal("无法打开链接: " + e.getMessage()), false);
+                }
             }
         }).dimensions(centerX + 5, buttonY, buttonWidth, buttonHeight).build());
     }
@@ -111,10 +126,10 @@ public class AnnouncementScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         // 修复背景渲染
-        renderInGameBackground(context);
+        this.renderInGameBackground(context);
 
         // 手动渲染标题以确保显示
-        renderTitle(context);
+        this.renderTitle(context, mouseX, mouseY, delta);
 
         super.render(context, mouseX, mouseY, delta);
 
@@ -129,25 +144,8 @@ public class AnnouncementScreen extends Screen {
         }
     }
 
-    // 新增方法：手动渲染标题以确保显示
-    private void renderTitle(DrawContext context) {
-        int mouseX = 0;
-        if (client != null) {
-            mouseX = (int)client.mouse.getX();
-
-        }
-        int mouseY = 0;
-        if (client != null) {
-            mouseY = (int)client.mouse.getY();
-        }
-
-        // 2. 计算增量时间（使用tickDelta近似值）
-        float delta = 0;
-        if (client != null) {
-            delta = client.getRenderTime();
-        }
-
-
+    // 修复渲染标题方法
+    private void renderTitle(DrawContext context, int mouseX, int mouseY, float delta) {
         if (TestModClient.DEBUG_MODE) {
             // 绘制组件边界
             if (titleWidget != null) {
@@ -162,7 +160,6 @@ public class AnnouncementScreen extends Screen {
         if (titleWidget != null) titleWidget.render(context, mouseX, mouseY, delta);
         if (subtitleWidget != null) subtitleWidget.render(context, mouseX, mouseY, delta);
     }
-
 
     // 新增调试轮廓绘制方法
     private void drawDebugOutline(DrawContext context, ClickableWidget widget, int color) {
@@ -179,5 +176,10 @@ public class AnnouncementScreen extends Screen {
     public void tick() {
         super.tick();
         tickCount++;
+    }
+
+    @Override
+    public boolean shouldCloseOnEsc() {
+        return true; // 允许按ESC键关闭屏幕
     }
 }

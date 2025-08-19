@@ -84,6 +84,7 @@ public class ModConfig implements ConfigData {
         if (subTitleColor == 0) subTitleColor = 0xFFFFFF;
         if (contentColor == 0) contentColor = 0xCCCCCC;
 
+        // 迁移旧版字符串颜色配置
         if (oldMainTitleColor != null && !oldMainTitleColor.isEmpty()) {
             try {
                 mainTitleColor = (int) Long.parseLong(oldMainTitleColor.replace("#", ""), 16);
@@ -108,6 +109,7 @@ public class ModConfig implements ConfigData {
             }
         }
 
+        // 同步调试模式状态
         TestModClient.DEBUG_MODE = this.debugMode;
     }
 }

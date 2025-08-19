@@ -2,15 +2,12 @@ package net.redstone233.test.core.button;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.screen.narration.NarrationPart;
+import net.minecraft.text.OrderedText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +32,10 @@ public class ScrollableTextWidget extends ClickableWidget {
 
     public void updateWrappedLines() {
         wrappedLines.clear();
-        List<Text> lines = new ArrayList<>();
-        for (String line : getMessage().getString().split("\n")) {
-            lines.add(Text.literal(line));
+        String[] lines = getMessage().getString().split("\n");
+        for (String line : lines) {
+            wrappedLines.addAll(client.textRenderer.wrapLines(Text.literal(line), width - scrollbarWidth - scrollbarPadding * 2));
         }
-
-        for (Text line : lines) {
-            wrappedLines.addAll(client.textRenderer.wrapLines(line, width - scrollbarWidth - scrollbarPadding * 2));
-        }
-
         totalHeight = wrappedLines.size() * client.textRenderer.fontHeight;
     }
 
@@ -55,7 +47,8 @@ public class ScrollableTextWidget extends ClickableWidget {
 
     @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-
+        builder.put(NarrationPart.TITLE, Text.translatable("narration.scrollable_text", this.getMessage()));
+        builder.put(NarrationPart.USAGE, Text.translatable("narration.scrollable_text.usage"));
     }
 
     @Override
