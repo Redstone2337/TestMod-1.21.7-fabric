@@ -14,13 +14,25 @@ public class ModKeys {
             "category.freezesword"
     );
 
+    public static KeyBinding ANNOUNCEMENT_KEY = new KeyBinding(
+            "key.mtc.announcement",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_H,
+            "category.freezesword"
+    );
+
     public static void register() {
         // 注册键位绑定
         KeyBindingHelper.registerKeyBinding(CHARGE_KEY);
+        KeyBindingHelper.registerKeyBinding(ANNOUNCEMENT_KEY);
     }
 
     // 检查按键是否按下（客户端调用）
     public static boolean isChargeKeyPressed() {
         return CHARGE_KEY.isPressed();
+    }
+
+    public static boolean isAnnouncementKeyPressed() {
+        return ANNOUNCEMENT_KEY.isPressed();
     }
 }

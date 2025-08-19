@@ -1,5 +1,7 @@
 package net.redstone233.test;
 
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
@@ -14,16 +16,22 @@ import net.redstone233.test.client.ClientLongPressHandler;
 import net.redstone233.test.client.hud.FreezeSwordHud;
 import net.redstone233.test.client.tooltip.FreezeSwordTooltipComponent;
 import net.redstone233.test.core.component.ModDataComponentTypes;
+import net.redstone233.test.core.config.ModConfig;
+import net.redstone233.test.core.screen.AnnouncementScreen;
 import net.redstone233.test.core.until.ModKeys;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 import net.redstone233.test.longpress.FreezeSwordLongPressAction;
 import net.redstone233.test.longpress.LongPressManager;
 
 public class TestModClient implements ClientModInitializer {
+    public static ModConfig CONFIG;
 
 
     @Override
     public void onInitializeClient() {
+
+        AutoConfig.register(ModConfig.class, Toml4jConfigSerializer::new);
+
         // 注册Tooltip组件
         TooltipComponentCallback.EVENT.register(data -> {
             if (data instanceof FreezeSwordTooltipComponent.Data(ItemStack stack)) {
@@ -59,6 +67,16 @@ public class TestModClient implements ClientModInitializer {
             if (client.player != null) {
                 FreezeSwordItem.handleKeyInput(client.player);
             }
+
+           while (ModKeys.isAnnouncementKeyPressed()) {
+               if (client.player != null) {
+                   client.setScreen(new AnnouncementScreen());
+               }
+           }
         });
+    }
+
+    public static void saveConfig() {
+        AutoConfig.getConfigHolder(ModConfig.class).save();
     }
 }

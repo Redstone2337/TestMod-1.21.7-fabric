@@ -12,7 +12,7 @@
   "block.mtc.silicon_pressure_plate": "Silicon Block Pressure Plate",
   "block.mtc.silicon_trapdoor": "Silicon Block Trapdoor",
   "block.mtc.silicon_wall": "Silicon Block Wall",
-  "category.freezesword": "Freeze Sword Mod",
+  "category.freezesword": "Debug Craft Mod",
   "effect.mtc.test_status_effect": "Herbal Tea Effect",
   "item.freeze.freezing_sword.charged": "Freezing energy fully charged!",
   "item.freeze.freezing_sword.charging": "Charging: %s%%",

@@ -103,6 +103,6 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
 
         // Key Bindings
         translationBuilder.add("key.freezesword.charge", "Activate Freeze Sword Charge");
-        translationBuilder.add("category.freezesword", "Freeze Sword Mod");
+        translationBuilder.add("category.freezesword", "Debug Craft Mod");
     }
 }
