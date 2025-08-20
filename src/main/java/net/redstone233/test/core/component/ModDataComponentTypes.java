@@ -8,6 +8,7 @@ import net.redstone233.test.TestMod;
 import net.redstone233.test.core.component.type.DeliciousBlackGarlicComponent;
 import net.redstone233.test.core.component.type.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.HerbalTeaComponent;
+import net.redstone233.test.core.component.type.InfoItemComponent;
 
 import java.util.function.UnaryOperator;
 
@@ -28,6 +29,11 @@ public class ModDataComponentTypes {
     public static final ComponentType<DeliciousBlackGarlicComponent> DELICIOUS_BLACK_GARLIC = register(
             "black_garlic",
             deliciousBlackGarlicComponentBuilder -> deliciousBlackGarlicComponentBuilder.codec(DeliciousBlackGarlicComponent.CODEC)
+    );
+
+    public static final ComponentType<InfoItemComponent> INFO_ITEM = register(
+            "info_item",
+            infoItemComponentBuilder -> infoItemComponentBuilder.codec(InfoItemComponent.CODEC)
     );
 
     private static <T> ComponentType<T> register(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {

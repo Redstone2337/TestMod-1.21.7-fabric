@@ -36,7 +36,7 @@ public class BlackGarlicItem extends Item {
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
         World world = context.getWorld();
-        if (world.isClient) {
+        if (!world.isClient) {
             world.createExplosion(context.getPlayer(),
                     context.getBlockPos().getX(),
                     context.getBlockPos().getY(),

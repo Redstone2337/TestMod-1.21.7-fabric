@@ -13,6 +13,7 @@ import net.redstone233.test.core.component.ModDataComponentTypes;
 import net.redstone233.test.core.component.type.DeliciousBlackGarlicComponent;
 import net.redstone233.test.core.component.type.FreezingSwordComponent;
 import net.redstone233.test.core.component.type.HerbalTeaComponent;
+import net.redstone233.test.core.component.type.InfoItemComponent;
 import net.redstone233.test.core.food.ModConsumableComponents;
 import net.redstone233.test.core.food.ModFoodComponents;
 import net.redstone233.test.core.until.ModToolMaterial;
@@ -20,6 +21,7 @@ import net.redstone233.test.items.custom.BlackGarlicItem;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 import net.redstone233.test.core.commands.SetValueCountCommand;
 import net.redstone233.test.items.custom.HerbalTeaItem;
+import net.redstone233.test.items.custom.InfoItem;
 
 import java.util.function.Function;
 
@@ -60,6 +62,15 @@ public static final float ATTACK_DAMAGE = 10.0f;
               .component(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE,true)
               .attributeModifiers(BlackGarlicItem.createAttributeModifiers())
               .maxCount(64)
+    );
+
+    public static final Item INFO_ITEM = register(
+            "info_item",
+            InfoItem::new,
+            new Item.Settings()
+                    .attributeModifiers(InfoItem.createAttributeModifiers())
+                    .component(ModDataComponentTypes.INFO_ITEM,InfoItemComponent.DEFAULT)
+                    .maxCount(64)
     );
 
 

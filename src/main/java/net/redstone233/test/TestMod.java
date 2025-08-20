@@ -3,6 +3,7 @@ package net.redstone233.test;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.redstone233.test.blocks.ModBlockFamilies;
 import net.redstone233.test.blocks.ModBlocks;
 import net.redstone233.test.core.commands.AcquireModItemStackCommand;
@@ -60,7 +61,5 @@ public class TestMod implements ModInitializer {
 				}
 		);
 
-//		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
-//				.registerReloadListener(new BrewingRecipeLoader());
-	}
+    }
 }

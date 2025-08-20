@@ -63,6 +63,7 @@ public class TestModClient implements ClientModInitializer {
         ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.FREEZING_SWORD);
         ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.HE_QI_ZHENG);
         ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.DELICIOUS_BLACK_GARLIC);
+        ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.INFO_ITEM);
     }
 
     private void initializeLongPress() {
