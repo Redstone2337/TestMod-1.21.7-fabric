@@ -9,7 +9,6 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -18,7 +17,6 @@ import net.redstone233.test.core.screen.AnnouncementScreen;
 import net.redstone233.test.items.ModItems;
 
 public class InfoItem extends Item {
-    private static MinecraftClient client;
 
 
     public InfoItem(Settings settings) {
@@ -40,35 +38,47 @@ public class InfoItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
+        MinecraftClient minecraftClient = MinecraftClient.getInstance();
         if (user.canEquip(ModItems.INFO_ITEM.getDefaultStack(), EquipmentSlot.MAINHAND)) {
-            if (client != null) {
-                client.setScreen(new AnnouncementScreen());
+            if (minecraftClient != null) {
+                minecraftClient.setScreen(new AnnouncementScreen());
             }
         }
-        return super.use(world, user, hand);
+        return ActionResult.SUCCESS;
     }
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
         World world = context.getWorld();
         PlayerEntity player = context.getPlayer();
-        double x = context.getBlockPos().getX();
-        double y = context.getBlockPos().getY();
-        double z = context.getBlockPos().getX();
         if (!world.isClient) {
-            world.createExplosion(player,x,y,z,5.0f,true, World.ExplosionSourceType.MOB);
-            if (player != null) {
-                world.addParticleClient(
-                        DustParticleEffect.DEFAULT,
-                        player.getX(),
-                        player.getY(),
-                        player.getZ(),
-                        player.getVelocity().getX(),
-                        player.getVelocity().getY(),
-                        player.getVelocity().getZ()
-                );
-            }
+            world.createExplosion(player,
+                    context.getBlockPos().getX(),
+                    context.getBlockPos().getY(),
+                    context.getBlockPos().getZ(),
+                    5.0f,
+                    true,
+                    World.ExplosionSourceType.TNT
+            );
+           spawnChargingParticles(player, 300);
         }
+
+
         return ActionResult.SUCCESS;
+    }
+    private void spawnChargingParticles(PlayerEntity player, int time) {
+        for (int i = 0; i < time; i++) {
+            double offsetX = player.getRandom().nextGaussian() * 0.5;
+            double offsetY = player.getRandom().nextGaussian() * 0.5 + 1;
+            double offsetZ = player.getRandom().nextGaussian() * 0.5;
+
+            player.getWorld().addParticleClient(
+                    ParticleTypes.SNOWFLAKE,
+                    player.getX() + offsetX,
+                    player.getY() + offsetY,
+                    player.getZ() + offsetZ,
+                    0, 0.1, 0
+            );
+        }
     }
 }

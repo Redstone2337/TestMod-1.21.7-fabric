@@ -42,6 +42,7 @@ public class BlackGarlicItem extends Item {
                     context.getBlockPos().getY(),
                     context.getBlockPos().getZ(),
                     5.0f,
+                    true,
                     World.ExplosionSourceType.TNT
             );
         }
