@@ -122,7 +122,7 @@ public class AnnouncementScreen extends Screen {
 
         scrollableText = new ScrollableTextWidget(
                 centerX - 150, 80, 300, this.height - 150,
-                contentText, textRenderer, client
+                contentText, textRenderer, client, contentColor  // 传递颜色参数
         );
         addDrawableChild(scrollableText);
 
@@ -186,6 +186,17 @@ public class AnnouncementScreen extends Screen {
                 if (scrollAmount > maxScroll) scrollAmount = 0;
                 scrollableText.setScrollAmount(Math.min(scrollAmount, maxScroll));
             }
+        }
+
+        // 调试模式：绘制ScrollableTextWidget的边框
+        if (TestModClient.DEBUG_MODE && scrollableText != null) {
+            context.fill(
+                    scrollableText.getX() - 1,
+                    scrollableText.getY() - 1,
+                    scrollableText.getX() + scrollableText.getWidth() + 1,
+                    scrollableText.getY() + scrollableText.getHeight() + 1,
+                    0x40FF00FF
+            );
         }
     }
 

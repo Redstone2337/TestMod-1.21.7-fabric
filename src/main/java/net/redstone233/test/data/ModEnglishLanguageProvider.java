@@ -100,6 +100,9 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("item.freeze.freezing_sword.charged", "Freezing energy fully charged!");
         translationBuilder.add("item.freeze.freezing_sword.power_attack", "Unleashed frozen fury!");
 
+        translationBuilder.add("narration.scrollable_text","Scrollable Text");
+        translationBuilder.add("narration.scrollable_text.usage","Usage Scrollable Text");
+
         // Key Bindings
         translationBuilder.add("key.freezesword.charge", "Activate Freeze Sword Charge");
         translationBuilder.add("key.mtc.announcement","Display the announcement.");

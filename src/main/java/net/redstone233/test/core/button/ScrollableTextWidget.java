@@ -23,11 +23,13 @@ public class ScrollableTextWidget extends ClickableWidget {
     private int totalHeight;
     private final int scrollbarWidth = 6;
     private final int scrollbarPadding = 2;
+    private final int color; // 新增颜色字段
 
-    public ScrollableTextWidget(int x, int y, int width, int height, Text message, TextRenderer textRenderer, MinecraftClient client) {
+    public ScrollableTextWidget(int x, int y, int width, int height, Text message, TextRenderer textRenderer, MinecraftClient client, int color) {
         super(x, y, width, height, message);
         this.client = client;
         this.textRenderer = textRenderer;
+        this.color = color; // 初始化颜色
         this.wrappedLines = new ArrayList<>();
         this.scrollAmount = 0;
         this.totalHeight = 0;
@@ -36,10 +38,8 @@ public class ScrollableTextWidget extends ClickableWidget {
 
     public void updateWrappedLines() {
         wrappedLines.clear();
-        String[] lines = getMessage().getString().split("\n");
-        for (String line : lines) {
-            wrappedLines.addAll(textRenderer.wrapLines(Text.literal(line), width - scrollbarWidth - scrollbarPadding * 2));
-        }
+        // 直接包装整个文本，保留样式
+        wrappedLines.addAll(textRenderer.wrapLines(getMessage(), width - scrollbarWidth - scrollbarPadding * 2));
         totalHeight = wrappedLines.size() * textRenderer.fontHeight;
     }
 
@@ -85,11 +85,11 @@ public class ScrollableTextWidget extends ClickableWidget {
         // 启用裁剪
         context.enableScissor(getX() + 1, getY() + 1, getX() + width - scrollbarWidth - 1, getY() + height - 1);
 
-        // 绘制文本
+        // 绘制文本，使用配置的颜色
         int yOffset = getY() + 5 - (int) scrollAmount;
         for (OrderedText line : wrappedLines) {
             if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
-                context.drawText(textRenderer, line, getX() + 5, yOffset, 0xFFFFFF, false);
+                context.drawText(textRenderer, line, getX() + 5, yOffset, color, false); // 使用color参数
             }
             yOffset += textRenderer.fontHeight;
         }
@@ -145,5 +145,9 @@ public class ScrollableTextWidget extends ClickableWidget {
 
     public int getTotalHeight() {
         return totalHeight;
+    }
+
+    public int getHeight() {
+        return super.getHeight();
     }
 }
