@@ -36,6 +36,7 @@ public class ModItemGroups {
                             entries.add(ModItems.FREEZE_SWORD);
                             entries.add(ModItems.HE_QI_ZHENG);
                             entries.add(ModItems.DELICIOUS_BLACK_GARLIC);
+                            entries.add(ModItems.INFO_ITEM);
                         })
                         .build()
         );

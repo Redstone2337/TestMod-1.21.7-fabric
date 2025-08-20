@@ -40,6 +40,8 @@ public class AcquireModItemStackCommand {
             player.getInventory().insertStack(new ItemStack(ModItems.RAW_SILICON));
             player.getInventory().insertStack(new ItemStack(ModItems.HE_QI_ZHENG));
             player.getInventory().insertStack(new ItemStack(ModItems.FREEZE_SWORD));
+            player.getInventory().insertStack(new ItemStack(ModItems.DELICIOUS_BLACK_GARLIC));
+            player.getInventory().insertStack(new ItemStack(ModItems.INFO_ITEM));
             source.sendFeedback(() -> Text.literal("执行成功，已将模组物品给予玩家:").formatted(Formatting.GREEN, Formatting.BOLD)
                     .append(player.getName()).formatted(Formatting.BLUE, Formatting.BOLD), true);
             return 1;
