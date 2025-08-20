@@ -21,6 +21,14 @@ public class ModConfigScreen {
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         ModConfig config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
 
+        // 颜色模式设置
+        builder.getOrCreateCategory(Text.literal("颜色模式"))
+                .addEntry(entryBuilder.startBooleanToggle(Text.literal("使用自定义RGB颜色"), config.useCustomRGB)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.literal("启用后将隐藏Formatting枚举颜色选择，使用自定义RGB颜色"))
+                        .setSaveConsumer(newValue -> config.useCustomRGB = newValue)
+                        .build());
+
         // 标题设置
         builder.getOrCreateCategory(Text.literal("标题设置"))
                 .addEntry(entryBuilder.startStrField(Text.literal("主标题"), config.mainTitle)
@@ -32,9 +40,17 @@ public class ModConfigScreen {
                         .setDefaultValue(0xFFD700)
                         .setTooltip(Text.literal("主标题的文本颜色 (RGB整数格式，如0xFFD700表示金色)"))
                         .setSaveConsumer(newValue -> config.mainTitleColor = newValue)
+                        .setRequirement(() -> config.useCustomRGB) // 仅在自定义RGB模式下显示
+                        .build())
+                .addEntry(entryBuilder.startEnumSelector(Text.literal("主标题颜色"), Formatting.class,
+                                getFormattingFromColor(config.mainTitleColor))
+                        .setDefaultValue(Formatting.GOLD)
+                        .setTooltip(Text.literal("主标题的文本颜色 (Formatting枚举)"))
+                        .setSaveConsumer(newValue -> config.mainTitleColor = getColorFromFormatting(newValue))
+                        .setRequirement(() -> !config.useCustomRGB) // 仅在非自定义RGB模式下显示
                         .build())
                 .addEntry(entryBuilder.startStrField(Text.literal("副标题"), config.subTitle)
-                        .setDefaultValue("最新通知与更新")
+                        .setDefaultValue("最新通知")
                         .setTooltip(Text.literal("显示在主标题下方的小标题"))
                         .setSaveConsumer(newValue -> config.subTitle = newValue)
                         .build())
@@ -42,6 +58,14 @@ public class ModConfigScreen {
                         .setDefaultValue(0xFFFFFF)
                         .setTooltip(Text.literal("副标题的文本颜色 (RGB整数格式)"))
                         .setSaveConsumer(newValue -> config.subTitleColor = newValue)
+                        .setRequirement(() -> config.useCustomRGB) // 仅在自定义RGB模式下显示
+                        .build())
+                .addEntry(entryBuilder.startEnumSelector(Text.literal("副标题颜色"), Formatting.class,
+                                getFormattingFromColor(config.subTitleColor))
+                        .setDefaultValue(Formatting.WHITE)
+                        .setTooltip(Text.literal("副标题的文本颜色 (Formatting枚举)"))
+                        .setSaveConsumer(newValue -> config.subTitleColor = getColorFromFormatting(newValue))
+                        .setRequirement(() -> !config.useCustomRGB) // 仅在非自定义RGB模式下显示
                         .build());
 
         // 图标设置
@@ -101,6 +125,14 @@ public class ModConfigScreen {
                         .setDefaultValue(0x0610EA)
                         .setTooltip(Text.literal("公告内容的文本颜色 (RGB整数格式)"))
                         .setSaveConsumer(newValue -> config.contentColor = newValue)
+                        .setRequirement(() -> config.useCustomRGB) // 仅在自定义RGB模式下显示
+                        .build())
+                .addEntry(entryBuilder.startEnumSelector(Text.literal("内容颜色"), Formatting.class,
+                                getFormattingFromColor(config.contentColor))
+                        .setDefaultValue(Formatting.BLUE)
+                        .setTooltip(Text.literal("公告内容的文本颜色 (Formatting枚举)"))
+                        .setSaveConsumer(newValue -> config.contentColor = getColorFromFormatting(newValue))
+                        .setRequirement(() -> !config.useCustomRGB) // 仅在非自定义RGB模式下显示
                         .build())
                 .addEntry(entryBuilder.startIntSlider(Text.literal("滚动速度"), config.scrollSpeed, 10, 100)
                         .setDefaultValue(30)
@@ -132,7 +164,7 @@ public class ModConfigScreen {
                         })
                         .build());
 
-        // 在适当的位置添加以下配置项
+        // 显示设置
         builder.getOrCreateCategory(Text.literal("显示设置"))
                 .addEntry(entryBuilder.startBooleanToggle(Text.literal("进入世界时显示公告"), config.showOnWorldEnter)
                         .setDefaultValue(true)
@@ -141,5 +173,21 @@ public class ModConfigScreen {
                         .build());
 
         return builder.build();
+    }
+
+    // 辅助方法：从颜色值获取Formatting枚举
+    private static Formatting getFormattingFromColor(int color) {
+        for (Formatting formatting : Formatting.values()) {
+            if (formatting.isColor() && formatting.getColorValue() != null &&
+                    formatting.getColorValue() == color) {
+                return formatting;
+            }
+        }
+        return Formatting.WHITE; // 默认值
+    }
+
+    // 辅助方法：从Formatting枚举获取颜色值
+    private static int getColorFromFormatting(Formatting formatting) {
+        return formatting.getColorValue() != null ? formatting.getColorValue() : 0xFFFFFF;
     }
 }

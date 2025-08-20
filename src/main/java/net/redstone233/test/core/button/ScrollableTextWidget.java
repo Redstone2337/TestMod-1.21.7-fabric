@@ -23,7 +23,7 @@ public class ScrollableTextWidget extends ClickableWidget {
     private int totalHeight;
     private final int scrollbarWidth = 6;
     private final int scrollbarPadding = 2;
-    private final int color; // 新增颜色字段
+    private final int color; // 颜色字段
 
     public ScrollableTextWidget(int x, int y, int width, int height, Text message, TextRenderer textRenderer, MinecraftClient client, int color) {
         super(x, y, width, height, message);
@@ -77,20 +77,19 @@ public class ScrollableTextWidget extends ClickableWidget {
         return false;
     }
 
-    // ScrollableTextWidget.java
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        // 绘制背景
-        context.fill(getX(), getY(), getX() + width, getY() + height, 0x80000000);
+        // 绘制背景 - 改为灰色半透明
+        context.fill(getX(), getY(), getX() + width, getY() + height, 0x80A0A0A0);
 
         // 启用裁剪 - 修正裁剪区域
         context.enableScissor(getX(), getY(), getX() + width - scrollbarWidth, getY() + height);
 
-        // 绘制文本 - 修正文本绘制逻辑
+        // 绘制文本 - 使用传递的颜色值
         int yOffset = getY() - (int) scrollAmount;
         for (OrderedText line : wrappedLines) {
             if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
-                context.drawText(textRenderer, line, getX() + 5, yOffset, 0xFFFFFF, false);
+                context.drawText(textRenderer, line, getX() + 5, yOffset, color, false);
             }
             yOffset += textRenderer.fontHeight;
         }

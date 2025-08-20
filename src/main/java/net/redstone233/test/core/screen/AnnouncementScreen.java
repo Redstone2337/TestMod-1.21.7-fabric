@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -86,58 +87,101 @@ public class AnnouncementScreen extends Screen {
 
         // 安全访问配置字段
         String mainTitleText = config.mainTitle != null ? config.mainTitle : "服务器公告";
-        int mainTitleColor = config.mainTitleColor;
 
-        Text mainTitle = Text.literal(mainTitleText)
-                .formatted(Formatting.BOLD)
-                .withColor(mainTitleColor);
+        // 使用 MutableText 创建丰富的主标题
+        MutableText mainTitle = Text.literal(mainTitleText);
+        if (config.useCustomRGB) {
+            mainTitle = mainTitle.withColor(config.mainTitleColor);
+        } else {
+            Formatting formatting = getFormattingFromColor(config.mainTitleColor);
+            mainTitle = mainTitle.formatted(formatting);
+        }
+        mainTitle = mainTitle.formatted(Formatting.BOLD);
 
         titleWidget = new TextWidget(titleX, 30, 200, 20, mainTitle, textRenderer);
         titleWidget.alignCenter();
         addDrawableChild(titleWidget);
 
         String subTitleText = config.subTitle != null ? config.subTitle : "最新通知";
-        int subTitleColor = config.subTitleColor;
 
-        Text subTitle = Text.literal(subTitleText)
-                .withColor(subTitleColor);
+        // 使用 MutableText 创建丰富的副标题
+        MutableText subTitle = Text.literal(subTitleText);
+        if (config.useCustomRGB) {
+            subTitle = subTitle.withColor(config.subTitleColor);
+        } else {
+            Formatting formatting = getFormattingFromColor(config.subTitleColor);
+            subTitle = subTitle.formatted(formatting);
+        }
 
         subtitleWidget = new TextWidget(titleX, 55, 200, 20, subTitle, textRenderer);
         subtitleWidget.alignCenter();
         addDrawableChild(subtitleWidget);
 
         // 滚动公告内容
-        StringBuilder content = new StringBuilder();
+        MutableText contentText = Text.empty();
         if (config.announcementContent != null) {
             for (String line : config.announcementContent) {
-                content.append(line).append("\n");
+                if (line.trim().isEmpty()) {
+                    contentText.append("\n");
+                } else {
+                    // 使用 MutableText 创建丰富的公告内容
+                    MutableText lineText = Text.literal(line);
+                    if (config.useCustomRGB) {
+                        lineText = lineText.withColor(config.contentColor);
+                    } else {
+                        Formatting formatting = getFormattingFromColor(config.contentColor);
+                        lineText = lineText.formatted(formatting);
+                    }
+                    contentText.append(lineText).append("\n");
+                }
             }
         } else {
-            content.append("欢迎来到服务器！").append("\n");
+            contentText = Text.literal("欢迎来到服务器！").withColor(config.useCustomRGB ?
+                    config.contentColor : getColorFromFormatting(Formatting.WHITE));
         }
 
-        int contentColor = config.contentColor;
-        Text contentText = Text.literal(content.toString().trim())
-                .withColor(contentColor);
+        // 移除末尾多余的换行符
+        String contentString = contentText.getString();
+        if (contentString.endsWith("\n")) {
+            contentString = contentString.substring(0, contentString.length() - 1);
+            contentText = Text.literal(contentString);
+        }
 
         scrollableText = new ScrollableTextWidget(
                 centerX - 150, 80, 300, this.height - 150,
-                contentText, textRenderer, client, contentColor  // 传递颜色参数
+                contentText, textRenderer, client,
+                config.useCustomRGB ? config.contentColor : getColorFromFormatting(getFormattingFromColor(config.contentColor))
         );
         addDrawableChild(scrollableText);
 
+        // 使用 MutableText 创建按钮文本
+        String buttonText = config.buttonText != null ? config.buttonText : "前往投递";
+        MutableText buttonTextMutable = Text.literal(buttonText);
+        if (config.useCustomRGB) {
+            buttonTextMutable = buttonTextMutable.withColor(0xFFFFFF); // 按钮文本使用白色
+        } else {
+            buttonTextMutable = buttonTextMutable.formatted(Formatting.WHITE);
+        }
+
         // 确定按钮
-        addDrawableChild(ButtonWidget.builder(Text.literal("确定"), button -> {
+        addDrawableChild(ButtonWidget.builder(buttonTextMutable, button -> {
             if (this.client != null) {
                 this.close();
             }
         }).dimensions(centerX - buttonWidth - 5, buttonY, buttonWidth, buttonHeight).build());
 
         // 前往投递按钮
-        String buttonText = config.buttonText != null ? config.buttonText : "前往投递";
+        String submitButtonText = config.buttonText != null ? config.buttonText : "前往投递";
+        MutableText submitButtonTextMutable = Text.literal(submitButtonText);
+        if (config.useCustomRGB) {
+            submitButtonTextMutable = submitButtonTextMutable.withColor(0xFFFFFF); // 按钮文本使用白色
+        } else {
+            submitButtonTextMutable = submitButtonTextMutable.formatted(Formatting.WHITE);
+        }
+
         String buttonLink = Objects.requireNonNullElse(config.buttonLink, "https://example.com");
 
-        addDrawableChild(ButtonWidget.builder(Text.literal(buttonText), button -> {
+        addDrawableChild(ButtonWidget.builder(submitButtonTextMutable, button -> {
             try {
                 String url = buttonLink;
                 if (!url.startsWith("http://") && !url.startsWith("https://")) {
@@ -294,5 +338,21 @@ public class AnnouncementScreen extends Screen {
     @Override
     public boolean shouldCloseOnEsc() {
         return super.shouldCloseOnEsc();
+    }
+
+    // 辅助方法：从颜色值获取Formatting枚举
+    private Formatting getFormattingFromColor(int color) {
+        for (Formatting formatting : Formatting.values()) {
+            if (formatting.isColor() && formatting.getColorValue() != null &&
+                    formatting.getColorValue() == color) {
+                return formatting;
+            }
+        }
+        return Formatting.WHITE; // 默认值
+    }
+
+    // 辅助方法：从Formatting枚举获取颜色值
+    private int getColorFromFormatting(Formatting formatting) {
+        return formatting.getColorValue() != null ? formatting.getColorValue() : 0xFFFFFF;
     }
 }

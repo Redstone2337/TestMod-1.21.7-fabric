@@ -72,7 +72,6 @@ public class ModConfig implements ConfigData {
     public boolean debugMode = false;
 
     // 新增配置选项
-    // 修改图标显示默认值为false
     @ConfigEntry.Gui.Tooltip
     @Comment("是否显示公告图标")
     public boolean showIcon = false;
@@ -92,6 +91,11 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     @Comment("图标与文本的间距 (像素)")
     public int iconTextSpacing = 10;
+
+    // 新增配置选项：是否使用自定义RGB颜色
+    @ConfigEntry.Gui.Tooltip
+    @Comment("是否使用自定义RGB颜色（启用后将隐藏Formatting枚举颜色选择）")
+    public boolean useCustomRGB = false;
 
     // 向后兼容字段
     @Deprecated
