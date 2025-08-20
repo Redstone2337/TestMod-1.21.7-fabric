@@ -1,6 +1,10 @@
+// AnnouncementScreen.java
 package net.redstone233.test.core.screen;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -17,6 +21,7 @@ import net.redstone233.test.core.config.ModConfig;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.Optional;
 
 public class AnnouncementScreen extends Screen {
     private final ModConfig config;
@@ -55,6 +60,12 @@ public class AnnouncementScreen extends Screen {
         int buttonWidth = 100;
         int buttonHeight = 20;
         int buttonY = this.height - 30;
+
+        // 版本兼容性检查
+        if (!isVersionCompatible()) {
+            addDrawableChild(new TextWidget(centerX, 20, 300, 20,
+                    Text.literal("此模组不兼容1.21.5及以下版本").formatted(Formatting.RED), textRenderer));
+        }
 
         // 加载图标纹理
         if (config.showIcon && config.iconPath != null && !config.iconPath.isEmpty()) {
@@ -111,7 +122,7 @@ public class AnnouncementScreen extends Screen {
 
         scrollableText = new ScrollableTextWidget(
                 centerX - 150, 80, 300, this.height - 150,
-                contentText, client
+                contentText, textRenderer, client
         );
         addDrawableChild(scrollableText);
 
@@ -150,22 +161,9 @@ public class AnnouncementScreen extends Screen {
             int iconX = (this.width / 2) - 150 - config.iconWidth - config.iconTextSpacing;
             int iconY = 30;
 
-//            context.drawTexture(
-//                    iconTexture,
-//                    iconX,
-//                    iconY,
-//                    0,
-//                    0,
-//                    config.iconWidth,
-//                    config.iconHeight,
-//                    config.iconWidth,
-//                    config.iconHeight
-//            );
-
+            // 使用正确的DrawContext API绘制纹理
             context.drawTexture(
-                    RenderPipeline.builder()
-                            .withColorWrite(false)
-                            .build(),
+                    RenderPipelines.GUI_TEXTURED,
                     iconTexture,
                     iconX,
                     iconY,
@@ -182,12 +180,59 @@ public class AnnouncementScreen extends Screen {
         super.render(context, mouseX, mouseY, delta);
 
         if (scrollableText != null && tickCount % 2 == 0) {
-            double maxScroll = scrollableText.totalHeight - scrollableText.getHeight();
+            double maxScroll = scrollableText.getTotalHeight() - scrollableText.getHeight();
             if (maxScroll > 0) {
-                double scrollAmount = scrollableText.scrollAmount + (config.scrollSpeed / 20.0);
+                double scrollAmount = scrollableText.getScrollAmount() + (config.scrollSpeed / 20.0);
                 if (scrollAmount > maxScroll) scrollAmount = 0;
-                scrollableText.scrollAmount = Math.min(scrollAmount, maxScroll);
+                scrollableText.setScrollAmount(Math.min(scrollAmount, maxScroll));
             }
+        }
+    }
+
+    private boolean isVersionCompatible() {
+        try {
+            Optional<ModContainer> minecraftContainer =
+                    FabricLoader.getInstance().getModContainer("minecraft");
+
+            if (minecraftContainer.isEmpty()) {
+                TestModClient.LOGGER.warn("无法找到 Minecraft mod 容器");
+                return true;
+            }
+
+            String version = minecraftContainer.get().getMetadata().getVersion().getFriendlyString();
+            TestModClient.LOGGER.info("检测到 Minecraft 版本: {}", version);
+
+            return isVersionAtLeast(version, 1, 21, 6);
+        } catch (Exception e) {
+            TestModClient.LOGGER.warn("无法确定 Minecraft 版本", e);
+            return true;
+        }
+    }
+
+    private boolean isVersionAtLeast(String versionString, int minMajor, int minMinor, int minPatch) {
+        try {
+            String[] parts = versionString.split("\\.");
+            if (parts.length < 3) {
+                return false;
+            }
+
+            int major = Integer.parseInt(parts[0]);
+            int minor = Integer.parseInt(parts[1]);
+
+            // 处理可能的版本后缀 (如 "1.21.8-fabric")
+            String patchPart = parts[2].replaceAll("[^0-9].*", "");
+            int patch = Integer.parseInt(patchPart);
+
+            if (major > minMajor) return true;
+            if (major < minMajor) return false;
+
+            if (minor > minMinor) return true;
+            if (minor < minMinor) return false;
+
+            return patch >= minPatch;
+        } catch (NumberFormatException e) {
+            TestModClient.LOGGER.warn("无法解析版本号: {}", versionString, e);
+            return false;
         }
     }
 

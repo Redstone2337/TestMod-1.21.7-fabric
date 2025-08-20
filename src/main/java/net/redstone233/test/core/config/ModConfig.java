@@ -63,6 +63,7 @@ public class ModConfig implements ConfigData {
     public boolean debugMode = false;
 
     // 新增配置选项
+    // 修改图标显示默认值为false
     @ConfigEntry.Gui.Tooltip
     @Comment("是否显示公告图标")
     public boolean showIcon = false;

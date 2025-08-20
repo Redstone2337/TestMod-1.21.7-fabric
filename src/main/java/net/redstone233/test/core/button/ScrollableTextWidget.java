@@ -1,3 +1,4 @@
+// ScrollableTextWidget.java
 package net.redstone233.test.core.button;
 
 import net.minecraft.client.MinecraftClient;
@@ -8,22 +9,25 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.text.OrderedText;
+import net.minecraft.client.font.TextRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScrollableTextWidget extends ClickableWidget {
     private final MinecraftClient client;
+    private final TextRenderer textRenderer;
     private final List<OrderedText> wrappedLines;
-    public double scrollAmount;
+    private double scrollAmount;
     private boolean scrolling;
-    public int totalHeight;
+    private int totalHeight;
     private final int scrollbarWidth = 6;
     private final int scrollbarPadding = 2;
 
-    public ScrollableTextWidget(int x, int y, int width, int height, Text message, MinecraftClient client) {
+    public ScrollableTextWidget(int x, int y, int width, int height, Text message, TextRenderer textRenderer, MinecraftClient client) {
         super(x, y, width, height, message);
         this.client = client;
+        this.textRenderer = textRenderer;
         this.wrappedLines = new ArrayList<>();
         this.scrollAmount = 0;
         this.totalHeight = 0;
@@ -34,9 +38,9 @@ public class ScrollableTextWidget extends ClickableWidget {
         wrappedLines.clear();
         String[] lines = getMessage().getString().split("\n");
         for (String line : lines) {
-            wrappedLines.addAll(client.textRenderer.wrapLines(Text.literal(line), width - scrollbarWidth - scrollbarPadding * 2));
+            wrappedLines.addAll(textRenderer.wrapLines(Text.literal(line), width - scrollbarWidth - scrollbarPadding * 2));
         }
-        totalHeight = wrappedLines.size() * client.textRenderer.fontHeight;
+        totalHeight = wrappedLines.size() * textRenderer.fontHeight;
     }
 
     @Override
@@ -76,7 +80,7 @@ public class ScrollableTextWidget extends ClickableWidget {
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         // 绘制背景
-        context.fill(getX(), getY(), getX() + width, getY() + height, 0xE0FFFF);
+        context.fill(getX(), getY(), getX() + width, getY() + height, 0x80000000);
 
         // 启用裁剪
         context.enableScissor(getX() + 1, getY() + 1, getX() + width - scrollbarWidth - 1, getY() + height - 1);
@@ -84,10 +88,10 @@ public class ScrollableTextWidget extends ClickableWidget {
         // 绘制文本
         int yOffset = getY() + 5 - (int) scrollAmount;
         for (OrderedText line : wrappedLines) {
-            if (yOffset + client.textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
-                context.drawText(client.textRenderer, line, getX() + 5, yOffset, 0xBBFFFF, false);
+            if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
+                context.drawText(textRenderer, line, getX() + 5, yOffset, 0xFFFFFF, false);
             }
-            yOffset += client.textRenderer.fontHeight;
+            yOffset += textRenderer.fontHeight;
         }
 
         // 禁用裁剪
@@ -129,5 +133,17 @@ public class ScrollableTextWidget extends ClickableWidget {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         scrolling = false;
         return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    public double getScrollAmount() {
+        return scrollAmount;
+    }
+
+    public void setScrollAmount(double scrollAmount) {
+        this.scrollAmount = scrollAmount;
+    }
+
+    public int getTotalHeight() {
+        return totalHeight;
     }
 }
