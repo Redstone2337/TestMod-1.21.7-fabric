@@ -4,6 +4,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
@@ -26,11 +27,26 @@ import net.redstone233.test.longpress.LongPressManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+
 public class TestModClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("TestModClient");
     public static ModConfig CONFIG;
     public static boolean DEBUG_MODE = false;
     public static boolean SHOW_ICON = true; // 新增：图标显示状态
+    // 添加静态变量来跟踪是否已显示公告
+    private static boolean hasAnnouncementBeenShown = false;
+
+    public static boolean isHasAnnouncementBeenShown() {
+        return hasAnnouncementBeenShown;
+    }
+
+    public static void setHasAnnouncementBeenShown(boolean hasAnnouncementBeenShown) {
+        TestModClient.hasAnnouncementBeenShown = hasAnnouncementBeenShown;
+    }
 
 
     @Override
@@ -60,10 +76,59 @@ public class TestModClient implements ClientModInitializer {
             return null;
         });
 
+        // 添加世界进入事件监听
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            if (client.world != null && client.player != null) {
+                showAnnouncementIfNeeded(client);
+            }
+        });
+
         ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.FREEZING_SWORD);
         ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.HE_QI_ZHENG);
         ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.DELICIOUS_BLACK_GARLIC);
         ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.INFO_ITEM);
+    }
+
+    private void showAnnouncementIfNeeded(MinecraftClient client) {
+        if (!CONFIG.showOnWorldEnter || hasAnnouncementBeenShown) {
+            return;
+        }
+
+        // 计算当前公告内容的哈希值
+        String currentHash = calculateAnnouncementHash();
+
+        // 如果公告内容已更改或从未显示过
+        if (!currentHash.equals(CONFIG.lastDisplayedHash)) {
+            client.execute(() -> {
+                if (client.currentScreen == null) {
+                    client.setScreen(new AnnouncementScreen());
+                    hasAnnouncementBeenShown = true;
+
+                    // 更新配置中的哈希值
+                    CONFIG.lastDisplayedHash = currentHash;
+                    saveConfig();
+                }
+            });
+        }
+    }
+
+    private String calculateAnnouncementHash() {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            StringBuilder contentBuilder = new StringBuilder();
+
+            if (CONFIG.announcementContent != null) {
+                for (String line : CONFIG.announcementContent) {
+                    contentBuilder.append(line);
+                }
+            }
+
+            byte[] hash = digest.digest(contentBuilder.toString().getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error("无法计算公告哈希值", e);
+            return "";
+        }
     }
 
     private void initializeLongPress() {
@@ -136,6 +201,15 @@ public class TestModClient implements ClientModInitializer {
 
     public static void saveConfig() {
         ConfigInitializer.saveConfig();
+    }
+
+    // TestModClient.java
+    public static void setAnnouncementShown(boolean shown) {
+        hasAnnouncementBeenShown = shown;
+    }
+
+    public static void resetAnnouncementShown() {
+        hasAnnouncementBeenShown = false;
     }
 
     public static void refreshConfig() {

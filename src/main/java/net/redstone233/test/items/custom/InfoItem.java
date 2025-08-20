@@ -6,6 +6,8 @@ import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
@@ -38,11 +40,9 @@ public class InfoItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        if (user.canEquip(ModItems.INFO_ITEM.getDefaultStack(), EquipmentSlot.MAINHAND)) {
-            if (minecraftClient != null) {
-                minecraftClient.setScreen(new AnnouncementScreen());
-            }
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (world.isClient) {
+            client.setScreen(new AnnouncementScreen());
         }
         return ActionResult.SUCCESS;
     }

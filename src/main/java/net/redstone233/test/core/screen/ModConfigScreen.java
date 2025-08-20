@@ -132,6 +132,14 @@ public class ModConfigScreen {
                         })
                         .build());
 
+        // 在适当的位置添加以下配置项
+        builder.getOrCreateCategory(Text.literal("显示设置"))
+                .addEntry(entryBuilder.startBooleanToggle(Text.literal("进入世界时显示公告"), config.showOnWorldEnter)
+                        .setDefaultValue(true)
+                        .setTooltip(Text.literal("是否在玩家进入世界时显示公告屏幕"))
+                        .setSaveConsumer(newValue -> config.showOnWorldEnter = newValue)
+                        .build());
+
         return builder.build();
     }
 }

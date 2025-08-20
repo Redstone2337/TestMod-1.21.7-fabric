@@ -10,8 +10,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Config(name = "testmod")
+@Config(name = "announcement")
 public class ModConfig implements ConfigData {
+    // ModConfig.java
+    @ConfigEntry.Gui.Tooltip
+    @Comment("上次显示公告的哈希值（用于检测公告是否已修改）")
+    public String lastDisplayedHash = "";
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("是否在进入世界时显示公告")
+    public boolean showOnWorldEnter = true;
+
     @ConfigEntry.Gui.Tooltip(count = 2)
     @Comment("主标题文本")
     public String mainTitle = "模组公告";

@@ -77,19 +77,20 @@ public class ScrollableTextWidget extends ClickableWidget {
         return false;
     }
 
+    // ScrollableTextWidget.java
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         // 绘制背景
         context.fill(getX(), getY(), getX() + width, getY() + height, 0x80000000);
 
-        // 启用裁剪
-        context.enableScissor(getX() + 1, getY() + 1, getX() + width - scrollbarWidth - 1, getY() + height - 1);
+        // 启用裁剪 - 修正裁剪区域
+        context.enableScissor(getX(), getY(), getX() + width - scrollbarWidth, getY() + height);
 
-        // 绘制文本，使用配置的颜色
-        int yOffset = getY() + 5 - (int) scrollAmount;
+        // 绘制文本 - 修正文本绘制逻辑
+        int yOffset = getY() - (int) scrollAmount;
         for (OrderedText line : wrappedLines) {
             if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
-                context.drawText(textRenderer, line, getX() + 5, yOffset, color, false); // 使用color参数
+                context.drawText(textRenderer, line, getX() + 5, yOffset, 0xFFFFFF, false);
             }
             yOffset += textRenderer.fontHeight;
         }
@@ -149,5 +150,17 @@ public class ScrollableTextWidget extends ClickableWidget {
 
     public int getHeight() {
         return super.getHeight();
+    }
+
+    public MinecraftClient getClient() {
+        return client;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public int getScrollbarPadding() {
+        return scrollbarPadding;
     }
 }
