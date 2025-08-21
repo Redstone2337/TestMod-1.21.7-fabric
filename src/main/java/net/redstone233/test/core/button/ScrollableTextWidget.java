@@ -49,6 +49,12 @@ public class ScrollableTextWidget extends ClickableWidget {
         // 直接包装整个文本，保留样式
         wrappedLines.addAll(textRenderer.wrapLines(getMessage(), width - scrollbarWidth - scrollbarPadding * 2));
         totalHeight = wrappedLines.size() * textRenderer.fontHeight;
+
+        // 调试日志
+        if (net.redstone233.test.TestModClient.DEBUG_MODE) {
+            net.redstone233.test.TestModClient.LOGGER.info("包装了 {} 行文本，总高度: {}", wrappedLines.size(), totalHeight);
+            net.redstone233.test.TestModClient.LOGGER.info("消息内容: {}", getMessage().getString());
+        }
     }
 
     @Override
@@ -111,7 +117,7 @@ public class ScrollableTextWidget extends ClickableWidget {
             if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
                 // 确保文本颜色与背景有足够对比度
                 int textColor = this.color;
-                if (isColorSimilar(textColor, 0x80404040)) {
+                if ((textColor & 0xFFFFFF) == (0x80404040 & 0xFFFFFF)) {
                     textColor = 0xFFFFFFFF; // 如果颜色太相似，使用白色
                 }
                 context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, textColor, false);
@@ -190,24 +196,5 @@ public class ScrollableTextWidget extends ClickableWidget {
 
     public int getScrollbarPadding() {
         return scrollbarPadding;
-    }
-
-    // 辅助方法：检查两个颜色是否相似
-    private boolean isColorSimilar(int color1, int color2) {
-        int r1 = (color1 >> 16) & 0xFF;
-        int g1 = (color1 >> 8) & 0xFF;
-        int b1 = color1 & 0xFF;
-        int a1 = (color1 >> 24) & 0xFF;
-
-        int r2 = (color2 >> 16) & 0xFF;
-        int g2 = (color2 >> 8) & 0xFF;
-        int b2 = color2 & 0xFF;
-        int a2 = (color2 >> 24) & 0xFF;
-
-        // 计算颜色差异
-        double diff = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
-
-        // 如果颜色差异小于阈值，则认为相似
-        return diff < 50;
     }
 }

@@ -12,7 +12,6 @@ import java.util.List;
 
 @Config(name = "announcement")
 public class ModConfig implements ConfigData {
-    // ModConfig.java
     @ConfigEntry.Gui.Tooltip
     @Comment("上次显示公告的哈希值（用于检测公告是否已修改）")
     public String lastDisplayedHash = "";
@@ -44,8 +43,12 @@ public class ModConfig implements ConfigData {
     );
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("按钮文本")
-    public String buttonText = "前往投递";
+    @Comment("确定按钮文本")
+    public String confirmButtonText = "确定";
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("前往投递按钮文本")
+    public String submitButtonText = "前往投递";
 
     @ConfigEntry.Gui.Tooltip
     @Comment("按钮点击后打开的链接")
@@ -71,7 +74,6 @@ public class ModConfig implements ConfigData {
     @Comment("启用调试模式（显示UI边界等辅助信息）")
     public boolean debugMode = false;
 
-    // 新增配置选项
     @ConfigEntry.Gui.Tooltip
     @Comment("是否显示公告图标")
     public boolean showIcon = false;
@@ -92,7 +94,6 @@ public class ModConfig implements ConfigData {
     @Comment("图标与文本的间距 (像素)")
     public int iconTextSpacing = 10;
 
-    // 新增配置选项：是否使用自定义RGB颜色
     @ConfigEntry.Gui.Tooltip
     @Comment("是否使用自定义RGB颜色（启用后将隐藏Formatting枚举颜色选择）")
     public boolean useCustomRGB = false;
@@ -104,6 +105,8 @@ public class ModConfig implements ConfigData {
     public String oldSubTitleColor;
     @Deprecated
     public String oldContentColor;
+    @Deprecated
+    public String oldButtonText; // 旧版按钮文本字段
 
     @Override
     public void validatePostLoad() throws ValidationException {
@@ -111,9 +114,10 @@ public class ModConfig implements ConfigData {
         if (mainTitle == null) mainTitle = "服务器公告";
         if (subTitle == null) subTitle = "最新通知";
         if (announcementContent == null) announcementContent = Collections.singletonList("默认公告内容");
-        if (buttonText == null) buttonText = "前往投递";
-        if (buttonLink == null) buttonLink = "https://example.com";
-        if (iconPath == null) iconPath = "testmod:textures/gui/announcement_icon.png";
+        if (confirmButtonText == null) confirmButtonText = "确定";
+        if (submitButtonText == null) submitButtonText = "前往投递";
+        if (buttonLink == null) buttonLink = "https://github.com/Redstone2337/TestMod-1.21.7-fabric/issues";
+        if (iconPath == null) iconPath = "mtc:textures/gui/announcement_icon.png";
 
         // 确保颜色值有效
         if (mainTitleColor == 0) mainTitleColor = 0xFFD700;
@@ -149,6 +153,12 @@ public class ModConfig implements ConfigData {
             if (oldContentColor != null && !oldContentColor.isEmpty()) {
                 contentColor = parseColor(oldContentColor, 0xCCCCCC);
                 oldContentColor = null;
+            }
+
+            // 迁移旧版按钮文本配置
+            if (oldButtonText != null && !oldButtonText.isEmpty()) {
+                submitButtonText = oldButtonText;
+                oldButtonText = null;
             }
         } catch (Exception e) {
             TestModClient.LOGGER.warn("配置迁移失败", e);

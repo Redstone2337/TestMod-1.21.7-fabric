@@ -102,6 +102,24 @@ public class ModConfigScreen {
                         .setRequirement(() -> !config.useCustomRGB) // 仅在非自定义RGB模式下显示
                         .build());
 
+        // 按钮设置
+        builder.getOrCreateCategory(Text.literal("按钮设置"))
+                .addEntry(entryBuilder.startStrField(Text.literal("确定按钮文本"), config.confirmButtonText)
+                        .setDefaultValue("确定")
+                        .setTooltip(Text.literal("确定按钮上显示的文本"))
+                        .setSaveConsumer(newValue -> config.confirmButtonText = newValue)
+                        .build())
+                .addEntry(entryBuilder.startStrField(Text.literal("前往投递按钮文本"), config.submitButtonText)
+                        .setDefaultValue("前往投递")
+                        .setTooltip(Text.literal("前往投递按钮上显示的文本"))
+                        .setSaveConsumer(newValue -> config.submitButtonText = newValue)
+                        .build())
+                .addEntry(entryBuilder.startStrField(Text.literal("按钮链接"), config.buttonLink)
+                        .setDefaultValue("https://example.com/submit")
+                        .setTooltip(Text.literal("点击按钮后打开的网页链接"))
+                        .setSaveConsumer(newValue -> config.buttonLink = newValue)
+                        .build());
+
         // 图标设置
         builder.getOrCreateCategory(Text.literal("图标设置"))
                 .addEntry(entryBuilder.startBooleanToggle(Text.literal("显示图标"), config.showIcon)
@@ -185,19 +203,6 @@ public class ModConfigScreen {
                         .setDefaultValue(30)
                         .setTooltip(Text.literal("公告内容滚动速度 (像素/秒)"))
                         .setSaveConsumer(newValue -> config.scrollSpeed = newValue)
-                        .build());
-
-        // 按钮设置
-        builder.getOrCreateCategory(Text.literal("按钮设置"))
-                .addEntry(entryBuilder.startStrField(Text.literal("按钮文本"), config.buttonText)
-                        .setDefaultValue("前往投递")
-                        .setTooltip(Text.literal("按钮上显示的文本"))
-                        .setSaveConsumer(newValue -> config.buttonText = newValue)
-                        .build())
-                .addEntry(entryBuilder.startStrField(Text.literal("按钮链接"), config.buttonLink)
-                        .setDefaultValue("https://example.com/submit")
-                        .setTooltip(Text.literal("点击按钮后打开的网页链接"))
-                        .setSaveConsumer(newValue -> config.buttonLink = newValue)
                         .build());
 
         // 调试设置

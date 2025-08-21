@@ -126,9 +126,16 @@ public class AnnouncementScreen extends Screen {
 
         // 创建滚动文本部件
         int contentColor = config.useCustomRGB ? config.contentColor : getColorFromFormatting(getFormattingFromColor(config.contentColor));
-        // 确保文本颜色与背景有足够对比度
-        if (isColorSimilar(contentColor, 0xB4303030)) {
+
+        // 简化颜色对比度检查
+        if ((contentColor & 0xFFFFFF) == (0xB4303030 & 0xFFFFFF)) {
             contentColor = 0xFFFFFFFF; // 如果颜色太相似，使用白色
+        }
+
+        // 调试日志
+        if (TestModClient.DEBUG_MODE) {
+            TestModClient.LOGGER.info("公告内容: {}", contentText.getString());
+            TestModClient.LOGGER.info("内容颜色: 0x{}", Integer.toHexString(contentColor));
         }
 
         scrollableText = new ScrollableTextWidget(
@@ -161,7 +168,8 @@ public class AnnouncementScreen extends Screen {
         List<String> content = config.announcementContent != null && !config.announcementContent.isEmpty() ?
                 config.announcementContent : defaultContent;
 
-        for (String line : content) {
+        for (int i = 0; i < content.size(); i++) {
+            String line = content.get(i);
             if (line.trim().isEmpty()) {
                 // 空行
                 contentText.append("\n");
@@ -174,15 +182,13 @@ public class AnnouncementScreen extends Screen {
                     Formatting formatting = getFormattingFromColor(config.contentColor);
                     lineText = lineText.formatted(formatting);
                 }
-                contentText.append(lineText).append("\n");
-            }
-        }
+                contentText.append(lineText);
 
-        // 移除末尾多余的换行符
-        String contentString = contentText.getString();
-        if (contentString.endsWith("\n")) {
-            contentString = contentString.substring(0, contentString.length() - 1);
-            contentText = Text.literal(contentString);
+                // 如果不是最后一行，添加换行符
+                if (i < content.size() - 1) {
+                    contentText.append("\n");
+                }
+            }
         }
 
         return contentText;
@@ -190,33 +196,34 @@ public class AnnouncementScreen extends Screen {
 
     private void createButtons(int centerX, int buttonWidth, int buttonHeight, int buttonY) {
         // 使用 MutableText 创建按钮文本
-        String buttonText = config.buttonText != null ? config.buttonText : "确定";
-        MutableText buttonTextMutable = Text.literal(buttonText);
+        // 确定按钮使用配置的文本
+        String confirmText = config.confirmButtonText != null ? config.confirmButtonText : "确定";
+        MutableText confirmButtonText = Text.literal(confirmText);
         if (config.useCustomRGB) {
-            buttonTextMutable = buttonTextMutable.withColor(0xFFFFFF); // 按钮文本使用白色
+            confirmButtonText = confirmButtonText.withColor(0xFFFFFF); // 按钮文本使用白色
         } else {
-            buttonTextMutable = buttonTextMutable.formatted(Formatting.WHITE);
+            confirmButtonText = confirmButtonText.formatted(Formatting.WHITE);
         }
 
         // 确定按钮
-        addDrawableChild(ButtonWidget.builder(buttonTextMutable, button -> {
+        addDrawableChild(ButtonWidget.builder(confirmButtonText, button -> {
             if (this.client != null) {
                 this.close();
             }
         }).dimensions(centerX - buttonWidth - 5, buttonY, buttonWidth, buttonHeight).build());
 
-        // 前往投递按钮
-        String submitButtonText = config.buttonText != null ? config.buttonText : "前往投递";
-        MutableText submitButtonTextMutable = Text.literal(submitButtonText);
+        // 前往投递按钮使用配置的文本
+        String submitText = config.submitButtonText != null ? config.submitButtonText : "前往投递";
+        MutableText submitButtonText = Text.literal(submitText);
         if (config.useCustomRGB) {
-            submitButtonTextMutable = submitButtonTextMutable.withColor(0xFFFFFF); // 按钮文本使用白色
+            submitButtonText = submitButtonText.withColor(0xFFFFFF); // 按钮文本使用白色
         } else {
-            submitButtonTextMutable = submitButtonTextMutable.formatted(Formatting.WHITE);
+            submitButtonText = submitButtonText.formatted(Formatting.WHITE);
         }
 
         String buttonLink = Objects.requireNonNullElse(config.buttonLink, "https://example.com");
 
-        addDrawableChild(ButtonWidget.builder(submitButtonTextMutable, button -> {
+        addDrawableChild(ButtonWidget.builder(submitButtonText, button -> {
             try {
                 String url = buttonLink;
                 if (!url.startsWith("http://") && !url.startsWith("https://")) {
@@ -397,22 +404,5 @@ public class AnnouncementScreen extends Screen {
     // 辅助方法：从Formatting枚举获取颜色值
     private int getColorFromFormatting(Formatting formatting) {
         return formatting.getColorValue() != null ? formatting.getColorValue() : 0xFFFFFF;
-    }
-
-    // 辅助方法：检查两个颜色是否相似
-    private boolean isColorSimilar(int color1, int color2) {
-        int r1 = (color1 >> 16) & 0xFF;
-        int g1 = (color1 >> 8) & 0xFF;
-        int b1 = color1 & 0xFF;
-
-        int r2 = (color2 >> 16) & 0xFF;
-        int g2 = (color2 >> 8) & 0xFF;
-        int b2 = color2 & 0xFF;
-
-        // 计算颜色差异
-        double diff = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
-
-        // 如果颜色差异小于阈值，则认为相似
-        return diff < 50;
     }
 }
