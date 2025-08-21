@@ -28,11 +28,11 @@ public record InfoItemComponent(boolean Display) implements TooltipAppender {
     public void appendTooltip(Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type, ComponentsAccess components) {
         textConsumer.accept(Text.literal("§b基础介绍：").formatted(Formatting.AQUA,Formatting.BOLD));
         textConsumer.accept(Text.literal("§a这是一个能力武器，可以在物品栏中查看其属性。")
-                .formatted(Formatting.GRAY, Formatting.ITALIC));
+                .formatted(Formatting.GRAY, Formatting.ITALIC).append(" "));
 
         textConsumer.accept(Text.literal("§b使用方法：").formatted(Formatting.BLUE, Formatting.BOLD));
         textConsumer.accept(Text.literal("§e右键会显示屏幕。").formatted(Formatting.YELLOW, Formatting.ITALIC));
-        textConsumer.accept(Text.literal("§e对地面右键会爆炸").formatted(Formatting.DARK_BLUE, Formatting.ITALIC));
+        textConsumer.accept(Text.literal("§e对地面右键会爆炸").formatted(Formatting.DARK_BLUE, Formatting.ITALIC).append(" "));
 
         textConsumer.accept(Text.literal("§b请注意：").formatted(Formatting.BLUE, Formatting.BOLD));
         textConsumer.accept(Text.literal("§c注意：如果你不小心丢失了这个物品，你将无法再获得它。")
