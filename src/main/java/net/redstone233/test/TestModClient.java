@@ -88,24 +88,41 @@ public class TestModClient implements ClientModInitializer {
 
     private void showAnnouncementIfNeeded(MinecraftClient client) {
         if (!CONFIG.showOnWorldEnter || hasAnnouncementBeenShown) {
+            TestModClient.LOGGER.info("不显示公告: showOnWorldEnter={}, hasAnnouncementBeenShown={}",
+                    CONFIG.showOnWorldEnter, hasAnnouncementBeenShown);
             return;
         }
 
         // 计算当前公告内容的哈希值
         String currentHash = calculateAnnouncementHash();
+        TestModClient.LOGGER.info("公告哈希比较: 当前={}, 上次={}", currentHash, CONFIG.lastDisplayedHash);
 
         // 如果公告内容已更改或从未显示过
         if (!currentHash.equals(CONFIG.lastDisplayedHash)) {
             client.execute(() -> {
                 if (client.currentScreen == null) {
+                    TestModClient.LOGGER.info("显示公告屏幕");
                     client.setScreen(new AnnouncementScreen());
                     hasAnnouncementBeenShown = true;
 
                     // 更新配置中的哈希值
                     CONFIG.lastDisplayedHash = currentHash;
                     saveConfig();
+                } else {
+                    TestModClient.LOGGER.info("已有其他屏幕打开，延迟显示公告");
+                    // 延迟显示公告
+                    client.execute(() -> {
+                        if (client.currentScreen == null) {
+                            client.setScreen(new AnnouncementScreen());
+                            hasAnnouncementBeenShown = true;
+                            CONFIG.lastDisplayedHash = currentHash;
+                            saveConfig();
+                        }
+                    });
                 }
             });
+        } else {
+            TestModClient.LOGGER.info("公告内容未更改，不显示");
         }
     }
 

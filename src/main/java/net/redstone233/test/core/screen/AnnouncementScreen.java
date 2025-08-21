@@ -2,7 +2,6 @@ package net.redstone233.test.core.screen;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -71,8 +70,14 @@ public class AnnouncementScreen extends Screen {
         if (config.showIcon && config.iconPath != null && !config.iconPath.isEmpty()) {
             try {
                 iconTexture = Identifier.of(config.iconPath);
+                // 检查纹理是否存在
+                if (client != null && client.getResourceManager().getResource(iconTexture).isEmpty()) {
+                    TestModClient.LOGGER.warn("图标纹理不存在: {}", config.iconPath);
+                    iconTexture = null;
+                }
             } catch (Exception e) {
                 TestModClient.LOGGER.warn("无法加载图标纹理: {}", config.iconPath, e);
+                iconTexture = null;
             }
         }
 
@@ -120,10 +125,16 @@ public class AnnouncementScreen extends Screen {
         MutableText contentText = createAnnouncementContent();
 
         // 创建滚动文本部件
+        int contentColor = config.useCustomRGB ? config.contentColor : getColorFromFormatting(getFormattingFromColor(config.contentColor));
+        // 确保文本颜色与背景有足够对比度
+        if (isColorSimilar(contentColor, 0xB4303030)) {
+            contentColor = 0xFFFFFFFF; // 如果颜色太相似，使用白色
+        }
+
         scrollableText = new ScrollableTextWidget(
                 centerX - 150, 80, 300, this.height - 150,
                 contentText, textRenderer, client,
-                config.useCustomRGB ? config.contentColor : getColorFromFormatting(getFormattingFromColor(config.contentColor))
+                contentColor
         );
         addDrawableChild(scrollableText);
 
@@ -232,8 +243,7 @@ public class AnnouncementScreen extends Screen {
 
             try {
                 // 使用正确的DrawContext API绘制纹理
-                context.drawTexture(
-                        RenderPipelines.GUI_TEXTURED,
+                context.drawTexturedQuad(
                         iconTexture,
                         iconX,
                         iconY,
@@ -249,10 +259,10 @@ public class AnnouncementScreen extends Screen {
             }
         }
 
-        // 渲染标题
+        // 先渲染标题
         renderTitle(context, mouseX, mouseY, delta);
 
-        // 渲染其他部件
+        // 然后渲染其他部件（包括滚动文本）
         super.render(context, mouseX, mouseY, delta);
 
         // 滚动文本
@@ -387,5 +397,22 @@ public class AnnouncementScreen extends Screen {
     // 辅助方法：从Formatting枚举获取颜色值
     private int getColorFromFormatting(Formatting formatting) {
         return formatting.getColorValue() != null ? formatting.getColorValue() : 0xFFFFFF;
+    }
+
+    // 辅助方法：检查两个颜色是否相似
+    private boolean isColorSimilar(int color1, int color2) {
+        int r1 = (color1 >> 16) & 0xFF;
+        int g1 = (color1 >> 8) & 0xFF;
+        int b1 = color1 & 0xFF;
+
+        int r2 = (color2 >> 16) & 0xFF;
+        int g2 = (color2 >> 8) & 0xFF;
+        int b2 = color2 & 0xFF;
+
+        // 计算颜色差异
+        double diff = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // 如果颜色差异小于阈值，则认为相似
+        return diff < 50;
     }
 }

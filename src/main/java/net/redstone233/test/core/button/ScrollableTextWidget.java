@@ -87,18 +87,34 @@ public class ScrollableTextWidget extends ClickableWidget {
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        // 绘制背景 - 改为灰色半透明
-        context.fill(getX(), getY(), getX() + width, getY() + height, 0x80A0A0A0);
+        // 绘制背景 - 改为与原版UI相似的半透明深色
+        context.fill(getX(), getY(), getX() + width, getY() + height, 0x80404040);
+
+        // 绘制边框
+        context.fill(getX(), getY(), getX() + width, getY() + 1, 0xFF808080);
+        context.fill(getX(), getY() + height - 1, getX() + width, getY() + height, 0xFF808080);
+        context.fill(getX(), getY(), getX() + 1, getY() + height, 0xFF808080);
+        context.fill(getX() + width - 1, getY(), getX() + width, getY() + height, 0xFF808080);
 
         // 启用裁剪 - 修正裁剪区域
-        context.enableScissor(getX(), getY(), getX() + width - scrollbarWidth, getY() + height);
+        int clipX = getX() + scrollbarPadding;
+        int clipY = getY() + scrollbarPadding;
+        int clipWidth = width - scrollbarWidth - scrollbarPadding * 2;
+        int clipHeight = height - scrollbarPadding * 2;
+
+        context.enableScissor(clipX, clipY, clipX + clipWidth, clipY + clipHeight);
 
         // 绘制文本
-        int yOffset = getY() - (int) scrollAmount;
+        int yOffset = getY() + scrollbarPadding - (int) scrollAmount;
         for (OrderedText line : wrappedLines) {
             // 检查行是否在可见区域内
             if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
-                context.drawText(textRenderer, line, getX() + 5, yOffset, color, false);
+                // 确保文本颜色与背景有足够对比度
+                int textColor = this.color;
+                if (isColorSimilar(textColor, 0x80404040)) {
+                    textColor = 0xFFFFFFFF; // 如果颜色太相似，使用白色
+                }
+                context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, textColor, false);
             }
             yOffset += textRenderer.fontHeight;
         }
@@ -174,5 +190,24 @@ public class ScrollableTextWidget extends ClickableWidget {
 
     public int getScrollbarPadding() {
         return scrollbarPadding;
+    }
+
+    // 辅助方法：检查两个颜色是否相似
+    private boolean isColorSimilar(int color1, int color2) {
+        int r1 = (color1 >> 16) & 0xFF;
+        int g1 = (color1 >> 8) & 0xFF;
+        int b1 = color1 & 0xFF;
+        int a1 = (color1 >> 24) & 0xFF;
+
+        int r2 = (color2 >> 16) & 0xFF;
+        int g2 = (color2 >> 8) & 0xFF;
+        int b2 = color2 & 0xFF;
+        int a2 = (color2 >> 24) & 0xFF;
+
+        // 计算颜色差异
+        double diff = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // 如果颜色差异小于阈值，则认为相似
+        return diff < 50;
     }
 }
