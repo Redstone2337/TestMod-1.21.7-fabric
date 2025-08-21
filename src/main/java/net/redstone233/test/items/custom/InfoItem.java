@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
@@ -40,10 +41,28 @@ public class InfoItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        MinecraftClient client = MinecraftClient.getInstance();
+//        MinecraftClient client = MinecraftClient.getInstance();
         if (world.isClient) {
-            client.setScreen(new AnnouncementScreen());
+            MinecraftClient.getInstance().setScreen(new AnnouncementScreen());
         }
+
+        if (user.getMainHandStack().getItem() != ModItems.INFO_ITEM) {
+            // 如果玩家手持的不是InfoItem，则不执行后续逻辑
+            // 如果是服务器端，给玩家添加效果
+            user.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 200, 1, false, false));
+            user.addStatusEffect(new StatusEffectInstance(StatusEffects.JUMP_BOOST, 200, 1, false, false));
+            user.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 200, 0, false, false));
+            user.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 200, 1, false, false));
+            MinecraftClient.getInstance().setScreen(new AnnouncementScreen());
+        } else {
+            user.sendMessage(Text.literal("""
+                    简单介绍：
+                    §a欢迎使用测试模组！
+                    §b这是一个测试模组，包含了许多有趣的功能。
+                    §c请注意，这些功能可能会在未来的版本中发生变化。
+                    §d感谢您的支持！"""), false);
+        }
+
         return ActionResult.SUCCESS;
     }
 
