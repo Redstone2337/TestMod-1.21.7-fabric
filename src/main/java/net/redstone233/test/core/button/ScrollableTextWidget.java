@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.text.OrderedText;
 import net.minecraft.client.font.TextRenderer;
+import net.redstone233.test.TestModClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,14 +47,26 @@ public class ScrollableTextWidget extends ClickableWidget {
             return;
         }
 
-        // 直接包装整个文本，保留样式
-        wrappedLines.addAll(textRenderer.wrapLines(getMessage(), width - scrollbarWidth - scrollbarPadding * 2));
-        totalHeight = wrappedLines.size() * textRenderer.fontHeight;
+        try {
+            // 直接包装整个文本，保留样式
+            List<OrderedText> wrapped = textRenderer.wrapLines(getMessage(), width - scrollbarWidth - scrollbarPadding * 2);
+            wrappedLines.addAll(wrapped);
+            totalHeight = wrappedLines.size() * textRenderer.fontHeight;
 
-        // 调试日志
-        if (net.redstone233.test.TestModClient.DEBUG_MODE) {
-            net.redstone233.test.TestModClient.LOGGER.info("包装了 {} 行文本，总高度: {}", wrappedLines.size(), totalHeight);
-            net.redstone233.test.TestModClient.LOGGER.info("消息内容: {}", getMessage().getString());
+            // 调试日志
+            if (net.redstone233.test.TestModClient.DEBUG_MODE) {
+                net.redstone233.test.TestModClient.LOGGER.info("包装了 {} 行文本，总高度: {}", wrappedLines.size(), totalHeight);
+                net.redstone233.test.TestModClient.LOGGER.info("消息内容: {}", getMessage().getString());
+
+                for (int i = 0; i < wrappedLines.size(); i++) {
+                    OrderedText line = wrappedLines.get(i);
+                    net.redstone233.test.TestModClient.LOGGER.info("行 {}: {}", i, line.toString());
+                }
+            }
+        } catch (Exception e) {
+            net.redstone233.test.TestModClient.LOGGER.error("文本包装失败", e);
+            wrappedLines.add(Text.literal("文本渲染错误").asOrderedText());
+            totalHeight = textRenderer.fontHeight;
         }
     }
 
@@ -61,34 +74,6 @@ public class ScrollableTextWidget extends ClickableWidget {
     public void setMessage(Text message) {
         super.setMessage(message);
         updateWrappedLines();
-    }
-
-    @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-        builder.put(NarrationPart.TITLE, Text.translatable("narration.scrollable_text", this.getMessage()));
-        builder.put(NarrationPart.USAGE, Text.translatable("narration.scrollable_text.usage"));
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (this.visible && this.active && scrolling && totalHeight > height) {
-            double maxScroll = totalHeight - height;
-            double relativeY = mouseY - getY();
-            scrollAmount = (relativeY / height) * maxScroll;
-            scrollAmount = MathHelper.clamp(scrollAmount, 0, maxScroll);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (this.visible && this.active && totalHeight > height) {
-            double maxScroll = totalHeight - height;
-            scrollAmount = MathHelper.clamp(scrollAmount - verticalAmount * 20, 0, maxScroll);
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -120,6 +105,13 @@ public class ScrollableTextWidget extends ClickableWidget {
                 if ((textColor & 0xFFFFFF) == (0x80404040 & 0xFFFFFF)) {
                     textColor = 0xFFFFFFFF; // 如果颜色太相似，使用白色
                 }
+
+                // 调试日志
+                if (TestModClient.DEBUG_MODE) {
+                    TestModClient.LOGGER.info("绘制文本行: {}, 颜色: 0x{}, 位置: {}",
+                            line.toString(), Integer.toHexString(textColor), yOffset);
+                }
+
                 context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, textColor, false);
             }
             yOffset += textRenderer.fontHeight;
@@ -150,6 +142,34 @@ public class ScrollableTextWidget extends ClickableWidget {
                     getX() + width - 1, scrollbarY + scrollbarHeight,
                     0xFF888888);
         }
+    }
+
+    @Override
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+        builder.put(NarrationPart.TITLE, Text.translatable("narration.scrollable_text", this.getMessage()));
+        builder.put(NarrationPart.USAGE, Text.translatable("narration.scrollable_text.usage"));
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if (this.visible && this.active && scrolling && totalHeight > height) {
+            double maxScroll = totalHeight - height;
+            double relativeY = mouseY - getY();
+            scrollAmount = (relativeY / height) * maxScroll;
+            scrollAmount = MathHelper.clamp(scrollAmount, 0, maxScroll);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (this.visible && this.active && totalHeight > height) {
+            double maxScroll = totalHeight - height;
+            scrollAmount = MathHelper.clamp(scrollAmount - verticalAmount * 20, 0, maxScroll);
+            return true;
+        }
+        return false;
     }
 
     @Override

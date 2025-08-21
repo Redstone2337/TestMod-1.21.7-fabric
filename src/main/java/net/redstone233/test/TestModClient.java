@@ -30,7 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class TestModClient implements ClientModInitializer {
-    public static final Logger LOGGER = LoggerFactory.getLogger("TestModClient");
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestMod.MOD_ID);
     public static ModConfig CONFIG;
     public static boolean DEBUG_MODE = false;
     public static boolean SHOW_ICON = true; // 新增：图标显示状态
@@ -87,6 +87,11 @@ public class TestModClient implements ClientModInitializer {
     }
 
     private void showAnnouncementIfNeeded(MinecraftClient client) {
+        // 确保配置已加载
+        if (!ConfigInitializer.isInitialized()) {
+            ConfigInitializer.initialize();
+        }
+
         if (!CONFIG.showOnWorldEnter || hasAnnouncementBeenShown) {
             TestModClient.LOGGER.info("不显示公告: showOnWorldEnter={}, hasAnnouncementBeenShown={}",
                     CONFIG.showOnWorldEnter, hasAnnouncementBeenShown);

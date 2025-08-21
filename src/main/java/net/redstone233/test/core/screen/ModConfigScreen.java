@@ -161,12 +161,10 @@ public class ModConfigScreen {
                 .addEntry(entryBuilder.startStrList(Text.literal("公告内容"), config.announcementContent)
                         .setDefaultValue(Arrays.asList(
                                 "欢迎游玩，我们团队做的模组！",
-                                " ",
                                 "一些提醒：",
                                 "1. 模组仅限于1.21.7~1.21.8fabric",
                                 "2. 模组目前是半成品",
                                 "3. 后面会继续更新",
-                                " ",
                                 "模组随缘更新",
                                 "若发现bug可以向模组作者或者仓库反馈！"
                         ))

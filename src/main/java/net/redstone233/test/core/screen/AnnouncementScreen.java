@@ -152,7 +152,6 @@ public class AnnouncementScreen extends Screen {
     private MutableText createAnnouncementContent() {
         MutableText contentText = Text.empty();
 
-        // 使用默认公告内容
         List<String> defaultContent = List.of(
                 "欢迎游玩，我们团队做的模组！",
                 " ",
@@ -170,25 +169,38 @@ public class AnnouncementScreen extends Screen {
 
         for (int i = 0; i < content.size(); i++) {
             String line = content.get(i);
+
+            // 处理空行
             if (line.trim().isEmpty()) {
-                // 空行
-                contentText.append("\n");
+                contentText.append(Text.literal("\n"));
+                continue;
+            }
+
+            // 创建带样式的文本行
+            MutableText lineText = Text.literal(line);
+
+            // 应用颜色样式
+            if (config.useCustomRGB) {
+                lineText = lineText.withColor(config.contentColor);
             } else {
-                // 使用 MutableText 创建丰富的公告内容
-                MutableText lineText = Text.literal(line);
-                if (config.useCustomRGB) {
-                    lineText = lineText.withColor(config.contentColor);
-                } else {
-                    Formatting formatting = getFormattingFromColor(config.contentColor);
+                Formatting formatting = getFormattingFromColor(config.contentColor);
+                if (formatting != null) {
                     lineText = lineText.formatted(formatting);
                 }
-                contentText.append(lineText);
-
-                // 如果不是最后一行，添加换行符
-                if (i < content.size() - 1) {
-                    contentText.append("\n");
-                }
             }
+
+            contentText.append(lineText);
+
+            // 如果不是最后一行，添加换行符
+            if (i < content.size() - 1) {
+                contentText.append(Text.literal("\n"));
+            }
+        }
+
+        // 调试日志
+        if (TestModClient.DEBUG_MODE) {
+            TestModClient.LOGGER.info("公告内容构建完成: {}", contentText.getString());
+            TestModClient.LOGGER.info("公告内容行数: {}", content.size());
         }
 
         return contentText;
@@ -392,13 +404,21 @@ public class AnnouncementScreen extends Screen {
 
     // 辅助方法：从颜色值获取Formatting枚举
     private Formatting getFormattingFromColor(int color) {
+        // 移除alpha通道，只比较RGB值
+        int rgbColor = color & 0xFFFFFF;
+
         for (Formatting formatting : Formatting.values()) {
-            if (formatting.isColor() && formatting.getColorValue() != null &&
-                    formatting.getColorValue() == color) {
-                return formatting;
+            if (formatting.isColor() && formatting.getColorValue() != null) {
+                int formattingColor = formatting.getColorValue() & 0xFFFFFF;
+                if (formattingColor == rgbColor) {
+                    return formatting;
+                }
             }
         }
-        return Formatting.WHITE; // 默认值
+
+        // 如果没有找到匹配的颜色，返回默认值
+        TestModClient.LOGGER.warn("未找到匹配的Formatting枚举，颜色: 0x{}", Integer.toHexString(color));
+        return Formatting.WHITE;
     }
 
     // 辅助方法：从Formatting枚举获取颜色值
