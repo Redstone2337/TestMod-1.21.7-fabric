@@ -1,4 +1,3 @@
-// ScrollableTextWidget.java
 package net.redstone233.test.core.button;
 
 import net.minecraft.client.MinecraftClient;
@@ -38,15 +37,18 @@ public class ScrollableTextWidget extends ClickableWidget {
 
     public void updateWrappedLines() {
         wrappedLines.clear();
-        // 直接包装整个文本，保留样式
-        if (getMessage() != null && !getMessage().getString().isEmpty()) {
-            wrappedLines.addAll(textRenderer.wrapLines(getMessage(), width - scrollbarWidth - scrollbarPadding * 2));
-            totalHeight = wrappedLines.size() * textRenderer.fontHeight;
-        } else {
-            // 如果消息为空，添加一个空的 OrderedText
-            wrappedLines.add(OrderedText.EMPTY);
+
+        // 检查消息是否为空
+        if (getMessage() == null || getMessage().getString().isEmpty()) {
+            // 添加默认文本
+            wrappedLines.add(Text.literal("暂无公告内容").asOrderedText());
             totalHeight = textRenderer.fontHeight;
+            return;
         }
+
+        // 直接包装整个文本，保留样式
+        wrappedLines.addAll(textRenderer.wrapLines(getMessage(), width - scrollbarWidth - scrollbarPadding * 2));
+        totalHeight = wrappedLines.size() * textRenderer.fontHeight;
     }
 
     @Override
@@ -91,9 +93,10 @@ public class ScrollableTextWidget extends ClickableWidget {
         // 启用裁剪 - 修正裁剪区域
         context.enableScissor(getX(), getY(), getX() + width - scrollbarWidth, getY() + height);
 
-        // 绘制文本 - 使用传递的颜色值
+        // 绘制文本
         int yOffset = getY() - (int) scrollAmount;
         for (OrderedText line : wrappedLines) {
+            // 检查行是否在可见区域内
             if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
                 context.drawText(textRenderer, line, getX() + 5, yOffset, color, false);
             }
@@ -103,7 +106,11 @@ public class ScrollableTextWidget extends ClickableWidget {
         // 禁用裁剪
         context.disableScissor();
 
-        // 绘制滚动条
+        // 绘制滚动条（如果需要）
+        drawScrollbar(context);
+    }
+
+    private void drawScrollbar(DrawContext context) {
         if (totalHeight > height) {
             int scrollbarHeight = (int) ((float) height * height / totalHeight);
             scrollbarHeight = Math.max(scrollbarHeight, 20);

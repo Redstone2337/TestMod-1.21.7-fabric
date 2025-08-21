@@ -1,7 +1,5 @@
-// AnnouncementScreen.java
 package net.redstone233.test.core.screen;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.gl.RenderPipelines;
@@ -21,6 +19,7 @@ import net.redstone233.test.core.config.ConfigInitializer;
 import net.redstone233.test.core.config.ModConfig;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -73,7 +72,7 @@ public class AnnouncementScreen extends Screen {
             try {
                 iconTexture = Identifier.of(config.iconPath);
             } catch (Exception e) {
-                TestModClient.LOGGER.warn("无法加载图标纹理: " + config.iconPath, e);
+                TestModClient.LOGGER.warn("无法加载图标纹理: {}", config.iconPath, e);
             }
         }
 
@@ -117,40 +116,10 @@ public class AnnouncementScreen extends Screen {
         subtitleWidget.alignCenter();
         addDrawableChild(subtitleWidget);
 
-        // 滚动公告内容 - 修复内容构建逻辑
-        MutableText contentText = Text.empty();
-        if (config.announcementContent != null && !config.announcementContent.isEmpty()) {
-            for (String line : config.announcementContent) {
-                if (line.trim().isEmpty()) {
-                    // 空行
-                    contentText.append("\n");
-                } else {
-                    // 使用 MutableText 创建丰富的公告内容
-                    MutableText lineText = Text.literal(line);
-                    if (config.useCustomRGB) {
-                        lineText = lineText.withColor(config.contentColor);
-                    } else {
-                        Formatting formatting = getFormattingFromColor(config.contentColor);
-                        lineText = lineText.formatted(formatting);
-                    }
-                    contentText.append(lineText).append("\n");
-                }
-            }
-        } else {
-            // 默认公告内容
-            contentText = Text.literal("欢迎来到服务器！");
-            if (config.useCustomRGB) {
-                contentText = contentText.withColor(config.contentColor);
-            } else {
-                contentText = contentText.formatted(Formatting.WHITE);
-            }
-        }
+        // 创建公告内容
+        MutableText contentText = createAnnouncementContent();
 
-        // 确保内容不为空
-        if (contentText.getString().trim().isEmpty()) {
-            contentText = Text.literal("暂无公告内容").formatted(Formatting.GRAY);
-        }
-
+        // 创建滚动文本部件
         scrollableText = new ScrollableTextWidget(
                 centerX - 150, 80, 300, this.height - 150,
                 contentText, textRenderer, client,
@@ -158,6 +127,57 @@ public class AnnouncementScreen extends Screen {
         );
         addDrawableChild(scrollableText);
 
+        // 创建按钮
+        createButtons(centerX, buttonWidth, buttonHeight, buttonY);
+    }
+
+    private MutableText createAnnouncementContent() {
+        MutableText contentText = Text.empty();
+
+        // 使用默认公告内容
+        List<String> defaultContent = List.of(
+                "欢迎游玩，我们团队做的模组！",
+                " ",
+                "一些提醒：",
+                "1. 模组仅限于1.21.7~1.21.8fabric",
+                "2. 模组目前是半成品",
+                "3. 后面会继续更新",
+                " ",
+                "模组随缘更新",
+                "若发现bug可以向模组作者或者仓库反馈！"
+        );
+
+        List<String> content = config.announcementContent != null && !config.announcementContent.isEmpty() ?
+                config.announcementContent : defaultContent;
+
+        for (String line : content) {
+            if (line.trim().isEmpty()) {
+                // 空行
+                contentText.append("\n");
+            } else {
+                // 使用 MutableText 创建丰富的公告内容
+                MutableText lineText = Text.literal(line);
+                if (config.useCustomRGB) {
+                    lineText = lineText.withColor(config.contentColor);
+                } else {
+                    Formatting formatting = getFormattingFromColor(config.contentColor);
+                    lineText = lineText.formatted(formatting);
+                }
+                contentText.append(lineText).append("\n");
+            }
+        }
+
+        // 移除末尾多余的换行符
+        String contentString = contentText.getString();
+        if (contentString.endsWith("\n")) {
+            contentString = contentString.substring(0, contentString.length() - 1);
+            contentText = Text.literal(contentString);
+        }
+
+        return contentText;
+    }
+
+    private void createButtons(int centerX, int buttonWidth, int buttonHeight, int buttonY) {
         // 使用 MutableText 创建按钮文本
         String buttonText = config.buttonText != null ? config.buttonText : "确定";
         MutableText buttonTextMutable = Text.literal(buttonText);
@@ -202,31 +222,40 @@ public class AnnouncementScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderInGameBackground(context);
+        // 渲染背景 - 使用与原版UI相似的颜色 #B4303030
+        context.fill(0, 0, this.width, this.height, 0xB4303030);
 
         // 绘制图标（如果有）
         if (config.showIcon && iconTexture != null) {
             int iconX = (this.width / 2) - 150 - config.iconWidth - config.iconTextSpacing;
             int iconY = 30;
 
-            // 使用正确的DrawContext API绘制纹理
-            context.drawTexture(
-                    RenderPipelines.GUI_TEXTURED,
-                    iconTexture,
-                    iconX,
-                    iconY,
-                    0,
-                    0,
-                    config.iconWidth,
-                    config.iconHeight,
-                    config.iconWidth,
-                    config.iconHeight
-            );
+            try {
+                // 使用正确的DrawContext API绘制纹理
+                context.drawTexture(
+                        RenderPipelines.GUI_TEXTURED,
+                        iconTexture,
+                        iconX,
+                        iconY,
+                        0,
+                        0,
+                        config.iconWidth,
+                        config.iconHeight,
+                        config.iconWidth,
+                        config.iconHeight
+                );
+            } catch (Exception e) {
+                TestModClient.LOGGER.warn("无法绘制图标", e);
+            }
         }
 
-        this.renderTitle(context, mouseX, mouseY, delta);
+        // 渲染标题
+        renderTitle(context, mouseX, mouseY, delta);
+
+        // 渲染其他部件
         super.render(context, mouseX, mouseY, delta);
 
+        // 滚动文本
         if (scrollableText != null && tickCount % 2 == 0) {
             double maxScroll = scrollableText.getTotalHeight() - scrollableText.getHeight();
             if (maxScroll > 0) {

@@ -3,6 +3,7 @@ package net.redstone233.test.core.screen;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -10,6 +11,8 @@ import net.redstone233.test.TestModClient;
 import net.redstone233.test.core.config.ModConfig;
 
 import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ModConfigScreen {
     public static Screen getScreen(Screen parent) {
@@ -20,6 +23,11 @@ public class ModConfigScreen {
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         ModConfig config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
+
+        // 获取所有颜色Formatting的集合
+        Set<Formatting> colorFormattings = Arrays.stream(Formatting.values())
+                .filter(Formatting::isColor)
+                .collect(Collectors.toSet());
 
         // 颜色模式设置
         builder.getOrCreateCategory(Text.literal("颜色模式"))
@@ -42,11 +50,24 @@ public class ModConfigScreen {
                         .setSaveConsumer(newValue -> config.mainTitleColor = newValue)
                         .setRequirement(() -> config.useCustomRGB) // 仅在自定义RGB模式下显示
                         .build())
-                .addEntry(entryBuilder.startEnumSelector(Text.literal("主标题颜色"), Formatting.class,
-                                getFormattingFromColor(config.mainTitleColor))
-                        .setDefaultValue(Formatting.GOLD)
-                        .setTooltip(Text.literal("主标题的文本颜色 (Formatting枚举)"))
-                        .setSaveConsumer(newValue -> config.mainTitleColor = getColorFromFormatting(newValue))
+                .addEntry(entryBuilder.startDropdownMenu(Text.literal("主标题颜色"),
+                                DropdownMenuBuilder.TopCellElementBuilder.of(
+                                        getFormattingFromColor(config.mainTitleColor),
+                                        str -> {
+                                            try {
+                                                return Formatting.valueOf(str.toUpperCase());
+                                            } catch (IllegalArgumentException e) {
+                                                return null;
+                                            }
+                                        },
+                                        formatting -> Text.literal(formatting != null ? formatting.getName() : "WHITE")
+                                ),
+                                DropdownMenuBuilder.CellCreatorBuilder.of(
+                                        formatting -> Text.literal(formatting != null ? formatting.getName() : "WHITE")
+                                ))
+                        .setDefaultValue(getFormattingFromColor(config.mainTitleColor))
+                        .setSelections(colorFormattings)
+                        .setSaveConsumer(newValue -> config.mainTitleColor = getColorFromFormatting((Formatting) newValue))
                         .setRequirement(() -> !config.useCustomRGB) // 仅在非自定义RGB模式下显示
                         .build())
                 .addEntry(entryBuilder.startStrField(Text.literal("副标题"), config.subTitle)
@@ -60,11 +81,24 @@ public class ModConfigScreen {
                         .setSaveConsumer(newValue -> config.subTitleColor = newValue)
                         .setRequirement(() -> config.useCustomRGB) // 仅在自定义RGB模式下显示
                         .build())
-                .addEntry(entryBuilder.startEnumSelector(Text.literal("副标题颜色"), Formatting.class,
-                                getFormattingFromColor(config.subTitleColor))
-                        .setDefaultValue(Formatting.WHITE)
-                        .setTooltip(Text.literal("副标题的文本颜色 (Formatting枚举)"))
-                        .setSaveConsumer(newValue -> config.subTitleColor = getColorFromFormatting(newValue))
+                .addEntry(entryBuilder.startDropdownMenu(Text.literal("副标题颜色"),
+                                DropdownMenuBuilder.TopCellElementBuilder.of(
+                                        getFormattingFromColor(config.subTitleColor),
+                                        str -> {
+                                            try {
+                                                return Formatting.valueOf(str.toUpperCase());
+                                            } catch (IllegalArgumentException e) {
+                                                return null;
+                                            }
+                                        },
+                                        formatting -> Text.literal(formatting != null ? formatting.getName() : "WHITE")
+                                ),
+                                DropdownMenuBuilder.CellCreatorBuilder.of(
+                                        formatting -> Text.literal(formatting != null ? formatting.getName() : "WHITE")
+                                ))
+                        .setDefaultValue(getFormattingFromColor(config.subTitleColor))
+                        .setSelections(colorFormattings)
+                        .setSaveConsumer(newValue -> config.subTitleColor = getColorFromFormatting((Formatting) newValue))
                         .setRequirement(() -> !config.useCustomRGB) // 仅在非自定义RGB模式下显示
                         .build());
 
@@ -76,8 +110,8 @@ public class ModConfigScreen {
                         .setSaveConsumer(newValue -> config.showIcon = newValue)
                         .build())
                 .addEntry(entryBuilder.startStrField(Text.literal("图标路径"), config.iconPath)
-                        .setDefaultValue("testmod:textures/gui/announcement_icon.png")
-                        .setTooltip(Text.literal("图标资源路径 (例如: testmod:textures/gui/icon.png)"))
+                        .setDefaultValue("mtc:textures/gui/announcement_icon.png")
+                        .setTooltip(Text.literal("图标资源路径 (例如: testmod:textures/gui/announcement_icon.png)"))
                         .setSaveConsumer(newValue -> config.iconPath = newValue)
                         .build())
                 .addEntry(entryBuilder.startIntField(Text.literal("图标宽度"), config.iconWidth)
@@ -127,11 +161,24 @@ public class ModConfigScreen {
                         .setSaveConsumer(newValue -> config.contentColor = newValue)
                         .setRequirement(() -> config.useCustomRGB) // 仅在自定义RGB模式下显示
                         .build())
-                .addEntry(entryBuilder.startEnumSelector(Text.literal("内容颜色"), Formatting.class,
-                                getFormattingFromColor(config.contentColor))
-                        .setDefaultValue(Formatting.BLUE)
-                        .setTooltip(Text.literal("公告内容的文本颜色 (Formatting枚举)"))
-                        .setSaveConsumer(newValue -> config.contentColor = getColorFromFormatting(newValue))
+                .addEntry(entryBuilder.startDropdownMenu(Text.literal("内容颜色"),
+                                DropdownMenuBuilder.TopCellElementBuilder.of(
+                                        getFormattingFromColor(config.contentColor),
+                                        str -> {
+                                            try {
+                                                return Formatting.valueOf(str.toUpperCase());
+                                            } catch (IllegalArgumentException e) {
+                                                return null;
+                                            }
+                                        },
+                                        formatting -> Text.literal(formatting != null ? formatting.getName() : "WHITE")
+                                ),
+                                DropdownMenuBuilder.CellCreatorBuilder.of(
+                                        formatting -> Text.literal(formatting != null ? formatting.getName() : "WHITE")
+                                ))
+                        .setDefaultValue(getFormattingFromColor(config.contentColor))
+                        .setSelections(colorFormattings)
+                        .setSaveConsumer(newValue -> config.contentColor = getColorFromFormatting((Formatting) newValue))
                         .setRequirement(() -> !config.useCustomRGB) // 仅在非自定义RGB模式下显示
                         .build())
                 .addEntry(entryBuilder.startIntSlider(Text.literal("滚动速度"), config.scrollSpeed, 10, 100)

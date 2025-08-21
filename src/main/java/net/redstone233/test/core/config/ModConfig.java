@@ -77,8 +77,8 @@ public class ModConfig implements ConfigData {
     public boolean showIcon = false;
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("图标资源路径 (例如: testmod:textures/gui/icon.png)")
-    public String iconPath = "testmod:textures/gui/announcement_icon.png";
+    @Comment("图标资源路径 (例如: testmod:textures/gui/announcement_icon.png)")
+    public String iconPath = "mtc:textures/gui/announcement_icon.png";
 
     @ConfigEntry.Gui.Tooltip
     @Comment("图标宽度 (像素)")

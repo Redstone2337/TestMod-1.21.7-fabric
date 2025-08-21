@@ -1,7 +1,5 @@
 package net.redstone233.test;
 
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -9,7 +7,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -63,6 +60,13 @@ public class TestModClient implements ClientModInitializer {
         initializeHud();
         initializeKeyBindings();
 
+        // 添加世界进入事件监听
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            if (client.world != null && client.player != null) {
+                showAnnouncementIfNeeded(client);
+            }
+        });
+
         LOGGER.info("客户端初始化完成，总耗时 {}ms", System.currentTimeMillis() - startTime);
     }
 
@@ -74,13 +78,6 @@ public class TestModClient implements ClientModInitializer {
                 return new FreezeSwordTooltipComponent(stack);
             }
             return null;
-        });
-
-        // 添加世界进入事件监听
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            if (client.world != null && client.player != null) {
-                showAnnouncementIfNeeded(client);
-            }
         });
 
         ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ModDataComponentTypes.FREEZING_SWORD);
@@ -142,12 +139,9 @@ public class TestModClient implements ClientModInitializer {
     private void initializeHud() {
         LOGGER.debug("初始化HUD系统...");
 
-//        HudRenderCallback.EVENT.register((context, tickCounter) -> {
-//            FreezeSwordHud.render(context);
-//        });
         HudElementRegistry.addFirst(Identifier.of(TestMod.MOD_ID,"freeze_hud"),
                 (drawContext, renderTickCounter) -> {
-            FreezeSwordHud.render(drawContext);
+                    FreezeSwordHud.render(drawContext);
                 });
     }
 

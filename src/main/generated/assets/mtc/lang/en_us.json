@@ -55,7 +55,7 @@
   "msg.freezesword.max_charges_hud": "MAX CHARGES READY!",
   "msg.freezesword.progress_value": "Progress[",
   "msg.freezesword.start_charging": "§b[Freeze Sword]§r Charging started! Hold [%s] to continue...",
-  "narration.scrollable_text": "Scrollable Text",
+  "narration.scrollable_text": "Scrollable Text：%s",
   "narration.scrollable_text.usage": "Usage Scrollable Text",
   "tooltip.freezing_sword.charge": "Freeze Charge:",
   "tooltip.freezing_sword.charge_instruction": "Press %s to charge, then left-click for massive damage!",
