@@ -117,11 +117,12 @@ public class AnnouncementScreen extends Screen {
         subtitleWidget.alignCenter();
         addDrawableChild(subtitleWidget);
 
-        // 滚动公告内容
+        // 滚动公告内容 - 修复内容构建逻辑
         MutableText contentText = Text.empty();
-        if (config.announcementContent != null) {
+        if (config.announcementContent != null && !config.announcementContent.isEmpty()) {
             for (String line : config.announcementContent) {
                 if (line.trim().isEmpty()) {
+                    // 空行
                     contentText.append("\n");
                 } else {
                     // 使用 MutableText 创建丰富的公告内容
@@ -136,15 +137,18 @@ public class AnnouncementScreen extends Screen {
                 }
             }
         } else {
-            contentText = Text.literal("欢迎来到服务器！").withColor(config.useCustomRGB ?
-                    config.contentColor : getColorFromFormatting(Formatting.WHITE));
+            // 默认公告内容
+            contentText = Text.literal("欢迎来到服务器！");
+            if (config.useCustomRGB) {
+                contentText = contentText.withColor(config.contentColor);
+            } else {
+                contentText = contentText.formatted(Formatting.WHITE);
+            }
         }
 
-        // 移除末尾多余的换行符
-        String contentString = contentText.getString();
-        if (contentString.endsWith("\n")) {
-            contentString = contentString.substring(0, contentString.length() - 1);
-            contentText = Text.literal(contentString);
+        // 确保内容不为空
+        if (contentText.getString().trim().isEmpty()) {
+            contentText = Text.literal("暂无公告内容").formatted(Formatting.GRAY);
         }
 
         scrollableText = new ScrollableTextWidget(
@@ -155,7 +159,7 @@ public class AnnouncementScreen extends Screen {
         addDrawableChild(scrollableText);
 
         // 使用 MutableText 创建按钮文本
-        String buttonText = config.buttonText != null ? config.buttonText : "前往投递";
+        String buttonText = config.buttonText != null ? config.buttonText : "确定";
         MutableText buttonTextMutable = Text.literal(buttonText);
         if (config.useCustomRGB) {
             buttonTextMutable = buttonTextMutable.withColor(0xFFFFFF); // 按钮文本使用白色

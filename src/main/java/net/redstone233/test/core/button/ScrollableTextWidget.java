@@ -39,8 +39,14 @@ public class ScrollableTextWidget extends ClickableWidget {
     public void updateWrappedLines() {
         wrappedLines.clear();
         // 直接包装整个文本，保留样式
-        wrappedLines.addAll(textRenderer.wrapLines(getMessage(), width - scrollbarWidth - scrollbarPadding * 2));
-        totalHeight = wrappedLines.size() * textRenderer.fontHeight;
+        if (getMessage() != null && !getMessage().getString().isEmpty()) {
+            wrappedLines.addAll(textRenderer.wrapLines(getMessage(), width - scrollbarWidth - scrollbarPadding * 2));
+            totalHeight = wrappedLines.size() * textRenderer.fontHeight;
+        } else {
+            // 如果消息为空，添加一个空的 OrderedText
+            wrappedLines.add(OrderedText.EMPTY);
+            totalHeight = textRenderer.fontHeight;
+        }
     }
 
     @Override
