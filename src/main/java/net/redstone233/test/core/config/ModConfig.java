@@ -59,15 +59,15 @@ public class ModConfig implements ConfigData {
     public int scrollSpeed = 30;
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("主标题颜色 (RGB整数)")
+    @Comment("主标题颜色 (RGB整数，十六进制格式如0xFFD700)")
     public int mainTitleColor = 0xFFD700;
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("副标题颜色 (RGB整数)")
+    @Comment("副标题颜色 (RGB整数，十六进制格式如0xFFFFFF)")
     public int subTitleColor = 0xFFFFFF;
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("公告内容颜色 (RGB整数)")
+    @Comment("公告内容颜色 (RGB整数，十六进制格式如0x0610EA)")
     public int contentColor = 0x0610EA;
 
     @ConfigEntry.Gui.Tooltip

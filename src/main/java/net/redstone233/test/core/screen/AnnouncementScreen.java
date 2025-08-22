@@ -180,7 +180,7 @@ public class AnnouncementScreen extends Screen {
             String line = content.get(i);
 
             // 解析包含Formatting代码的字符串
-            MutableText lineText = parseFormattingCodes(line);
+            MutableText lineText = parseFormattingCodes(line, config.contentColor, config.useCustomRGB);
 
             contentText.append(lineText);
 
@@ -201,8 +201,13 @@ public class AnnouncementScreen extends Screen {
     /**
      * 解析包含Minecraft Formatting代码的字符串
      * 支持 § 符号后跟颜色代码（如 §a 表示绿色）
+     *
+     * @param text 要解析的文本
+     * @param defaultColor 默认颜色值（十六进制整数格式，如0xFFFFFF）
+     * @param useCustomRGB 是否使用自定义RGB颜色
+     * @return 解析后的MutableText
      */
-    private MutableText parseFormattingCodes(String text) {
+    private MutableText parseFormattingCodes(String text, int defaultColor, boolean useCustomRGB) {
         MutableText result = Text.empty();
         StringBuilder currentText = new StringBuilder();
         Formatting currentFormatting = null;
@@ -221,12 +226,17 @@ public class AnnouncementScreen extends Screen {
                         MutableText segment = Text.literal(currentText.toString());
                         if (currentFormatting != null) {
                             segment = segment.formatted(currentFormatting);
+                        } else if (useCustomRGB) {
+                            segment = segment.withColor(defaultColor);
+                        } else {
+                            Formatting defaultFormatting = getFormattingFromColor(defaultColor);
+                            segment = segment.formatted(defaultFormatting);
                         }
                         result.append(segment);
                         currentText.setLength(0);
                     }
 
-                    currentFormatting = formatting;
+                    currentFormatting = formatting.isColor() ? formatting : currentFormatting;
                     i++; // 跳过格式代码
                 } else {
                     // 无效的格式代码，当作普通文本处理
@@ -242,6 +252,11 @@ public class AnnouncementScreen extends Screen {
             MutableText segment = Text.literal(currentText.toString());
             if (currentFormatting != null) {
                 segment = segment.formatted(currentFormatting);
+            } else if (useCustomRGB) {
+                segment = segment.withColor(defaultColor);
+            } else {
+                Formatting defaultFormatting = getFormattingFromColor(defaultColor);
+                segment = segment.formatted(defaultFormatting);
             }
             result.append(segment);
         }
@@ -452,7 +467,7 @@ public class AnnouncementScreen extends Screen {
 
         for (Formatting formatting : Formatting.values()) {
             if (formatting.isColor() && formatting.getColorValue() != null) {
-                int formattingColor = formatting.getColorValue() & 0xFFFFFF;
+                int formattingColor = formatting.getColorValue();
                 if (formattingColor == rgbColor) {
                     return formatting;
                 }

@@ -12,6 +12,7 @@ import net.redstone233.test.core.config.ModConfig;
 
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ModConfigScreen {
@@ -37,6 +38,25 @@ public class ModConfigScreen {
                         .setSaveConsumer(newValue -> config.useCustomRGB = newValue)
                         .build());
 
+        // 创建颜色保存消费者
+        Consumer<String> mainTitleColorConsumer = createColorConsumer(
+                newValue -> config.mainTitleColor = newValue,
+                0xFFD700,
+                "主标题颜色"
+        );
+
+        Consumer<String> subTitleColorConsumer = createColorConsumer(
+                newValue -> config.subTitleColor = newValue,
+                0xFFFFFF,
+                "副标题颜色"
+        );
+
+        Consumer<String> contentColorConsumer = createColorConsumer(
+                newValue -> config.contentColor = newValue,
+                0x0610EA,
+                "内容颜色"
+        );
+
         // 标题设置
         builder.getOrCreateCategory(Text.literal("标题设置"))
                 .addEntry(entryBuilder.startStrField(Text.literal("主标题"), config.mainTitle)
@@ -44,10 +64,10 @@ public class ModConfigScreen {
                         .setTooltip(Text.literal("显示在公告屏幕顶部的大标题"))
                         .setSaveConsumer(newValue -> config.mainTitle = newValue)
                         .build())
-                .addEntry(entryBuilder.startIntField(Text.literal("主标题颜色"), config.mainTitleColor)
-                        .setDefaultValue(0xFFD700)
-                        .setTooltip(Text.literal("主标题的文本颜色 (RGB整数格式，如0xFFD700表示金色)"))
-                        .setSaveConsumer(newValue -> config.mainTitleColor = newValue)
+                .addEntry(entryBuilder.startStrField(Text.literal("主标题颜色"), String.format("0x%06X", config.mainTitleColor))
+                        .setDefaultValue("0xFFD700")
+                        .setTooltip(Text.literal("主标题的文本颜色 (十六进制格式，如0xFFD700表示金色)"))
+                        .setSaveConsumer(mainTitleColorConsumer)
                         .setRequirement(() -> config.useCustomRGB) // 仅在自定义RGB模式下显示
                         .build())
                 .addEntry(entryBuilder.startDropdownMenu(Text.literal("主标题颜色"),
@@ -75,10 +95,10 @@ public class ModConfigScreen {
                         .setTooltip(Text.literal("显示在主标题下方的小标题"))
                         .setSaveConsumer(newValue -> config.subTitle = newValue)
                         .build())
-                .addEntry(entryBuilder.startIntField(Text.literal("副标题颜色"), config.subTitleColor)
-                        .setDefaultValue(0xFFFFFF)
-                        .setTooltip(Text.literal("副标题的文本颜色 (RGB整数格式)"))
-                        .setSaveConsumer(newValue -> config.subTitleColor = newValue)
+                .addEntry(entryBuilder.startStrField(Text.literal("副标题颜色"), String.format("0x%06X", config.subTitleColor))
+                        .setDefaultValue("0xFFFFFF")
+                        .setTooltip(Text.literal("副标题的文本颜色 (十六进制格式)"))
+                        .setSaveConsumer(subTitleColorConsumer)
                         .setRequirement(() -> config.useCustomRGB) // 仅在自定义RGB模式下显示
                         .build())
                 .addEntry(entryBuilder.startDropdownMenu(Text.literal("副标题颜色"),
@@ -173,10 +193,10 @@ public class ModConfigScreen {
                         .setTooltip(Text.literal("公告内容列表，每行一条。支持Minecraft格式代码（如§a表示绿色）"))
                         .setSaveConsumer(newValue -> config.announcementContent = newValue)
                         .build())
-                .addEntry(entryBuilder.startIntField(Text.literal("内容颜色"), config.contentColor)
-                        .setDefaultValue(0x0610EA)
-                        .setTooltip(Text.literal("公告内容的默认文本颜色 (RGB整数格式)"))
-                        .setSaveConsumer(newValue -> config.contentColor = newValue)
+                .addEntry(entryBuilder.startStrField(Text.literal("内容颜色"), String.format("0x%06X", config.contentColor))
+                        .setDefaultValue("0x0610EA")
+                        .setTooltip(Text.literal("公告内容的默认文本颜色 (十六进制格式)"))
+                        .setSaveConsumer(contentColorConsumer)
                         .setRequirement(() -> config.useCustomRGB) // 仅在自定义RGB模式下显示
                         .build())
                 .addEntry(entryBuilder.startDropdownMenu(Text.literal("内容颜色"),
@@ -229,6 +249,39 @@ public class ModConfigScreen {
                         .build());
 
         return builder.build();
+    }
+
+    /**
+     * 创建颜色保存消费者，用于处理十六进制颜色值的解析和验证
+     *
+     * @param colorSetter 颜色设置器，用于设置配置中的颜色值
+     * @param defaultValue 默认颜色值（当输入无效时使用）
+     * @param colorName 颜色名称（用于日志记录）
+     * @return 配置保存消费者
+     */
+    private static Consumer<String> createColorConsumer(Consumer<Integer> colorSetter, int defaultValue, String colorName) {
+        return newValue -> {
+            try {
+                // 移除可能的#前缀和空格
+                String cleanValue = newValue.replace("#", "").replace(" ", "").trim();
+
+                // 处理0x前缀或没有前缀的情况
+                int colorValue;
+                if (cleanValue.startsWith("0x")) {
+                    colorValue = (int) Long.parseLong(cleanValue.substring(2), 16);
+                } else {
+                    colorValue = (int) Long.parseLong(cleanValue, 16);
+                }
+
+                // 确保只保留RGB部分（移除Alpha通道）
+                colorValue = colorValue & 0xFFFFFF;
+                colorSetter.accept(colorValue);
+
+            } catch (NumberFormatException e) {
+                TestModClient.LOGGER.warn("无效的{}值: {}, 使用默认值", colorName, newValue);
+                colorSetter.accept(defaultValue);
+            }
+        };
     }
 
     // 辅助方法：从颜色值获取Formatting枚举
