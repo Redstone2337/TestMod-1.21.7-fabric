@@ -161,20 +161,7 @@ public class AnnouncementScreen extends Screen {
     private MutableText createAnnouncementContent() {
         MutableText contentText = Text.empty();
 
-        List<String> defaultContent = List.of(
-                "§a欢迎游玩，我们团队做的模组！",
-                " ",
-                "§e一些提醒：",
-                "§f1. 模组仅限于1.21.7~1.21.8fabric",
-                "§f2. 模组目前是半成品",
-                "§f3. 后面会继续更新",
-                " ",
-                "§b模组随缘更新",
-                "§c若发现bug可以向模组作者或者仓库反馈！"
-        );
-
-        List<String> content = config.announcementContent != null && !config.announcementContent.isEmpty() ?
-                config.announcementContent : defaultContent;
+        List<String> content = getStrings();
 
         for (int i = 0; i < content.size(); i++) {
             String line = content.get(i);
@@ -196,6 +183,23 @@ public class AnnouncementScreen extends Screen {
         }
 
         return contentText;
+    }
+
+    private List<String> getStrings() {
+        List<String> defaultContent = List.of(
+                "§a欢迎游玩，我们团队做的模组！",
+                " ",
+                "§e一些提醒：",
+                "§f1. 模组仅限于1.21.7~1.21.8fabric",
+                "§f2. 模组目前是半成品",
+                "§f3. 后面会继续更新",
+                " ",
+                "§b模组随缘更新",
+                "§c若发现bug可以向模组作者或者仓库反馈！"
+        );
+
+        return config.announcementContent != null && !config.announcementContent.isEmpty() ?
+                config.announcementContent : defaultContent;
     }
 
     /**
