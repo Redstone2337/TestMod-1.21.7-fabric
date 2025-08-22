@@ -3,11 +3,12 @@ package net.redstone233.test.core.button;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.text.OrderedText;
+import net.minecraft.text.Text;
 import net.minecraft.client.font.TextRenderer;
 import net.redstone233.test.TestModClient;
 
@@ -17,7 +18,8 @@ import java.util.List;
 public class ScrollableTextWidget extends ClickableWidget {
     private final MinecraftClient client;
     private final TextRenderer textRenderer;
-    private final List<OrderedText> wrappedLines;
+//    private final List<OrderedText> wrappedLines;
+    private final List<Text> textLines;
     private double scrollAmount;
     private boolean scrolling;
     private int totalHeight;
@@ -25,6 +27,7 @@ public class ScrollableTextWidget extends ClickableWidget {
     private final int scrollbarPadding = 2;
     private final int color; // 颜色字段
 
+    /*
     public ScrollableTextWidget(int x, int y, int width, int height, Text message, TextRenderer textRenderer, MinecraftClient client, int color) {
         super(x, y, width, height, message);
         this.client = client;
@@ -42,7 +45,7 @@ public class ScrollableTextWidget extends ClickableWidget {
         // 检查消息是否为空
         if (getMessage() == null || getMessage().getString().isEmpty()) {
             // 添加默认文本
-            wrappedLines.add(Text.literal("暂无公告内容").asOrderedText());
+            wrappedLines.add(Text.literal("暂无公告内容").asText());
             totalHeight = textRenderer.fontHeight;
             return;
         }
@@ -54,18 +57,18 @@ public class ScrollableTextWidget extends ClickableWidget {
             totalHeight = wrappedLines.size() * textRenderer.fontHeight;
 
             // 调试日志
-            if (net.redstone233.test.TestModClient.DEBUG_MODE) {
-                net.redstone233.test.TestModClient.LOGGER.info("包装了 {} 行文本，总高度: {}", wrappedLines.size(), totalHeight);
-                net.redstone233.test.TestModClient.LOGGER.info("消息内容: {}", getMessage().getString());
+            if (TestModClient.DEBUG_MODE) {
+                TestModClient.LOGGER.info("包装了 {} 行文本，总高度: {}", wrappedLines.size(), totalHeight);
+                TestModClient.LOGGER.info("消息内容: {}", getMessage().getString());
 
                 for (int i = 0; i < wrappedLines.size(); i++) {
-                    OrderedText line = wrappedLines.get(i);
-                    net.redstone233.test.TestModClient.LOGGER.info("行 {}: {}", i, line.toString());
+                    Text line = wrappedLines.get(i);
+                    TestModClient.LOGGER.info("行 {}: {}", i, line.toString());
                 }
             }
         } catch (Exception e) {
-            net.redstone233.test.TestModClient.LOGGER.error("文本包装失败", e);
-            wrappedLines.add(Text.literal("文本渲染错误").asOrderedText());
+            TestModClient.LOGGER.error("文本包装失败", e);
+            wrappedLines.add(Text.literal("文本渲染错误").asText());
             totalHeight = textRenderer.fontHeight;
         }
     }
@@ -97,7 +100,7 @@ public class ScrollableTextWidget extends ClickableWidget {
 
         // 绘制文本
         int yOffset = getY() + scrollbarPadding - (int) scrollAmount;
-        for (OrderedText line : wrappedLines) {
+        for (Text line : wrappedLines) {
             // 检查行是否在可见区域内
             if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
                 // 确保文本颜色与背景有足够对比度
@@ -110,6 +113,99 @@ public class ScrollableTextWidget extends ClickableWidget {
                 if (TestModClient.DEBUG_MODE) {
                     TestModClient.LOGGER.info("绘制文本行: {}, 颜色: 0x{}, 位置: {}",
                             line.toString(), Integer.toHexString(textColor), yOffset);
+                }
+
+                context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, textColor, false);
+            }
+            yOffset += textRenderer.fontHeight;
+        }
+
+        // 禁用裁剪
+        context.disableScissor();
+
+        // 绘制滚动条（如果需要）
+        drawScrollbar(context);
+    }
+    */
+
+    public ScrollableTextWidget(int x, int y, int width, int height, Text message, TextRenderer textRenderer, MinecraftClient client, int color) {
+        super(x, y, width, height, message);
+        this.client = client;
+        this.textRenderer = textRenderer;
+        this.color = color;
+        this.textLines = new ArrayList<>(); // 改为存储Text对象
+        this.scrollAmount = 0;
+        this.totalHeight = 0;
+        updateTextLines(); // 改为更新文本行
+    }
+
+    public void updateTextLines() {
+        textLines.clear();
+
+        if (getMessage() == null || getMessage().getString().isEmpty()) {
+            textLines.add(Text.literal("暂无公告内容"));
+            totalHeight = textRenderer.fontHeight;
+            return;
+        }
+
+        try {
+            // 按换行符分割文本
+            String[] lines = getMessage().getString().split("\n");
+            for (String line : lines) {
+                textLines.add(Text.literal(line));
+            }
+            totalHeight = textLines.size() * textRenderer.fontHeight;
+
+            if (TestModClient.DEBUG_MODE) {
+                TestModClient.LOGGER.info("处理了 {} 行文本，总高度: {}", textLines.size(), totalHeight);
+                for (int i = 0; i < textLines.size(); i++) {
+                    TestModClient.LOGGER.info("行 {}: {}", i, textLines.get(i).getString());
+                }
+            }
+        } catch (Exception e) {
+            TestModClient.LOGGER.error("文本处理失败", e);
+            textLines.add(Text.literal("文本渲染错误"));
+            totalHeight = textRenderer.fontHeight;
+        }
+    }
+
+    @Override
+    public void setMessage(Text message) {
+        super.setMessage(message);
+        updateTextLines();
+    }
+
+    @Override
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        // 绘制背景
+        context.fill(getX(), getY(), getX() + width, getY() + height, 0x80404040);
+
+        // 绘制边框
+        context.fill(getX(), getY(), getX() + width, getY() + 1, 0xFF808080);
+        context.fill(getX(), getY() + height - 1, getX() + width, getY() + height, 0xFF808080);
+        context.fill(getX(), getY(), getX() + 1, getY() + height, 0xFF808080);
+        context.fill(getX() + width - 1, getY(), getX() + width, getY() + height, 0xFF808080);
+
+        // 启用裁剪
+        int clipX = getX() + scrollbarPadding;
+        int clipY = getY() + scrollbarPadding;
+        int clipWidth = width - scrollbarWidth - scrollbarPadding * 2;
+        int clipHeight = height - scrollbarPadding * 2;
+
+        context.enableScissor(clipX, clipY, clipX + clipWidth, clipY + clipHeight);
+
+        // 绘制文本 - 直接使用Text对象而不是OrderedText
+        int yOffset = getY() + scrollbarPadding - (int) scrollAmount;
+        for (Text line : textLines) {
+            if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
+                int textColor = this.color;
+                if ((textColor & 0xFFFFFF) == (0x80404040 & 0xFFFFFF)) {
+                    textColor = 0xFFFFFFFF;
+                }
+
+                if (TestModClient.DEBUG_MODE) {
+                    TestModClient.LOGGER.info("绘制文本行: {}, 颜色: 0x{}, 位置: {}",
+                            line.getString(), Integer.toHexString(textColor), yOffset);
                 }
 
                 context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, textColor, false);

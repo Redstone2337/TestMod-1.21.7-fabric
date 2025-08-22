@@ -160,20 +160,22 @@ public class ModConfigScreen {
                         .build())
                 .addEntry(entryBuilder.startStrList(Text.literal("公告内容"), config.announcementContent)
                         .setDefaultValue(Arrays.asList(
-                                "欢迎游玩，我们团队做的模组！",
-                                "一些提醒：",
-                                "1. 模组仅限于1.21.7~1.21.8fabric",
-                                "2. 模组目前是半成品",
-                                "3. 后面会继续更新",
-                                "模组随缘更新",
-                                "若发现bug可以向模组作者或者仓库反馈！"
+                                "§a欢迎游玩，我们团队做的模组！",
+                                " ",
+                                "§e一些提醒：",
+                                "§f1. 模组仅限于1.21.7~1.21.8fabric",
+                                "§f2. 模组目前是半成品",
+                                "§f3. 后面会继续更新",
+                                " ",
+                                "§b模组随缘更新",
+                                "§c若发现bug可以向模组作者或者仓库反馈！"
                         ))
-                        .setTooltip(Text.literal("公告内容列表，每行一条"))
+                        .setTooltip(Text.literal("公告内容列表，每行一条。支持Minecraft格式代码（如§a表示绿色）"))
                         .setSaveConsumer(newValue -> config.announcementContent = newValue)
                         .build())
                 .addEntry(entryBuilder.startIntField(Text.literal("内容颜色"), config.contentColor)
                         .setDefaultValue(0x0610EA)
-                        .setTooltip(Text.literal("公告内容的文本颜色 (RGB整数格式)"))
+                        .setTooltip(Text.literal("公告内容的默认文本颜色 (RGB整数格式)"))
                         .setSaveConsumer(newValue -> config.contentColor = newValue)
                         .setRequirement(() -> config.useCustomRGB) // 仅在自定义RGB模式下显示
                         .build())
@@ -196,6 +198,10 @@ public class ModConfigScreen {
                         .setSelections(colorFormattings)
                         .setSaveConsumer(newValue -> config.contentColor = getColorFromFormatting((Formatting) newValue))
                         .setRequirement(() -> !config.useCustomRGB) // 仅在非自定义RGB模式下显示
+                        .build())
+                .addEntry(entryBuilder.startTextDescription(Text.literal("提示：在公告内容中使用 § 符号后跟颜色代码可以设置特定文本的颜色").formatted(Formatting.GRAY))
+                        .build())
+                .addEntry(entryBuilder.startTextDescription(Text.literal("例如：§a绿色文本 §b蓝色文本 §c红色文本 §e黄色文本").formatted(Formatting.GRAY))
                         .build())
                 .addEntry(entryBuilder.startIntSlider(Text.literal("滚动速度"), config.scrollSpeed, 10, 100)
                         .setDefaultValue(30)
@@ -227,10 +233,15 @@ public class ModConfigScreen {
 
     // 辅助方法：从颜色值获取Formatting枚举
     private static Formatting getFormattingFromColor(int color) {
+        // 移除alpha通道，只比较RGB值
+        int rgbColor = color & 0xFFFFFF;
+
         for (Formatting formatting : Formatting.values()) {
-            if (formatting.isColor() && formatting.getColorValue() != null &&
-                    formatting.getColorValue() == color) {
-                return formatting;
+            if (formatting.isColor() && formatting.getColorValue() != null) {
+                int formattingColor = formatting.getColorValue() & 0xFFFFFF;
+                if (formattingColor == rgbColor) {
+                    return formatting;
+                }
             }
         }
         return Formatting.WHITE; // 默认值

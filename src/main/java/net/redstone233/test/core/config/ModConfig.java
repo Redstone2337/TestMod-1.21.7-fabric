@@ -31,13 +31,15 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     @Comment("公告内容（每行一条，支持多行）")
     public List<String> announcementContent = Arrays.asList(
-            "欢迎游玩，我们团队做的模组！",
-            "一些提醒：",
-            "1. 模组仅限于1.21.7~1.21.8fabric",
-            "2. 模组目前是半成品",
-            "3. 后面会继续更新",
-            "模组随缘更新",
-            "若发现bug可以向模组作者或者仓库反馈！"
+            "§a欢迎游玩，我们团队做的模组！",
+            " ",
+            "§e一些提醒：",
+            "§f1. 模组仅限于1.21.7~1.21.8fabric",
+            "§f2. 模组目前是半成品",
+            "§f3. 后面会继续更新",
+            " ",
+            "§b模组随缘更新",
+            "§c若发现bug可以向模组作者或者仓库反馈！"
     );
 
     @ConfigEntry.Gui.Tooltip

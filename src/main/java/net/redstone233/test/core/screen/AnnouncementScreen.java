@@ -55,7 +55,18 @@ public class AnnouncementScreen extends Screen {
     protected void init() {
         super.init();
 
-        int centerX = this.width / 2;
+        // 创建滚动文本部件
+        int contentColor = config.useCustomRGB ? config.contentColor : 0xFFFFFFFF; // 默认使用白色
+
+        int centerX = 0;
+        MutableText contentText = null;
+        scrollableText = new ScrollableTextWidget(
+                centerX - 150, 80, 300, this.height - 150,
+                contentText, textRenderer, client,
+                contentColor
+        );
+
+        centerX = this.width / 2;
         int buttonWidth = 100;
         int buttonHeight = 20;
         int buttonY = this.height - 30;
@@ -122,11 +133,9 @@ public class AnnouncementScreen extends Screen {
         addDrawableChild(subtitleWidget);
 
         // 创建公告内容
-        MutableText contentText = createAnnouncementContent();
+        contentText = createAnnouncementContent();
 
         // 创建滚动文本部件
-        int contentColor = config.useCustomRGB ? config.contentColor : getColorFromFormatting(getFormattingFromColor(config.contentColor));
-
         // 简化颜色对比度检查
         if ((contentColor & 0xFFFFFF) == (0xB4303030 & 0xFFFFFF)) {
             contentColor = 0xFFFFFFFF; // 如果颜色太相似，使用白色
@@ -153,15 +162,15 @@ public class AnnouncementScreen extends Screen {
         MutableText contentText = Text.empty();
 
         List<String> defaultContent = List.of(
-                "欢迎游玩，我们团队做的模组！",
+                "§a欢迎游玩，我们团队做的模组！",
                 " ",
-                "一些提醒：",
-                "1. 模组仅限于1.21.7~1.21.8fabric",
-                "2. 模组目前是半成品",
-                "3. 后面会继续更新",
+                "§e一些提醒：",
+                "§f1. 模组仅限于1.21.7~1.21.8fabric",
+                "§f2. 模组目前是半成品",
+                "§f3. 后面会继续更新",
                 " ",
-                "模组随缘更新",
-                "若发现bug可以向模组作者或者仓库反馈！"
+                "§b模组随缘更新",
+                "§c若发现bug可以向模组作者或者仓库反馈！"
         );
 
         List<String> content = config.announcementContent != null && !config.announcementContent.isEmpty() ?
@@ -170,24 +179,8 @@ public class AnnouncementScreen extends Screen {
         for (int i = 0; i < content.size(); i++) {
             String line = content.get(i);
 
-            // 处理空行
-            if (line.trim().isEmpty()) {
-                contentText.append(Text.literal("\n"));
-                continue;
-            }
-
-            // 创建带样式的文本行
-            MutableText lineText = Text.literal(line);
-
-            // 应用颜色样式
-            if (config.useCustomRGB) {
-                lineText = lineText.withColor(config.contentColor);
-            } else {
-                Formatting formatting = getFormattingFromColor(config.contentColor);
-                if (formatting != null) {
-                    lineText = lineText.formatted(formatting);
-                }
-            }
+            // 解析包含Formatting代码的字符串
+            MutableText lineText = parseFormattingCodes(line);
 
             contentText.append(lineText);
 
@@ -197,13 +190,63 @@ public class AnnouncementScreen extends Screen {
             }
         }
 
-        // 调试日志
         if (TestModClient.DEBUG_MODE) {
             TestModClient.LOGGER.info("公告内容构建完成: {}", contentText.getString());
             TestModClient.LOGGER.info("公告内容行数: {}", content.size());
         }
 
         return contentText;
+    }
+
+    /**
+     * 解析包含Minecraft Formatting代码的字符串
+     * 支持 § 符号后跟颜色代码（如 §a 表示绿色）
+     */
+    private MutableText parseFormattingCodes(String text) {
+        MutableText result = Text.empty();
+        StringBuilder currentText = new StringBuilder();
+        Formatting currentFormatting = null;
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (c == '§' && i + 1 < text.length()) {
+                // 找到Formatting代码
+                char codeChar = text.charAt(i + 1);
+                Formatting formatting = Formatting.byCode(codeChar);
+
+                if (formatting != null) {
+                    // 添加当前文本（如果有）
+                    if (!currentText.isEmpty()) {
+                        MutableText segment = Text.literal(currentText.toString());
+                        if (currentFormatting != null) {
+                            segment = segment.formatted(currentFormatting);
+                        }
+                        result.append(segment);
+                        currentText.setLength(0);
+                    }
+
+                    currentFormatting = formatting;
+                    i++; // 跳过格式代码
+                } else {
+                    // 无效的格式代码，当作普通文本处理
+                    currentText.append(c);
+                }
+            } else {
+                currentText.append(c);
+            }
+        }
+
+        // 添加剩余的文本
+        if (!currentText.isEmpty()) {
+            MutableText segment = Text.literal(currentText.toString());
+            if (currentFormatting != null) {
+                segment = segment.formatted(currentFormatting);
+            }
+            result.append(segment);
+        }
+
+        return result;
     }
 
     private void createButtons(int centerX, int buttonWidth, int buttonHeight, int buttonY) {
