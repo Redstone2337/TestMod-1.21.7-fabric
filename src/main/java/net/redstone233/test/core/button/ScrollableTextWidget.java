@@ -45,10 +45,13 @@ public class ScrollableTextWidget extends ClickableWidget {
         }
 
         try {
-            // 按换行符分割文本
-            String[] lines = getMessage().getString().split("\n");
+            // 按换行符分割文本，并保留格式
+            String fullText = getMessage().getString();
+            String[] lines = fullText.split("\n");
+
+            // 解析每行的格式代码
             for (String line : lines) {
-                textLines.add(Text.literal(line));
+                textLines.add(parseFormattingCodes(line));
             }
             totalHeight = textLines.size() * textRenderer.fontHeight;
 
@@ -63,6 +66,60 @@ public class ScrollableTextWidget extends ClickableWidget {
             textLines.add(Text.literal("文本渲染错误"));
             totalHeight = textRenderer.fontHeight;
         }
+    }
+
+    /**
+     * 解析包含Minecraft Formatting代码的字符串
+     * 支持 § 符号后跟颜色代码（如 §a 表示绿色）
+     *
+     * @param text 要解析的文本
+     * @return 解析后的Text对象
+     */
+    private Text parseFormattingCodes(String text) {
+        net.minecraft.text.MutableText result = net.minecraft.text.Text.empty();
+        StringBuilder currentText = new StringBuilder();
+        net.minecraft.util.Formatting currentFormatting = null;
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (c == '§' && i + 1 < text.length()) {
+                // 找到Formatting代码
+                char codeChar = text.charAt(i + 1);
+                net.minecraft.util.Formatting formatting = net.minecraft.util.Formatting.byCode(codeChar);
+
+                if (formatting != null) {
+                    // 添加当前文本（如果有）
+                    if (!currentText.isEmpty()) {
+                        net.minecraft.text.MutableText segment = net.minecraft.text.Text.literal(currentText.toString());
+                        if (currentFormatting != null) {
+                            segment = segment.formatted(currentFormatting);
+                        }
+                        result.append(segment);
+                        currentText.setLength(0);
+                    }
+
+                    currentFormatting = formatting.isColor() ? formatting : currentFormatting;
+                    i++; // 跳过格式代码
+                } else {
+                    // 无效的格式代码，当作普通文本处理
+                    currentText.append(c);
+                }
+            } else {
+                currentText.append(c);
+            }
+        }
+
+        // 添加剩余的文本
+        if (!currentText.isEmpty()) {
+            net.minecraft.text.MutableText segment = net.minecraft.text.Text.literal(currentText.toString());
+            if (currentFormatting != null) {
+                segment = segment.formatted(currentFormatting);
+            }
+            result.append(segment);
+        }
+
+        return result;
     }
 
     @Override
@@ -90,12 +147,11 @@ public class ScrollableTextWidget extends ClickableWidget {
 
         context.enableScissor(clipX, clipY, clipX + clipWidth, clipY + clipHeight);
 
-        // 绘制文本 - 直接使用Text对象而不是OrderedText
+        // 绘制文本 - 使用Text对象自身的颜色
         int yOffset = getY() + scrollbarPadding - (int) scrollAmount;
         for (Text line : textLines) {
             if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
-                // 不再使用传入的颜色，而是使用文本自身的颜色
-                // 这样Formatting代码设置的颜色就能正确显示
+                // 使用Text对象自身的颜色，而不是固定颜色
                 context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, 0xFFFFFFFF, false);
             }
             yOffset += textRenderer.fontHeight;
