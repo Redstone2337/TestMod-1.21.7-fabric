@@ -47,10 +47,7 @@ public class CodecPlayerDataProvider implements PlayerDataProvider {
         String playerUuid = player.getUuidAsString();
 //        this.dataFilePath = Paths.get("config", TestMod.MOD_ID, "player_data_" + playerUuid + ".json");
         this.dataFilePath = FabricLoader.getInstance().getGameDir() // 获取游戏目录
-                .resolve("config") // 进入config目录
-                .resolve(TestMod.MOD_ID) // 进入mod的子目录
-                .resolve("data") // 进入data子目录
-                .resolve("player_data_" + playerUuid + ".json"); // 最终的文件名
+                .resolve("data" + "player_data_" + playerUuid + ".json"); // 最终的文件名
         // 确保目录存在
         try {
             Files.createDirectories(dataFilePath.getParent());
