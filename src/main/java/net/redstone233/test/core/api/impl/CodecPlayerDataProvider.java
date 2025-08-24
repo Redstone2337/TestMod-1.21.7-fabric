@@ -44,7 +44,7 @@ public class CodecPlayerDataProvider implements PlayerDataProvider {
 
         // 确定数据文件路径
         String playerUuid = player.getUuidAsString();
-        this.dataFilePath = Paths.get("config", "playermod", "player_data_" + playerUuid + ".json");
+        this.dataFilePath = Paths.get("config", TestMod.MOD_ID, "player_data_" + playerUuid + ".json");
 
         // 确保目录存在
         try {

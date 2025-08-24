@@ -1,5 +1,6 @@
 package net.redstone233.test.core.potion.status;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
@@ -9,6 +10,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import net.redstone233.test.core.until.RandomNumber;
 
 public class TestStatusEffect extends StatusEffect {
@@ -20,8 +23,16 @@ public class TestStatusEffect extends StatusEffect {
 
     @Override
     public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
+        int min = -1;
+        int max = 10;
         if (entity instanceof PlayerEntity player) {
-            int random = RandomNumber.nextInt(-1,10);
+//            int random = RandomNumber.nextInt(-1,10);
+            int random = MathHelper.nextBetween(world.getRandom(), min, max);
+            player.sendMessage(Text.literal("当前随机数：" + random)
+                    .formatted(Formatting.GRAY,Formatting.BOLD)
+                    .append(Text.literal(" (范围: " + min + " ~ " + max + ")")
+                            .formatted(Formatting.BLUE,Formatting.BOLD))
+                    , false);
 
             if (amplifier == 2) {
                 applyDefaultEffect(player);

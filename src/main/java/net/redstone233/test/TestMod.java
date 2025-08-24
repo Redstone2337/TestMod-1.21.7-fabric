@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.redstone233.test.blocks.ModBlockFamilies;
 import net.redstone233.test.blocks.ModBlocks;
 import net.redstone233.test.core.commands.AcquireModItemStackCommand;
+import net.redstone233.test.core.commands.InformationCommand;
 import net.redstone233.test.core.commands.SetValueCountCommand;
 import net.redstone233.test.core.food.ModConsumableComponents;
 import net.redstone233.test.core.food.ModFoodComponents;
@@ -58,6 +59,7 @@ public class TestMod implements ModInitializer {
 				(commandDispatcher, commandRegistryAccess, registrationEnvironment) -> {
 					commandDispatcher.register(SetValueCountCommand.register());
 					commandDispatcher.register(AcquireModItemStackCommand.register());
+                    commandDispatcher.register(InformationCommand.register());
 				}
 		);
 
