@@ -13,11 +13,14 @@ import net.minecraft.util.Identifier;
 import net.redstone233.test.client.ClientLongPressHandler;
 import net.redstone233.test.client.hud.FreezeSwordHud;
 import net.redstone233.test.client.tooltip.FreezeSwordTooltipComponent;
+import net.redstone233.test.core.api.PlayerDataProvider;
 import net.redstone233.test.core.component.ModDataComponentTypes;
 import net.redstone233.test.core.config.ConfigInitializer;
 import net.redstone233.test.core.config.ModConfig;
 import net.redstone233.test.core.screen.AnnouncementScreen;
+import net.redstone233.test.core.screen.EnhancedPlayerInfoScreen;
 import net.redstone233.test.core.until.ModKeys;
+import net.redstone233.test.core.until.PlayerDataFactory;
 import net.redstone233.test.items.custom.FreezeSwordItem;
 import net.redstone233.test.longpress.FreezeSwordLongPressAction;
 import net.redstone233.test.longpress.LongPressManager;
@@ -212,6 +215,17 @@ public class TestModClient implements ClientModInitializer {
             DEBUG_MODE = CONFIG.debugMode;
             SHOW_ICON = CONFIG.showIcon; // 新增：同步图标显示状态
             LOGGER.info("配置已重新加载，调试模式: {}, 显示图标: {}", DEBUG_MODE, SHOW_ICON);
+        }
+    }
+
+    private void handlePlayerInfoKey(MinecraftClient client) {
+        while (ModKeys.isPlayerInfoPressed()) {
+            if (client.player != null && client.currentScreen == null) {
+                PlayerDataProvider dataProvider = PlayerDataFactory.getProvider(client.player);
+                // 打开玩家信息界面
+                client.setScreen(new EnhancedPlayerInfoScreen(client.player, dataProvider)); // 替换为实际的玩家信息屏幕
+                break;
+            }
         }
     }
 

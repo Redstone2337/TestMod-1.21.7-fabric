@@ -1,0 +1,234 @@
+package net.redstone233.test.core.screen;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+import net.redstone233.test.core.api.PlayerDataProvider;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class EnhancedPlayerInfoScreen extends Screen {
+    private static final Identifier BACKGROUND = Identifier.of("textures/gui/demo_background.png");
+    private final PlayerEntity player;
+    private final PlayerDataProvider dataProvider;
+
+    // 动画相关变量
+    private int lastLevel;
+    private int animationTicks;
+    private float levelScale = 1.0f;
+    private boolean isAnimating = false;
+
+    // 鼠标悬停检测
+    private int hoveredExpBarX;
+    private int hoveredExpBarY;
+    private int hoveredExpBarWidth;
+    private boolean isExpBarHovered = false;
+
+    public EnhancedPlayerInfoScreen(PlayerEntity player, PlayerDataProvider dataProvider) {
+        super(Text.literal(""));
+        this.player = player;
+        this.dataProvider = dataProvider;
+        this.lastLevel = dataProvider.getLevel(); // 初始化记录当前等级
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+
+        // 添加关闭按钮
+        this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.close"), button -> this.close())
+                .dimensions(this.width / 2 - 50, this.height / 2 + 60, 100, 20)
+                .build());
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        // 渲染半透明背景
+        this.renderInGameBackground(context);
+
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        int centerX = this.width / 2;
+        int startY = this.height / 4;
+
+        // 检查等级是否提升
+        checkLevelUp();
+
+        // 更新动画
+        updateAnimation();
+
+        // 检查鼠标悬停
+        checkHover(mouseX, mouseY);
+
+        // 绘制玩家名称大标题（彩色）
+        MutableText playerName = player.getName().copy();
+
+        // 根据VIP状态设置标题颜色
+        if (dataProvider.isSVip()) {
+            playerName.formatted(Formatting.GOLD, Formatting.BOLD); // SVIP使用金色粗体
+        } else if (dataProvider.isVip()) {
+            playerName.formatted(Formatting.AQUA, Formatting.BOLD); // VIP使用青色粗体
+        } else {
+            playerName.formatted(Formatting.WHITE, Formatting.BOLD); // 普通玩家使用白色粗体
+        }
+
+        // 绘制大标题（使用较大的缩放比例）
+        context.getMatrices().pushMatrix();
+        context.getMatrices().scale(1.5f, 1.5f);
+        int scaledCenterX = (int)(centerX / 1.5f);
+        int scaledTitleY = (int)(startY / 1.5f);
+        context.drawCenteredTextWithShadow(textRenderer, playerName, scaledCenterX, scaledTitleY, 0xFFFFFF);
+        context.getMatrices().popMatrix();
+
+        // 绘制等级信息（带动画效果）
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(centerX, startY + 40);
+        context.getMatrices().scale(levelScale, levelScale);
+        Text levelText = Text.translatable("gui.playermod.level", dataProvider.getLevel())
+                .formatted(Formatting.YELLOW);
+        context.drawText(textRenderer, levelText, -textRenderer.getWidth(levelText) / 2, 0, 0xFFFFFF, true);
+        context.getMatrices().popMatrix();
+
+        // 绘制经验信息
+        Text expText = Text.translatable("gui.playermod.experience",
+                        dataProvider.getExperience(), dataProvider.getTotalExpForNextLevel())
+                .formatted(Formatting.GREEN);
+        context.drawCenteredTextWithShadow(textRenderer, expText, centerX, startY + 60, 0xFFFFFF);
+
+        // 绘制经验条
+        int expBarWidth = 150;
+        int expBarX = centerX - expBarWidth / 2;
+        int expBarY = startY + 80;
+        hoveredExpBarX = expBarX;
+        hoveredExpBarY = expBarY;
+        hoveredExpBarWidth = expBarWidth;
+
+        // 经验条背景
+        context.fill(expBarX, expBarY, expBarX + expBarWidth, expBarY + 10, 0xFF555555);
+
+        // 经验条进度
+        float progress = dataProvider.getExperienceProgress();
+        int progressWidth = (int)(expBarWidth * progress);
+        if (progressWidth > 0) {
+            // 根据进度使用不同颜色
+            int color = progress >= 0.9f ? 0xFFFFFF00 : // 接近满时黄色
+                    progress >= 0.7f ? 0xFF00FF00 : // 高进度绿色
+                            0xFF00AA00; // 普通进度深绿色
+            context.fill(expBarX, expBarY, expBarX + progressWidth, expBarY + 10, color);
+        }
+
+        // 经验条边框
+        context.drawBorder(expBarX, expBarY, expBarWidth, 10, 0xFF000000);
+
+        // 绘制经验百分比
+        String percentText = String.format("%.1f%%", progress * 100);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal(percentText),
+                centerX, expBarY + 12, 0xDDDDDD);
+
+        // 绘制会员状态
+        int statusY = startY + 110;
+
+        if (dataProvider.isSVip()) {
+            // SVIP状态 - 金色
+            Text svipText = Text.translatable("gui.playermod.svip_status")
+                    .formatted(Formatting.GOLD, Formatting.BOLD);
+            context.drawCenteredTextWithShadow(textRenderer, svipText, centerX, statusY, 0xFFFFFF);
+        } else if (dataProvider.isVip()) {
+            // VIP状态 - 青色
+            Text vipText = Text.translatable("gui.playermod.vip_status")
+                    .formatted(Formatting.AQUA, Formatting.BOLD);
+            context.drawCenteredTextWithShadow(textRenderer, vipText, centerX, statusY, 0xFFFFFF);
+        } else {
+            // 非会员状态 - 灰色
+            Text nonVipText = Text.translatable("gui.playermod.non_vip_status")
+                    .formatted(Formatting.GRAY);
+            context.drawCenteredTextWithShadow(textRenderer, nonVipText, centerX, statusY, 0xFFFFFF);
+        }
+
+        // 绘制鼠标悬停提示
+        if (isExpBarHovered) {
+            drawExpTooltip(context, mouseX, mouseY, textRenderer);
+        }
+
+        super.render(context, mouseX, mouseY, delta);
+    }
+
+    // 检查等级是否提升
+    private void checkLevelUp() {
+        int currentLevel = dataProvider.getLevel();
+        if (currentLevel > lastLevel) {
+            // 等级提升，触发动画
+            isAnimating = true;
+            animationTicks = 0;
+            lastLevel = currentLevel;
+        }
+    }
+
+    // 更新动画
+    private void updateAnimation() {
+        if (isAnimating) {
+            animationTicks++;
+
+            // 简单的缩放动画：先放大再缩小
+            if (animationTicks < 10) {
+                // 放大阶段
+                levelScale = 1.0f + (animationTicks / 10.0f) * 0.5f;
+            } else if (animationTicks < 20) {
+                // 缩小阶段
+                levelScale = 1.5f - ((animationTicks - 10) / 10.0f) * 0.5f;
+            } else {
+                // 动画结束
+                levelScale = 1.0f;
+                isAnimating = false;
+            }
+        }
+    }
+
+    // 检查鼠标悬停
+    private void checkHover(int mouseX, int mouseY) {
+        isExpBarHovered = mouseX >= hoveredExpBarX &&
+                mouseX <= hoveredExpBarX + hoveredExpBarWidth &&
+                mouseY >= hoveredExpBarY &&
+                mouseY <= hoveredExpBarY + 10;
+    }
+
+    // 绘制经验条提示信息
+    private void drawExpTooltip(DrawContext context, int mouseX, int mouseY, TextRenderer textRenderer) {
+        List<Text> tooltip = new ArrayList<>();
+
+        // 添加基本信息
+        tooltip.add(Text.translatable("gui.playermod.tooltip.exp_info")
+                .formatted(Formatting.GRAY));
+
+        // 添加下一级所需经验
+        int remainingExp = dataProvider.getRemainingExpForNextLevel();
+        tooltip.add(Text.translatable("gui.playermod.tooltip.exp_remaining", remainingExp)
+                .formatted(Formatting.YELLOW));
+
+        // 添加经验倍率
+        double multiplier = dataProvider.getExpMultiplier();
+        tooltip.add(Text.translatable("gui.playermod.tooltip.exp_multiplier", String.format("%.2f", multiplier))
+                .formatted(Formatting.GREEN));
+
+        // 添加基础经验需求
+        int baseExp = dataProvider.getBaseExpForNextLevel();
+        tooltip.add(Text.translatable("gui.playermod.tooltip.base_exp", baseExp)
+                .formatted(Formatting.BLUE));
+
+        // 绘制工具提示
+        context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
+    }
+
+    @Override
+    public boolean shouldPause() {
+        return false;
+    }
+}

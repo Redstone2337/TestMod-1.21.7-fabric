@@ -103,11 +103,25 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("narration.scrollable_text","Scrollable Text：%s");
         translationBuilder.add("narration.scrollable_text.usage","Usage Scrollable Text");
 
+        // Screen Info
+        translationBuilder.add("gui.playermod.player_info","Player Information");
+        translationBuilder.add("gui.playermod.level", "Level: %d");
+        translationBuilder.add("gui.playermod.experience", "Experience: %d/%d");
+        translationBuilder.add("gui.playermod.vip_status", "VIP Member");
+        translationBuilder.add("gui.playermod.svip_status", "Super VIP Member");
+        translationBuilder.add("gui.playermod.non_vip_status", "Regular Player");
+        translationBuilder.add("gui.playermod.tooltip.exp_info", "Experience Information");
+        translationBuilder.add("gui.playermod.tooltip.exp_remaining", "Remaining for next level: %d");
+        translationBuilder.add("gui.playermod.tooltip.exp_multiplier", "Experience multiplier: %sx");
+        translationBuilder.add("gui.playermod.tooltip.base_exp", "Base experience required: %d");
+        translationBuilder.add("gui.close", "Close");
+
         // Key Bindings
         translationBuilder.add("key.freezesword.charge", "Activate Freeze Sword Charge");
         translationBuilder.add("key.mtc.announcement","Display the announcement.");
         translationBuilder.add("key.mtc.debug","Display debugging.");
         translationBuilder.add("key.mtc.reload", "Reload the configuration.");
         translationBuilder.add("category.freezesword", "Debug Craft Mod");
+        translationBuilder.add("key.mtc.open_player_info","Open Player Info Screen");
     }
 }

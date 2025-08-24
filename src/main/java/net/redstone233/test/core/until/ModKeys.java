@@ -35,12 +35,20 @@ public class ModKeys {
             "category.freezesword"
     );
 
+    public static KeyBinding PLAYER_INFO_KEY = new KeyBinding(
+            "key.mtc.open_player_info",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_P,
+            "category.freezesword"
+    );
+
     public static void register() {
         // 注册键位绑定
         KeyBindingHelper.registerKeyBinding(CHARGE_KEY);
         KeyBindingHelper.registerKeyBinding(ANNOUNCEMENT_KEY);
         KeyBindingHelper.registerKeyBinding(DEBUG_MODE_KEY);
         KeyBindingHelper.registerKeyBinding(RELOAD_KEY);
+        KeyBindingHelper.registerKeyBinding(PLAYER_INFO_KEY);
     }
 
     // 检查按键是否按下（客户端调用）
@@ -58,5 +66,9 @@ public class ModKeys {
 
     public static boolean isReloadPressed() {
         return RELOAD_KEY.wasPressed();
+    }
+
+    public static boolean isPlayerInfoPressed() {
+        return PLAYER_INFO_KEY.wasPressed();
     }
 }
