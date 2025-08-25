@@ -1,13 +1,13 @@
 package net.redstone233.test.core.api.impl;
 
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.Decoder;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.netty.handler.codec.DecoderResult;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
@@ -17,12 +17,14 @@ import net.redstone233.test.core.api.PlayerDataProvider;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class CodecPlayerDataProvider implements PlayerDataProvider {
     private final PlayerEntity player;
     private final Path dataFilePath;
     private PlayerData cachedData;
+
+    // 用于JSON格式化的Gson实例
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     // 默认经验倍率
     private static final double DEFAULT_EXP_MULTIPLIER = 1.5;
@@ -38,16 +40,15 @@ public class CodecPlayerDataProvider implements PlayerDataProvider {
             ).apply(dataInstance, PlayerData::new)
     );
 
-
-
     public CodecPlayerDataProvider(PlayerEntity player) {
         this.player = player;
 
-        // 确定数据文件路径
+        // 确定数据文件路径 - 使用配置目录而不是游戏目录
         String playerUuid = player.getUuidAsString();
-//        this.dataFilePath = Paths.get("config", TestMod.MOD_ID, "player_data_" + playerUuid + ".json");
-        this.dataFilePath = FabricLoader.getInstance().getGameDir() // 获取游戏目录
-                .resolve("data" + "player_data_" + playerUuid + ".json"); // 最终的文件名
+        this.dataFilePath = FabricLoader.getInstance().getConfigDir() // 获取配置目录
+                .resolve(TestMod.MOD_ID) // 创建以mod id命名的子目录
+                .resolve("player_data_" + playerUuid + ".json"); // 最终的文件名
+
         // 确保目录存在
         try {
             Files.createDirectories(dataFilePath.getParent());
@@ -62,12 +63,21 @@ public class CodecPlayerDataProvider implements PlayerDataProvider {
     private void loadOrInitializeData() {
         if (Files.exists(dataFilePath)) {
             try {
-                JsonElement jsonContent = (JsonElement) Files.readAllLines(dataFilePath);
+                // 读取文件内容为字符串
+                String content = Files.readString(dataFilePath);
+
+                if (content == null || content.trim().isEmpty()) {
+                    TestMod.LOGGER.warn("Player data file is empty, creating default data");
+                    createDefaultData();
+                    saveData();
+                    return;
+                }
+
+                // 解析JSON字符串为JsonElement
+                JsonElement jsonElement = JsonParser.parseString(content);
 
                 // 使用Codec解析JSON
-//                DataResult<PlayerData> result = JsonOps.INSTANCE.withParser(DATA_CODEC::parse).apply(jsonContent);
-
-                DataResult<PlayerData> result = JsonOps.INSTANCE.withParser(DATA_CODEC).apply(jsonContent);
+                DataResult<PlayerData> result = DATA_CODEC.parse(JsonOps.INSTANCE, jsonElement);
 
                 result.resultOrPartial(error -> {
                     TestMod.LOGGER.error("Failed to parse player data: {}", error);
@@ -78,16 +88,22 @@ public class CodecPlayerDataProvider implements PlayerDataProvider {
 
                 // 如果解析失败，使用默认数据
                 if (cachedData == null) {
+                    TestMod.LOGGER.warn("Failed to parse player data, using default values");
                     createDefaultData();
                     saveData();
                 }
 
             } catch (IOException e) {
-                TestMod.LOGGER.error("Failed to load player data", e);
+                TestMod.LOGGER.error("Failed to load player data from {}", dataFilePath, e);
+                createDefaultData();
+                saveData();
+            } catch (Exception e) {
+                TestMod.LOGGER.error("Unexpected error while loading player data from {}", dataFilePath, e);
                 createDefaultData();
                 saveData();
             }
         } else {
+            TestMod.LOGGER.info("Player data file does not exist, creating default data at {}", dataFilePath);
             createDefaultData();
             saveData();
         }
@@ -101,17 +117,18 @@ public class CodecPlayerDataProvider implements PlayerDataProvider {
     private void saveData() {
         try {
             // 使用Codec将数据编码为JSON
-            DataResult<String> result = DATA_CODEC.encodeStart(JsonOps.INSTANCE, cachedData)
-                    .map(JsonElement::toString);
+            DataResult<JsonElement> result = DATA_CODEC.encodeStart(JsonOps.INSTANCE, cachedData);
 
             result.resultOrPartial(error -> {
                 TestMod.LOGGER.error("Failed to encode player data: {}", error);
-            }).ifPresent(jsonContent -> {
+            }).ifPresent(jsonElement -> {
                 try {
+                    // 将JsonElement转换为格式化的JSON字符串
+                    String jsonContent = GSON.toJson(jsonElement);
                     Files.writeString(dataFilePath, jsonContent);
                     TestMod.LOGGER.info("Saved player data to file: {}", dataFilePath);
                 } catch (IOException e) {
-                    TestMod.LOGGER.error("Failed to save player data", e);
+                    TestMod.LOGGER.error("Failed to save player data to {}", dataFilePath, e);
                 }
             });
         } catch (Exception e) {
@@ -119,6 +136,7 @@ public class CodecPlayerDataProvider implements PlayerDataProvider {
         }
     }
 
+    // 其余的方法保持不变...
     @Override
     public int getLevel() {
         return cachedData.getLevel();
@@ -279,8 +297,12 @@ public class CodecPlayerDataProvider implements PlayerDataProvider {
         loadOrInitializeData();
     }
 
+    public PlayerEntity getPlayer() {
+        return player;
+    }
+
     // 不可变数据记录
-    public static record PlayerData(
+    public record PlayerData(
             int level,
             int experience,
             boolean vip,

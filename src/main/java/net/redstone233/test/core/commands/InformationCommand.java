@@ -1,11 +1,9 @@
 package net.redstone233.test.core.commands;
 
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -19,7 +17,7 @@ import java.util.Optional;
 
 public class InformationCommand {
     public static LiteralArgumentBuilder<ServerCommandSource> register() {
-        return CommandManager.literal("playermod")
+        return CommandManager.literal("tmd")
                 .requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.literal("setlevel")
                         .then(CommandManager.argument("level", IntegerArgumentType.integer(1))
