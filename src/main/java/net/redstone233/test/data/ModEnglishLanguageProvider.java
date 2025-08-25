@@ -114,6 +114,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("gui.playermod.tooltip.exp_remaining", "Remaining for next level: %d");
         translationBuilder.add("gui.playermod.tooltip.exp_multiplier", "Experience multiplier: %sx");
         translationBuilder.add("gui.playermod.tooltip.base_exp", "Base experience required: %d");
+        translationBuilder.add("gui.playermod.next_level_exp", "Experience needed for next level: %d");
         translationBuilder.add("gui.close", "Close");
 
         // Key Bindings

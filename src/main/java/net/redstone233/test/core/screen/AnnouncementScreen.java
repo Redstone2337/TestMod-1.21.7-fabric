@@ -27,6 +27,7 @@ public class AnnouncementScreen extends Screen {
     private ScrollableTextWidget scrollableText;
     private int tickCount = 0;
     private Identifier iconTexture;
+    private Identifier backgroundTexture;
 
     private TextWidget titleWidget;
     private TextWidget subtitleWidget;
@@ -89,6 +90,21 @@ public class AnnouncementScreen extends Screen {
             } catch (Exception e) {
                 TestModClient.LOGGER.warn("无法加载图标纹理: {}", config.iconPath, e);
                 iconTexture = null;
+            }
+        }
+
+        // 加载背景纹理（如果启用自定义背景）
+        if (config.useCustomAnnouncementBackground && config.announcementBackgroundPath != null && !config.announcementBackgroundPath.isEmpty()) {
+            try {
+                backgroundTexture = Identifier.of(config.announcementBackgroundPath);
+                // 检查纹理是否存在
+                if (client != null && client.getResourceManager().getResource(backgroundTexture).isEmpty()) {
+                    TestModClient.LOGGER.warn("公告背景纹理不存在: {}", config.announcementBackgroundPath);
+                    backgroundTexture = null;
+                }
+            } catch (Exception e) {
+                TestModClient.LOGGER.warn("无法加载公告背景纹理: {}", config.announcementBackgroundPath, e);
+                backgroundTexture = null;
             }
         }
 
@@ -257,234 +273,240 @@ public class AnnouncementScreen extends Screen {
             if (currentFormatting != null) {
                 segment = segment.formatted(currentFormatting);
             } else if (useCustomRGB) {
-                segment = segment.withColor(defaultColor);
+                    segment = segment.withColor(defaultColor);
+                } else {
+                    Formatting defaultFormatting = getFormattingFromColor(defaultColor);
+                    segment = segment.formatted(defaultFormatting);
+                }
+                result.append(segment);
+            }
+
+            return result;
+        }
+
+        private void createButtons(int centerX, int buttonWidth, int buttonHeight, int buttonY) {
+            // 使用 MutableText 创建按钮文本
+            // 确定按钮使用配置的文本
+            String confirmText = config.confirmButtonText != null ? config.confirmButtonText : "确定";
+            MutableText confirmButtonText = Text.literal(confirmText);
+            if (config.useCustomRGB) {
+                confirmButtonText = confirmButtonText.withColor(0xFFFFFF); // 按钮文本使用白色
             } else {
-                Formatting defaultFormatting = getFormattingFromColor(defaultColor);
-                segment = segment.formatted(defaultFormatting);
+                confirmButtonText = confirmButtonText.formatted(Formatting.WHITE);
             }
-            result.append(segment);
-        }
 
-        return result;
-    }
-
-    private void createButtons(int centerX, int buttonWidth, int buttonHeight, int buttonY) {
-        // 使用 MutableText 创建按钮文本
-        // 确定按钮使用配置的文本
-        String confirmText = config.confirmButtonText != null ? config.confirmButtonText : "确定";
-        MutableText confirmButtonText = Text.literal(confirmText);
-        if (config.useCustomRGB) {
-            confirmButtonText = confirmButtonText.withColor(0xFFFFFF); // 按钮文本使用白色
-        } else {
-            confirmButtonText = confirmButtonText.formatted(Formatting.WHITE);
-        }
-
-        // 确定按钮
-        addDrawableChild(ButtonWidget.builder(confirmButtonText, button -> {
-            if (this.client != null) {
-                this.close();
-            }
-        }).dimensions(centerX - buttonWidth - 5, buttonY, buttonWidth, buttonHeight).build());
-
-        // 前往投递按钮使用配置的文本
-        String submitText = config.submitButtonText != null ? config.submitButtonText : "前往投递";
-        MutableText submitButtonText = Text.literal(submitText);
-        if (config.useCustomRGB) {
-            submitButtonText = submitButtonText.withColor(0xFFFFFF); // 按钮文本使用白色
-        } else {
-            submitButtonText = submitButtonText.formatted(Formatting.WHITE);
-        }
-
-        String buttonLink = Objects.requireNonNullElse(config.buttonLink, "https://example.com");
-
-        addDrawableChild(ButtonWidget.builder(submitButtonText, button -> {
-            try {
-                String url = buttonLink;
-                if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                    url = "https://" + url;
+            // 确定按钮
+            addDrawableChild(ButtonWidget.builder(confirmButtonText, button -> {
+                if (this.client != null) {
+                    this.close();
                 }
-                Util.getOperatingSystem().open(new URI(url));
-            } catch (Exception e) {
-                if (this.client != null && this.client.player != null) {
-                    this.client.player.sendMessage(Text.literal("无法打开链接: " + e.getMessage()), false);
+            }).dimensions(centerX - buttonWidth - 5, buttonY, buttonWidth, buttonHeight).build());
+
+            // 前往投递按钮使用配置的文本
+            String submitText = config.submitButtonText != null ? config.submitButtonText : "前往投递";
+            MutableText submitButtonText = Text.literal(submitText);
+            if (config.useCustomRGB) {
+                submitButtonText = submitButtonText.withColor(0xFFFFFF); // 按钮文本使用白色
+            } else {
+                submitButtonText = submitButtonText.formatted(Formatting.WHITE);
+            }
+
+            String buttonLink = Objects.requireNonNullElse(config.buttonLink, "https://example.com");
+
+            addDrawableChild(ButtonWidget.builder(submitButtonText, button -> {
+                try {
+                    String url = buttonLink;
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        url = "https://" + url;
+                    }
+                    Util.getOperatingSystem().open(new URI(url));
+                } catch (Exception e) {
+                    if (this.client != null && this.client.player != null) {
+                        this.client.player.sendMessage(Text.literal("无法打开链接: " + e.getMessage()), false);
+                    }
                 }
-            }
-        }).dimensions(centerX + 5, buttonY, buttonWidth, buttonHeight).build());
-    }
-
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // 渲染背景 - 使用与原版UI相似的颜色 #B4303030
-        context.fill(0, 0, this.width, this.height, 0xB4303030);
-
-        // 绘制图标（如果有）
-        if (config.showIcon && iconTexture != null) {
-            int iconX = (this.width / 2) - 150 - config.iconWidth - config.iconTextSpacing;
-            int iconY = 30;
-
-            try {
-                // 使用正确的DrawContext API绘制纹理
-                context.drawTexturedQuad(
-                        iconTexture,
-                        iconX,
-                        iconY,
-                        0,
-                        0,
-                        config.iconWidth,
-                        config.iconHeight,
-                        config.iconWidth,
-                        config.iconHeight
-                );
-            } catch (Exception e) {
-                TestModClient.LOGGER.warn("无法绘制图标", e);
-            }
+            }).dimensions(centerX + 5, buttonY, buttonWidth, buttonHeight).build());
         }
 
-        // 先渲染标题
-        renderTitle(context, mouseX, mouseY, delta);
-
-        // 然后渲染其他部件（包括滚动文本）
-        super.render(context, mouseX, mouseY, delta);
-
-        // 滚动文本
-        if (scrollableText != null && tickCount % 2 == 0) {
-            double maxScroll = scrollableText.getTotalHeight() - scrollableText.getHeight();
-            if (maxScroll > 0) {
-                double scrollAmount = scrollableText.getScrollAmount() + (config.scrollSpeed / 20.0);
-                if (scrollAmount > maxScroll) scrollAmount = 0;
-                scrollableText.setScrollAmount(Math.min(scrollAmount, maxScroll));
-            }
-        }
-
-        // 调试模式：绘制ScrollableTextWidget的边框
-        if (TestModClient.DEBUG_MODE && scrollableText != null) {
-            context.fill(
-                    scrollableText.getX() - 1,
-                    scrollableText.getY() - 1,
-                    scrollableText.getX() + scrollableText.getWidth() + 1,
-                    scrollableText.getY() + scrollableText.getHeight() + 1,
-                    0x40FF00FF
-            );
-        }
-    }
-
-    private boolean isVersionCompatible() {
-        try {
-            Optional<ModContainer> minecraftContainer =
-                    FabricLoader.getInstance().getModContainer("minecraft");
-
-            if (minecraftContainer.isEmpty()) {
-                TestModClient.LOGGER.warn("无法找到 Minecraft mod 容器");
-                return true;
+        @Override
+        public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+            // 渲染背景
+            if (config.useCustomAnnouncementBackground && backgroundTexture != null) {
+                // 使用自定义背景图
+                context.drawTexturedQuad(backgroundTexture, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+            } else {
+                // 使用与原版UI相似的颜色 #B4303030
+                context.fill(0, 0, this.width, this.height, 0xB4303030);
             }
 
-            String version = minecraftContainer.get().getMetadata().getVersion().getFriendlyString();
-            TestModClient.LOGGER.info("检测到 Minecraft 版本: {}", version);
-
-            return isVersionAtLeast(version, 1, 21, 6);
-        } catch (Exception e) {
-            TestModClient.LOGGER.warn("无法确定 Minecraft 版本", e);
-            return true;
-        }
-    }
-
-    private boolean isVersionAtLeast(String versionString, int minMajor, int minMinor, int minPatch) {
-        try {
-            String[] parts = versionString.split("\\.");
-            if (parts.length < 3) {
-                return false;
-            }
-
-            int major = Integer.parseInt(parts[0]);
-            int minor = Integer.parseInt(parts[1]);
-
-            // 处理可能的版本后缀 (如 "1.21.8-fabric")
-            String patchPart = parts[2].replaceAll("[^0-9].*", "");
-            int patch = Integer.parseInt(patchPart);
-
-            if (major > minMajor) return true;
-            if (major < minMajor) return false;
-
-            if (minor > minMinor) return true;
-            if (minor < minMinor) return false;
-
-            return patch >= minPatch;
-        } catch (NumberFormatException e) {
-            TestModClient.LOGGER.warn("无法解析版本号: {}", versionString, e);
-            return false;
-        }
-    }
-
-    private void renderTitle(DrawContext context, int mouseX, int mouseY, float delta) {
-        if (TestModClient.DEBUG_MODE) {
-            if (titleWidget != null) {
-                drawDebugOutline(context, titleWidget, 0x40FF0000);
-            }
-            if (subtitleWidget != null) {
-                drawDebugOutline(context, subtitleWidget, 0x4000FF00);
-            }
-
-            // 绘制图标区域调试框
+            // 绘制图标（如果有）
             if (config.showIcon && iconTexture != null) {
                 int iconX = (this.width / 2) - 150 - config.iconWidth - config.iconTextSpacing;
                 int iconY = 30;
 
+                try {
+                    // 使用正确的DrawContext API绘制纹理
+                    context.drawTexturedQuad(
+                            iconTexture,
+                            iconX,
+                            iconY,
+                            0,
+                            0,
+                            config.iconWidth,
+                            config.iconHeight,
+                            config.iconWidth,
+                            config.iconHeight
+                    );
+                } catch (Exception e) {
+                    TestModClient.LOGGER.warn("无法绘制图标", e);
+                }
+            }
+
+            // 先渲染标题
+            renderTitle(context, mouseX, mouseY, delta);
+
+            // 然后渲染其他部件（包括滚动文本）
+            super.render(context, mouseX, mouseY, delta);
+
+            // 滚动文本
+            if (scrollableText != null && tickCount % 2 == 0) {
+                double maxScroll = scrollableText.getTotalHeight() - scrollableText.getHeight();
+                if (maxScroll > 0) {
+                    double scrollAmount = scrollableText.getScrollAmount() + (config.scrollSpeed / 20.0);
+                    if (scrollAmount > maxScroll) scrollAmount = 0;
+                    scrollableText.setScrollAmount(Math.min(scrollAmount, maxScroll));
+                }
+            }
+
+            // 调试模式：绘制ScrollableTextWidget的边框
+            if (TestModClient.DEBUG_MODE && scrollableText != null) {
                 context.fill(
-                        iconX - 1,
-                        iconY - 1,
-                        iconX + config.iconWidth + 1,
-                        iconY + config.iconHeight + 1,
-                        0x400000FF
+                        scrollableText.getX() - 1,
+                        scrollableText.getY() - 1,
+                        scrollableText.getX() + scrollableText.getWidth() + 1,
+                        scrollableText.getY() + scrollableText.getHeight() + 1,
+                        0x40FF00FF
                 );
             }
         }
 
-        if (titleWidget != null) titleWidget.render(context, mouseX, mouseY, delta);
-        if (subtitleWidget != null) subtitleWidget.render(context, mouseX, mouseY, delta);
-    }
+        private boolean isVersionCompatible() {
+            try {
+                Optional<ModContainer> minecraftContainer =
+                        FabricLoader.getInstance().getModContainer("minecraft");
 
-    private void drawDebugOutline(DrawContext context, ClickableWidget widget, int color) {
-        context.fill(
-                widget.getX() - 1,
-                widget.getY() - 1,
-                widget.getX() + widget.getWidth() + 1,
-                widget.getY() + widget.getHeight() + 1,
-                color
-        );
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        tickCount++;
-    }
-
-    @Override
-    public boolean shouldCloseOnEsc() {
-        return super.shouldCloseOnEsc();
-    }
-
-    // 辅助方法：从颜色值获取Formatting枚举
-    private Formatting getFormattingFromColor(int color) {
-        // 移除alpha通道，只比较RGB值
-        int rgbColor = color & 0xFFFFFF;
-
-        for (Formatting formatting : Formatting.values()) {
-            if (formatting.isColor() && formatting.getColorValue() != null) {
-                int formattingColor = formatting.getColorValue();
-                if (formattingColor == rgbColor) {
-                    return formatting;
+                if (minecraftContainer.isEmpty()) {
+                    TestModClient.LOGGER.warn("无法找到 Minecraft mod 容器");
+                    return true;
                 }
+
+                String version = minecraftContainer.get().getMetadata().getVersion().getFriendlyString();
+                TestModClient.LOGGER.info("检测到 Minecraft 版本: {}", version);
+
+                return isVersionAtLeast(version, 1, 21, 6);
+            } catch (Exception e) {
+                TestModClient.LOGGER.warn("无法确定 Minecraft 版本", e);
+                return true;
             }
         }
 
-        // 如果没有找到匹配的颜色，返回默认值
-        TestModClient.LOGGER.warn("未找到匹配的Formatting枚举，颜色: 0x{}", Integer.toHexString(color));
-        return Formatting.WHITE;
-    }
+        private boolean isVersionAtLeast(String versionString, int minMajor, int minMinor, int minPatch) {
+            try {
+                String[] parts = versionString.split("\\.");
+                if (parts.length < 3) {
+                    return false;
+                }
 
-    // 辅助方法：从Formatting枚举获取颜色值
-    private int getColorFromFormatting(Formatting formatting) {
-        return formatting.getColorValue() != null ? formatting.getColorValue() : 0xFFFFFF;
+                int major = Integer.parseInt(parts[0]);
+                int minor = Integer.parseInt(parts[1]);
+
+                // 处理可能的版本后缀 (如 "1.21.8-fabric")
+                String patchPart = parts[2].replaceAll("[^0-9].*", "");
+                int patch = Integer.parseInt(patchPart);
+
+                if (major > minMajor) return true;
+                if (major < minMajor) return false;
+
+                if (minor > minMinor) return true;
+                if (minor < minMinor) return false;
+
+                return patch >= minPatch;
+            } catch (NumberFormatException e) {
+                TestModClient.LOGGER.warn("无法解析版本号: {}", versionString, e);
+                return false;
+            }
+        }
+
+        private void renderTitle(DrawContext context, int mouseX, int mouseY, float delta) {
+            if (TestModClient.DEBUG_MODE) {
+                if (titleWidget != null) {
+                    drawDebugOutline(context, titleWidget, 0x40FF0000);
+                }
+                if (subtitleWidget != null) {
+                    drawDebugOutline(context, subtitleWidget, 0x4000FF00);
+                }
+
+                // 绘制图标区域调试框
+                if (config.showIcon && iconTexture != null) {
+                    int iconX = (this.width / 2) - 150 - config.iconWidth - config.iconTextSpacing;
+                    int iconY = 30;
+
+                    context.fill(
+                            iconX - 1,
+                            iconY - 1,
+                            iconX + config.iconWidth + 1,
+                            iconY + config.iconHeight + 1,
+                            0x400000FF
+                    );
+                }
+            }
+
+            if (titleWidget != null) titleWidget.render(context, mouseX, mouseY, delta);
+            if (subtitleWidget != null) subtitleWidget.render(context, mouseX, mouseY, delta);
+        }
+
+        private void drawDebugOutline(DrawContext context, ClickableWidget widget, int color) {
+            context.fill(
+                    widget.getX() - 1,
+                    widget.getY() - 1,
+                    widget.getX() + widget.getWidth() + 1,
+                    widget.getY() + widget.getHeight() + 1,
+                    color
+            );
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+            tickCount++;
+        }
+
+        @Override
+        public boolean shouldCloseOnEsc() {
+            return super.shouldCloseOnEsc();
+        }
+
+        // 辅助方法：从颜色值获取Formatting枚举
+        private Formatting getFormattingFromColor(int color) {
+            // 移除alpha通道，只比较RGB值
+            int rgbColor = color & 0xFFFFFF;
+
+            for (Formatting formatting : Formatting.values()) {
+                if (formatting.isColor() && formatting.getColorValue() != null) {
+                    int formattingColor = formatting.getColorValue();
+                    if (formattingColor == rgbColor) {
+                        return formatting;
+                    }
+                }
+            }
+
+            // 如果没有找到匹配的颜色，返回默认值
+            TestModClient.LOGGER.warn("未找到匹配的Formatting枚举，颜色: 0x{}", Integer.toHexString(color));
+            return Formatting.WHITE;
+        }
+
+        // 辅助方法：从Formatting枚举获取颜色值
+        private int getColorFromFormatting(Formatting formatting) {
+            return formatting.getColorValue() != null ? formatting.getColorValue() : 0xFFFFFF;
+        }
     }
-}

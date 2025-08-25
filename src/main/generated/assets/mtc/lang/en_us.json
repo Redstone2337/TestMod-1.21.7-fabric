@@ -17,6 +17,7 @@
   "gui.close": "Close",
   "gui.playermod.experience": "Experience: %d/%d",
   "gui.playermod.level": "Level: %d",
+  "gui.playermod.next_level_exp": "Experience needed for next level: %d",
   "gui.playermod.non_vip_status": "Regular Player",
   "gui.playermod.player_info": "Player Information",
   "gui.playermod.svip_status": "Super VIP Member",

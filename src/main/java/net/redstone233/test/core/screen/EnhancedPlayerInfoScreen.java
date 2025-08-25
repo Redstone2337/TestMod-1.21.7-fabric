@@ -11,15 +11,16 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.redstone233.test.TestModClient;
 import net.redstone233.test.core.api.PlayerDataProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EnhancedPlayerInfoScreen extends Screen {
-    private static final Identifier BACKGROUND = Identifier.of("textures/gui/demo_background.png");
     private final PlayerEntity player;
     private final PlayerDataProvider dataProvider;
+    private Identifier backgroundTexture;
 
     // 动画相关变量
     private int lastLevel;
@@ -38,6 +39,23 @@ public class EnhancedPlayerInfoScreen extends Screen {
         this.player = player;
         this.dataProvider = dataProvider;
         this.lastLevel = dataProvider.getLevel(); // 初始化记录当前等级
+
+        // 加载背景纹理（如果启用自定义背景）
+        if (TestModClient.CONFIG != null && TestModClient.CONFIG.useCustomPlayerInfoBackground &&
+                TestModClient.CONFIG.playerInfoBackgroundPath != null && !TestModClient.CONFIG.playerInfoBackgroundPath.isEmpty()) {
+            try {
+                backgroundTexture = Identifier.of(TestModClient.CONFIG.playerInfoBackgroundPath);
+                // 检查纹理是否存在
+                MinecraftClient client = MinecraftClient.getInstance();
+                if (client != null && client.getResourceManager().getResource(backgroundTexture).isEmpty()) {
+                    TestModClient.LOGGER.warn("玩家信息背景纹理不存在: {}", TestModClient.CONFIG.playerInfoBackgroundPath);
+                    backgroundTexture = null;
+                }
+            } catch (Exception e) {
+                TestModClient.LOGGER.warn("无法加载玩家信息背景纹理: {}", TestModClient.CONFIG.playerInfoBackgroundPath, e);
+                backgroundTexture = null;
+            }
+        }
     }
 
     @Override
@@ -52,8 +70,14 @@ public class EnhancedPlayerInfoScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // 渲染半透明背景
-        this.renderInGameBackground(context);
+        // 渲染背景
+        if (TestModClient.CONFIG != null && TestModClient.CONFIG.useCustomPlayerInfoBackground && backgroundTexture != null) {
+            // 使用自定义背景图
+            context.drawTexturedQuad(backgroundTexture, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+        } else {
+            // 渲染接近原版MC的半透明背景 (#80404040)
+            this.renderBackground(context, 0x80404040);
+        }
 
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         int centerX = this.width / 2;
@@ -73,11 +97,11 @@ public class EnhancedPlayerInfoScreen extends Screen {
 
         // 根据VIP状态设置标题颜色
         if (dataProvider.isSVip()) {
-            playerName.formatted(Formatting.GOLD, Formatting.BOLD); // SVIP使用金色粗体
+            playerName = playerName.formatted(Formatting.GOLD, Formatting.BOLD); // SVIP使用金色粗体
         } else if (dataProvider.isVip()) {
-            playerName.formatted(Formatting.AQUA, Formatting.BOLD); // VIP使用青色粗体
+            playerName = playerName.formatted(Formatting.AQUA, Formatting.BOLD); // VIP使用青色粗体
         } else {
-            playerName.formatted(Formatting.WHITE, Formatting.BOLD); // 普通玩家使用白色粗体
+            playerName = playerName.formatted(Formatting.WHITE, Formatting.BOLD); // 普通玩家使用白色粗体
         }
 
         // 绘制大标题（使用较大的缩放比例）
@@ -135,23 +159,29 @@ public class EnhancedPlayerInfoScreen extends Screen {
 
         // 绘制会员状态
         int statusY = startY + 110;
+        Text statusText;
 
         if (dataProvider.isSVip()) {
             // SVIP状态 - 金色
-            Text svipText = Text.translatable("gui.playermod.svip_status")
+            statusText = Text.translatable("gui.playermod.svip_status")
                     .formatted(Formatting.GOLD, Formatting.BOLD);
-            context.drawCenteredTextWithShadow(textRenderer, svipText, centerX, statusY, 0xFFFFFF);
         } else if (dataProvider.isVip()) {
             // VIP状态 - 青色
-            Text vipText = Text.translatable("gui.playermod.vip_status")
+            statusText = Text.translatable("gui.playermod.vip_status")
                     .formatted(Formatting.AQUA, Formatting.BOLD);
-            context.drawCenteredTextWithShadow(textRenderer, vipText, centerX, statusY, 0xFFFFFF);
         } else {
             // 非会员状态 - 灰色
-            Text nonVipText = Text.translatable("gui.playermod.non_vip_status")
+            statusText = Text.translatable("gui.playermod.non_vip_status")
                     .formatted(Formatting.GRAY);
-            context.drawCenteredTextWithShadow(textRenderer, nonVipText, centerX, statusY, 0xFFFFFF);
         }
+        context.drawCenteredTextWithShadow(textRenderer, statusText, centerX, statusY, 0xFFFFFF);
+
+        // 绘制下一级所需经验
+        int nextLevelExpY = startY + 130;
+        Text nextLevelExpText = Text.translatable("gui.playermod.next_level_exp",
+                        dataProvider.getRemainingExpForNextLevel())
+                .formatted(Formatting.BLUE);
+        context.drawCenteredTextWithShadow(textRenderer, nextLevelExpText, centerX, nextLevelExpY, 0xFFFFFF);
 
         // 绘制鼠标悬停提示
         if (isExpBarHovered) {
@@ -159,6 +189,12 @@ public class EnhancedPlayerInfoScreen extends Screen {
         }
 
         super.render(context, mouseX, mouseY, delta);
+    }
+
+    // 自定义背景渲染方法，使用指定的颜色
+    private void renderBackground(DrawContext context, int color) {
+        // 填充整个屏幕
+        context.fill(0, 0, this.width, this.height, color);
     }
 
     // 检查等级是否提升

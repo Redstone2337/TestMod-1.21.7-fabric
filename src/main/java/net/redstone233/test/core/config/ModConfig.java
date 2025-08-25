@@ -98,15 +98,21 @@ public class ModConfig implements ConfigData {
     @Comment("是否使用自定义RGB颜色（启用后将隐藏Formatting枚举颜色选择）")
     public boolean useCustomRGB = false;
 
-    // 向后兼容字段
-    @Deprecated
-    public String oldMainTitleColor;
-    @Deprecated
-    public String oldSubTitleColor;
-    @Deprecated
-    public String oldContentColor;
-    @Deprecated
-    public String oldButtonText; // 旧版按钮文本字段
+    @ConfigEntry.Gui.Tooltip
+    @Comment("是否使用自定义公告背景图")
+    public boolean useCustomAnnouncementBackground = false;
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("公告背景图路径 (例如: testmod:textures/gui/announcement_background.png)")
+    public String announcementBackgroundPath = "testmod:textures/gui/announcement_background.png";
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("是否使用自定义玩家信息背景图")
+    public boolean useCustomPlayerInfoBackground = false;
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("玩家信息背景图路径 (例如: testmod:textures/gui/player_info_background.png)")
+    public String playerInfoBackgroundPath = "testmod:textures/gui/player_info_background.png";
 
     @Override
     public void validatePostLoad() throws ValidationException {
@@ -118,6 +124,8 @@ public class ModConfig implements ConfigData {
         if (submitButtonText == null) submitButtonText = "前往投递";
         if (buttonLink == null) buttonLink = "https://github.com/Redstone2337/TestMod-1.21.7-fabric/issues";
         if (iconPath == null) iconPath = "mtc:textures/gui/announcement_icon.png";
+        if (announcementBackgroundPath == null) announcementBackgroundPath = "testmod:textures/gui/announcement_background.png";
+        if (playerInfoBackgroundPath == null) playerInfoBackgroundPath = "testmod:textures/gui/player_info_background.png";
 
         // 确保颜色值有效
         if (mainTitleColor == 0) mainTitleColor = 0xFFD700;
@@ -131,46 +139,7 @@ public class ModConfig implements ConfigData {
         if (iconHeight > 1024) iconHeight = 1024;
         if (iconTextSpacing < 0) iconTextSpacing = 10;
 
-        // 迁移旧版配置
-        migrateOldConfig();
-
         // 同步调试模式
         TestModClient.DEBUG_MODE = this.debugMode;
-    }
-
-    private void migrateOldConfig() {
-        try {
-            if (oldMainTitleColor != null && !oldMainTitleColor.isEmpty()) {
-                mainTitleColor = parseColor(oldMainTitleColor, 0xFFD700);
-                oldMainTitleColor = null;
-            }
-
-            if (oldSubTitleColor != null && !oldSubTitleColor.isEmpty()) {
-                subTitleColor = parseColor(oldSubTitleColor, 0xFFFFFF);
-                oldSubTitleColor = null;
-            }
-
-            if (oldContentColor != null && !oldContentColor.isEmpty()) {
-                contentColor = parseColor(oldContentColor, 0xCCCCCC);
-                oldContentColor = null;
-            }
-
-            // 迁移旧版按钮文本配置
-            if (oldButtonText != null && !oldButtonText.isEmpty()) {
-                submitButtonText = oldButtonText;
-                oldButtonText = null;
-            }
-        } catch (Exception e) {
-            TestModClient.LOGGER.warn("配置迁移失败", e);
-        }
-    }
-
-    private int parseColor(String colorString, int defaultValue) {
-        try {
-            String cleanString = colorString.replace("#", "").trim();
-            return (int) Long.parseLong(cleanString, 16);
-        } catch (Exception e) {
-            return defaultValue;
-        }
     }
 }

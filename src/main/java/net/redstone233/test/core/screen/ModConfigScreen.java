@@ -174,6 +174,31 @@ public class ModConfigScreen {
                         .setSaveConsumer(newValue -> config.iconTextSpacing = newValue)
                         .build());
 
+        // 背景设置
+        builder.getOrCreateCategory(Text.literal("背景设置"))
+                .addEntry(entryBuilder.startBooleanToggle(Text.literal("使用自定义公告背景图"), config.useCustomAnnouncementBackground)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.literal("是否使用自定义公告背景图"))
+                        .setSaveConsumer(newValue -> config.useCustomAnnouncementBackground = newValue)
+                        .build())
+                .addEntry(entryBuilder.startStrField(Text.literal("公告背景图路径"), config.announcementBackgroundPath)
+                        .setDefaultValue("testmod:textures/gui/announcement_background.png")
+                        .setTooltip(Text.literal("公告背景图资源路径 (例如: testmod:textures/gui/announcement_background.png)"))
+                        .setSaveConsumer(newValue -> config.announcementBackgroundPath = newValue)
+                        .setRequirement(() -> config.useCustomAnnouncementBackground) // 仅在启用自定义公告背景时显示
+                        .build())
+                .addEntry(entryBuilder.startBooleanToggle(Text.literal("使用自定义玩家信息背景图"), config.useCustomPlayerInfoBackground)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.literal("是否使用自定义玩家信息背景图"))
+                        .setSaveConsumer(newValue -> config.useCustomPlayerInfoBackground = newValue)
+                        .build())
+                .addEntry(entryBuilder.startStrField(Text.literal("玩家信息背景图路径"), config.playerInfoBackgroundPath)
+                        .setDefaultValue("testmod:textures/gui/player_info_background.png")
+                        .setTooltip(Text.literal("玩家信息背景图资源路径 (例如: testmod:textures/gui/player_info_background.png)"))
+                        .setSaveConsumer(newValue -> config.playerInfoBackgroundPath = newValue)
+                        .setRequirement(() -> config.useCustomPlayerInfoBackground) // 仅在启用自定义玩家信息背景时显示
+                        .build());
+
         // 公告内容
         builder.getOrCreateCategory(Text.literal("公告内容"))
                 .addEntry(entryBuilder.startTextDescription(Text.literal("每行一条公告，支持多行").formatted(Formatting.GRAY))
