@@ -181,10 +181,10 @@ public class TestModClient implements ClientModInitializer {
                 FreezeSwordItem.handleKeyInput(client.player);
             }
 
-            // 处理公告内容
+            // 处理公告按键
             handleAnnouncementKey(client);
 
-            // 处理文件信息
+            // 处理玩家信息按键
             handlePlayerInfoKey(client);
 
             // 处理调试按键

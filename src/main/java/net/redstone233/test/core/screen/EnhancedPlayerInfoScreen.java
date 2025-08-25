@@ -5,14 +5,15 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import net.redstone233.test.TestModClient;
 import net.redstone233.test.core.api.PlayerDataProvider;
+import net.redstone233.test.core.button.ScrollableTextWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,10 @@ public class EnhancedPlayerInfoScreen extends Screen {
     private int hoveredExpBarY;
     private int hoveredExpBarWidth;
     private boolean isExpBarHovered = false;
+
+    private TextWidget subtitleWidget;
+    private ScrollableTextWidget contentWidget;
+    private int tickCount = 0;
 
     public EnhancedPlayerInfoScreen(PlayerEntity player, PlayerDataProvider dataProvider) {
         super(Text.literal(""));
@@ -62,26 +67,87 @@ public class EnhancedPlayerInfoScreen extends Screen {
     protected void init() {
         super.init();
 
+        int centerX = this.width / 2;
+
+        // 创建标题（玩家名称）
+        MutableText playerName = player.getName().copy();
+        if (dataProvider.isSVip()) {
+            playerName = playerName.formatted(Formatting.GOLD, Formatting.BOLD);
+        } else if (dataProvider.isVip()) {
+            playerName = playerName.formatted(Formatting.AQUA, Formatting.BOLD);
+        } else {
+            playerName = playerName.formatted(Formatting.WHITE, Formatting.BOLD);
+        }
+
+        // 类似于AnnouncementScreen的UI元素
+        TextWidget titleWidget = new TextWidget(centerX, 30, 200, 20, playerName, textRenderer);
+        titleWidget.alignCenter();
+        addDrawableChild(titleWidget);
+
+        // 创建副标题（玩家等级）
+        MutableText levelText = Text.translatable("gui.playermod.level", dataProvider.getLevel())
+                .formatted(Formatting.YELLOW);
+        subtitleWidget = new TextWidget(centerX, 55, 200, 20, levelText, textRenderer);
+        subtitleWidget.alignCenter();
+        addDrawableChild(subtitleWidget);
+
+        // 创建内容区域
+        MutableText contentText = createContentText();
+        contentWidget = new ScrollableTextWidget(
+                centerX - 150, 80, 300, this.height - 150,
+                contentText, textRenderer, client,
+                0xFFFFFFFF // 白色文本
+        );
+        addDrawableChild(contentWidget);
+
         // 添加关闭按钮
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.close"), button -> this.close())
-                .dimensions(this.width / 2 - 50, this.height / 2 + 60, 100, 20)
+                .dimensions(this.width / 2 - 50, this.height - 30, 100, 20)
                 .build());
+    }
+
+    private MutableText createContentText() {
+        MutableText content = Text.empty();
+
+        // VIP状态
+        if (dataProvider.isSVip()) {
+            content.append(Text.translatable("gui.playermod.svip_status")
+                    .formatted(Formatting.GOLD, Formatting.BOLD));
+        } else if (dataProvider.isVip()) {
+            content.append(Text.translatable("gui.playermod.vip_status")
+                    .formatted(Formatting.AQUA, Formatting.BOLD));
+        } else {
+            content.append(Text.translatable("gui.playermod.non_vip_status")
+                    .formatted(Formatting.GRAY));
+        }
+
+        content.append(Text.literal("\n\n"));
+
+        // 经验信息
+        content.append(Text.translatable("gui.playermod.experience",
+                        dataProvider.getExperience(), dataProvider.getTotalExpForNextLevel())
+                .formatted(Formatting.GREEN));
+
+        content.append(Text.literal("\n\n"));
+
+        // 下一级所需经验
+        content.append(Text.translatable("gui.playermod.next_level_exp",
+                        dataProvider.getRemainingExpForNextLevel())
+                .formatted(Formatting.BLUE));
+
+        return content;
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // 渲染背景
+        // 渲染背景 - 使用与AnnouncementScreen相同的样式
         if (TestModClient.CONFIG != null && TestModClient.CONFIG.useCustomPlayerInfoBackground && backgroundTexture != null) {
             // 使用自定义背景图
             context.drawTexturedQuad(backgroundTexture, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
         } else {
-            // 渲染接近原版MC的半透明背景 (#80404040)
-            this.renderBackground(context, 0x80404040);
+            // 使用与原版UI相似的颜色 #B4303030
+            context.fill(0, 0, this.width, this.height, 0xB4303030);
         }
-
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        int centerX = this.width / 2;
-        int startY = this.height / 4;
 
         // 检查等级是否提升
         checkLevelUp();
@@ -92,45 +158,30 @@ public class EnhancedPlayerInfoScreen extends Screen {
         // 检查鼠标悬停
         checkHover(mouseX, mouseY);
 
-        // 绘制玩家名称大标题（彩色）
-        MutableText playerName = player.getName().copy();
+        // 更新副标题（等级）的动画效果
+        if (subtitleWidget != null) {
+            MutableText levelText = Text.translatable("gui.playermod.level", dataProvider.getLevel())
+                    .formatted(Formatting.YELLOW);
 
-        // 根据VIP状态设置标题颜色
-        if (dataProvider.isSVip()) {
-            playerName = playerName.formatted(Formatting.GOLD, Formatting.BOLD); // SVIP使用金色粗体
-        } else if (dataProvider.isVip()) {
-            playerName = playerName.formatted(Formatting.AQUA, Formatting.BOLD); // VIP使用青色粗体
-        } else {
-            playerName = playerName.formatted(Formatting.WHITE, Formatting.BOLD); // 普通玩家使用白色粗体
+            // 应用动画缩放
+            context.getMatrices().pushMatrix();
+            context.getMatrices().translate(subtitleWidget.getX() + (float) subtitleWidget.getWidth() / 2,
+                    subtitleWidget.getY() + (float) subtitleWidget.getHeight() / 2);
+            context.getMatrices().scale(levelScale, levelScale);
+
+            // 绘制带动画的等级文本
+            int textWidth = textRenderer.getWidth(levelText);
+            context.drawText(textRenderer, levelText, -textWidth / 2, -5, 0xFFFFFF, true);
+            context.getMatrices().popMatrix();
         }
 
-        // 绘制大标题（使用较大的缩放比例）
-        context.getMatrices().pushMatrix();
-        context.getMatrices().scale(1.5f, 1.5f);
-        int scaledCenterX = (int)(centerX / 1.5f);
-        int scaledTitleY = (int)(startY / 1.5f);
-        context.drawCenteredTextWithShadow(textRenderer, playerName, scaledCenterX, scaledTitleY, 0xFFFFFF);
-        context.getMatrices().popMatrix();
-
-        // 绘制等级信息（带动画效果）
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(centerX, startY + 40);
-        context.getMatrices().scale(levelScale, levelScale);
-        Text levelText = Text.translatable("gui.playermod.level", dataProvider.getLevel())
-                .formatted(Formatting.YELLOW);
-        context.drawText(textRenderer, levelText, -textRenderer.getWidth(levelText) / 2, 0, 0xFFFFFF, true);
-        context.getMatrices().popMatrix();
-
-        // 绘制经验信息
-        Text expText = Text.translatable("gui.playermod.experience",
-                        dataProvider.getExperience(), dataProvider.getTotalExpForNextLevel())
-                .formatted(Formatting.GREEN);
-        context.drawCenteredTextWithShadow(textRenderer, expText, centerX, startY + 60, 0xFFFFFF);
+        // 绘制经验条（在内容区域下方）
+        int centerX = this.width / 2;
+        int expBarY = this.height - 80;
 
         // 绘制经验条
         int expBarWidth = 150;
         int expBarX = centerX - expBarWidth / 2;
-        int expBarY = startY + 80;
         hoveredExpBarX = expBarX;
         hoveredExpBarY = expBarY;
         hoveredExpBarWidth = expBarWidth;
@@ -157,44 +208,23 @@ public class EnhancedPlayerInfoScreen extends Screen {
         context.drawCenteredTextWithShadow(textRenderer, Text.literal(percentText),
                 centerX, expBarY + 12, 0xDDDDDD);
 
-        // 绘制会员状态
-        int statusY = startY + 110;
-        Text statusText;
-
-        if (dataProvider.isSVip()) {
-            // SVIP状态 - 金色
-            statusText = Text.translatable("gui.playermod.svip_status")
-                    .formatted(Formatting.GOLD, Formatting.BOLD);
-        } else if (dataProvider.isVip()) {
-            // VIP状态 - 青色
-            statusText = Text.translatable("gui.playermod.vip_status")
-                    .formatted(Formatting.AQUA, Formatting.BOLD);
-        } else {
-            // 非会员状态 - 灰色
-            statusText = Text.translatable("gui.playermod.non_vip_status")
-                    .formatted(Formatting.GRAY);
-        }
-        context.drawCenteredTextWithShadow(textRenderer, statusText, centerX, statusY, 0xFFFFFF);
-
-        // 绘制下一级所需经验
-        int nextLevelExpY = startY + 130;
-        Text nextLevelExpText = Text.translatable("gui.playermod.next_level_exp",
-                        dataProvider.getRemainingExpForNextLevel())
-                .formatted(Formatting.BLUE);
-        context.drawCenteredTextWithShadow(textRenderer, nextLevelExpText, centerX, nextLevelExpY, 0xFFFFFF);
-
         // 绘制鼠标悬停提示
         if (isExpBarHovered) {
             drawExpTooltip(context, mouseX, mouseY, textRenderer);
         }
 
+        // 渲染其他UI元素
         super.render(context, mouseX, mouseY, delta);
-    }
 
-    // 自定义背景渲染方法，使用指定的颜色
-    private void renderBackground(DrawContext context, int color) {
-        // 填充整个屏幕
-        context.fill(0, 0, this.width, this.height, color);
+        // 自动滚动内容
+        if (contentWidget != null && tickCount % 2 == 0) {
+            double maxScroll = contentWidget.getTotalHeight() - contentWidget.getHeight();
+            if (maxScroll > 0) {
+                double scrollAmount = contentWidget.getScrollAmount() + (0.5 / 20.0);
+                if (scrollAmount > maxScroll) scrollAmount = 0;
+                contentWidget.setScrollAmount(Math.min(scrollAmount, maxScroll));
+            }
+        }
     }
 
     // 检查等级是否提升
@@ -261,6 +291,12 @@ public class EnhancedPlayerInfoScreen extends Screen {
 
         // 绘制工具提示
         context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        tickCount++;
     }
 
     @Override
