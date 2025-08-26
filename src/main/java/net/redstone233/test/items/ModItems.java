@@ -17,11 +17,8 @@ import net.redstone233.test.core.component.type.InfoItemComponent;
 import net.redstone233.test.core.food.ModConsumableComponents;
 import net.redstone233.test.core.food.ModFoodComponents;
 import net.redstone233.test.core.until.ModToolMaterial;
-import net.redstone233.test.items.custom.BlackGarlicItem;
-import net.redstone233.test.items.custom.FreezeSwordItem;
+import net.redstone233.test.items.custom.*;
 import net.redstone233.test.core.commands.SetValueCountCommand;
-import net.redstone233.test.items.custom.HerbalTeaItem;
-import net.redstone233.test.items.custom.InfoItem;
 
 import java.util.function.Function;
 
@@ -71,6 +68,15 @@ public static final float ATTACK_DAMAGE = 10.0f;
                     .attributeModifiers(InfoItem.createAttributeModifiers())
                     .component(ModDataComponentTypes.INFO_ITEM,InfoItemComponent.DEFAULT)
                     .maxCount(64)
+    );
+
+    public static final Item BLUE_CHEESE = register(
+            "blue_cheese",
+            BlueCheeseItem::new,
+            new Item.Settings()
+                    .attributeModifiers(BlueCheeseItem.createAttributeModifiers())
+                    .food(ModFoodComponents.BLUE_CHEESE)
+                    .maxCount(16)
     );
 
 

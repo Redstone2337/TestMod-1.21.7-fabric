@@ -37,6 +37,7 @@ public class ModItemGroups {
                             entries.add(ModItems.HE_QI_ZHENG);
                             entries.add(ModItems.DELICIOUS_BLACK_GARLIC);
                             entries.add(ModItems.INFO_ITEM);
+                            entries.add(ModItems.BLUE_CHEESE);
                         })
                         .build()
         );

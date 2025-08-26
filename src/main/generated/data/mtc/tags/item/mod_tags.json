@@ -2,6 +2,10 @@
   "values": [
     "mtc:raw_silicon",
     "mtc:silicon",
-    "mtc:silicon_ingot"
+    "mtc:silicon_ingot",
+    "mtc:herbal_tea",
+    "mtc:black_garlic",
+    "mtc:info_item",
+    "mtc:blue_cheese"
   ]
 }

@@ -72,6 +72,7 @@ public class EnhancedPlayerInfoScreen extends Screen {
         // 创建标题（玩家名称）
         MutableText playerName = player.getName().copy();
         if (dataProvider.isSVip()) {
+            // 如果同时有SVIP和VIP，优先显示SVIP颜色（金色）
             playerName = playerName.formatted(Formatting.GOLD, Formatting.BOLD);
         } else if (dataProvider.isVip()) {
             playerName = playerName.formatted(Formatting.AQUA, Formatting.BOLD);
@@ -109,11 +110,22 @@ public class EnhancedPlayerInfoScreen extends Screen {
     private MutableText createContentText() {
         MutableText content = Text.empty();
 
-        // VIP状态
-        if (dataProvider.isSVip()) {
+        // 检查会员状态
+        boolean isSVip = dataProvider.isSVip();
+        boolean isVip = dataProvider.isVip();
+
+        // VIP状态显示
+        if (isSVip) {
             content.append(Text.translatable("gui.playermod.svip_status")
                     .formatted(Formatting.GOLD, Formatting.BOLD));
-        } else if (dataProvider.isVip()) {
+
+            // 如果同时有VIP，在SVIP下面添加VIP状态
+            if (isVip) {
+                content.append(Text.literal("\n"));
+                content.append(Text.translatable("gui.playermod.vip_status")
+                        .formatted(Formatting.AQUA, Formatting.BOLD));
+            }
+        } else if (isVip) {
             content.append(Text.translatable("gui.playermod.vip_status")
                     .formatted(Formatting.AQUA, Formatting.BOLD));
         } else {

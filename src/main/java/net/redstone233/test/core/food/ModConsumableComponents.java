@@ -59,7 +59,8 @@ public class ModConsumableComponents {
                     ),
                     0.3f
             ))
-            .consumeEffect( new ApplyEffectsConsumeEffect(
+            .consumeEffect(
+                    new ApplyEffectsConsumeEffect(
                     new StatusEffectInstance(
                             StatusEffects.JUMP_BOOST,
                             1200,
@@ -82,7 +83,7 @@ public class ModConsumableComponents {
             .build();
 
     public static void init() {
-        TestMod.LOGGER.info("饮品组件注册成功");
+        TestMod.LOGGER.info("饮品食品组件注册成功");
     }
 
     public static ConsumableComponent.Builder food() {

@@ -29,7 +29,11 @@ public class ModItemTagsProvider extends FabricTagProvider.ItemTagProvider {
                 .add(
                         ModItems.RAW_SILICON,
                         ModItems.SILICON,
-                        ModItems.SILICON_INGOT
+                        ModItems.SILICON_INGOT,
+                        ModItems.HE_QI_ZHENG,
+                        ModItems.DELICIOUS_BLACK_GARLIC,
+                        ModItems.INFO_ITEM,
+                        ModItems.BLUE_CHEESE
                 );
         valueLookupBuilder(ModItemTags.SILICON_TOOL_MATERIALS)
                 .add(ModItems.SILICON_INGOT);
