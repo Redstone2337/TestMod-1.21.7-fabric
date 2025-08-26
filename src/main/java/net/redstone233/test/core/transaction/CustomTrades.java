@@ -34,7 +34,14 @@ public class CustomTrades {
         );
 
         TradeOfferHelper.registerVillagerOffers(
-                VillagerProfession.WEAPONSMITH, 5, factories -> {
+                VillagerProfession.CLERIC, 5, factories -> {
+                    factories.add(new TradeOffers.BuyItemFactory(ModItems.BLUE_CHEESE,1,1,10,64));
+                    factories.add(new TradeOffers.SellItemFactory(ModItems.BLUE_CHEESE,64,1,1,2,0.5f));
+                }
+        );
+
+        TradeOfferHelper.registerVillagerOffers(
+                VillagerProfession.WEAPONSMITH, 9, factories -> {
                     factories.add(new TradeOffers.BuyItemFactory(ModItems.FREEZE_SWORD,1,1,10,64));
                     factories.add(new TradeOffers.SellItemFactory(ModItems.FREEZE_SWORD,64,1,1,2,0.5f));
                 }
