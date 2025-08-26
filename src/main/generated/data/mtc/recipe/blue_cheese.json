@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "minecraft:milk_bucket",
+    "B": "minecraft:sugar",
+    "C": "minecraft:blue_dye",
+    "D": "minecraft:wheat"
+  },
+  "pattern": [
+    "AAA",
+    "BCB",
+    "DDD"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mtc:blue_cheese"
+  }
+}

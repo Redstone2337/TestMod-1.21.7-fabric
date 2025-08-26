@@ -39,6 +39,17 @@ public class ModRecipesProvider extends FabricRecipeProvider {
                         .criterion("has_silicon", conditionsFromItem(ModItems.SILICON))
                         .offerTo(recipeExporter);
 
+                createShaped(RecipeCategory.FOOD, ModItems.BLUE_CHEESE)
+                        .pattern("AAA")
+                        .pattern("BCB")
+                        .pattern("DDD")
+                                .input('A', Items.MILK_BUCKET)
+                                .input('B', Items.SUGAR)
+                                .input('C', Items.BLUE_DYE)
+                                .input('D', Items.WHEAT)
+                        .criterion("has_sugar", conditionsFromItem(Items.SUGAR))
+                        .offerTo(recipeExporter);
+
                 createShapeless(RecipeCategory.FOOD, ModItems.HE_QI_ZHENG)
                         .input(Ingredient.ofItem(Items.GLASS_BOTTLE))
                         .input(Ingredient.ofItem(ModItems.SILICON))

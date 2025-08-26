@@ -4,6 +4,7 @@
 f0ca42489310006de911c993f571c8d738052f8e data/mtc/advancement/recipes/building_blocks/silicon_block_slab.json
 8c731ddb1e7396c4f3c28c83ebf5d1448201ae09 data/mtc/advancement/recipes/building_blocks/silicon_block_stairs.json
 a3248923f7d26b1bdb01fda5861c6bb303528a93 data/mtc/advancement/recipes/decorations/silicon_fence.json
+8c1323a05d152b2ddf45396d4b01671eda4bd3d7 data/mtc/advancement/recipes/food/blue_cheese.json
 368c747af7bf5b7ad3b7ea4a0974bdb44bf20896 data/mtc/advancement/recipes/food/herbal_tea.json
 d3652a47f05576886eb549fd991197e489e2d9f8 data/mtc/advancement/recipes/misc/raw_silicon.json
 775fa84c1d3be40a5ed5038705b34e187ea597b0 data/mtc/advancement/recipes/misc/silicon_from_blasting_deepslate_silicon_ore.json
@@ -16,6 +17,7 @@ c1cfa504aad30cb5378bb29841d877d0bbaa268f data/mtc/advancement/recipes/redstone/s
 65befe90fa0273f034fa5aa9c148046e33fbe864 data/mtc/advancement/recipes/redstone/silicon_fence_gate.json
 bff6b32f4fbb4f1a7d709ca11a7bd92cd5e1dd25 data/mtc/advancement/recipes/redstone/silicon_pressure_plate.json
 fa981cbfc65e299c5150ba1bb752a7ea38afe4a0 data/mtc/advancement/recipes/redstone/silicon_trapdoor.json
+7d39470c06682e41a504be058ea388b752cc448f data/mtc/recipe/blue_cheese.json
 1063e4b685e7ed14cded615418b7fd9c5bf2434d data/mtc/recipe/herbal_tea.json
 75bc463aee7020565fe18195be11b14ab93594cc data/mtc/recipe/raw_silicon.json
 2bd4d05c17ae4279c5ad71524fb0a89138064a19 data/mtc/recipe/raw_silicon_block.json
