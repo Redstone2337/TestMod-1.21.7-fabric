@@ -53,7 +53,7 @@ public class BlueCheeseItem extends Item {
             }
 
         }
-        return super.finishUsing(stack, world, user);
+        return stack.isEmpty() ? ItemStack.EMPTY : new ItemStack(stack.getItem());
     }
 
     private void applyEffects(PlayerEntity player) {
