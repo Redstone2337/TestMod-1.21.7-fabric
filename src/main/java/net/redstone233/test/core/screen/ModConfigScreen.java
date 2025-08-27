@@ -1,3 +1,4 @@
+// ModConfigScreen.java
 package net.redstone233.test.core.screen;
 
 import me.shedaniel.autoconfig.AutoConfig;

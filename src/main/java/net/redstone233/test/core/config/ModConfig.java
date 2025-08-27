@@ -1,3 +1,4 @@
+// ModConfig.java
 package net.redstone233.test.core.config;
 
 import me.shedaniel.autoconfig.ConfigData;
