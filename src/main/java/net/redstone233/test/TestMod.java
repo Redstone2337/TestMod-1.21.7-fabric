@@ -9,6 +9,7 @@ import net.redstone233.test.blocks.ModBlocks;
 import net.redstone233.test.core.commands.AcquireModItemStackCommand;
 import net.redstone233.test.core.commands.InformationCommand;
 import net.redstone233.test.core.commands.SetValueCountCommand;
+import net.redstone233.test.core.component.ModDataComponentTypes;
 import net.redstone233.test.core.food.ModConsumableComponents;
 import net.redstone233.test.core.food.ModFoodComponents;
 import net.redstone233.test.core.loader.BrewingRecipeLoader;
@@ -51,6 +52,7 @@ public class TestMod implements ModInitializer {
 		ModPotions.init();
 		ModStatusEffects.init();
 		CustomTrades.init();
+        ModDataComponentTypes.init();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.

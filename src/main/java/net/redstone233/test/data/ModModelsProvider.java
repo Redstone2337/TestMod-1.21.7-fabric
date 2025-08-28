@@ -39,5 +39,9 @@ public class ModModelsProvider extends FabricModelProvider {
         itemModelGenerator.register(ModItems.DELICIOUS_BLACK_GARLIC,Models.GENERATED);
         itemModelGenerator.register(ModItems.INFO_ITEM, Models.GENERATED);
         itemModelGenerator.register(ModItems.BLUE_CHEESE, Models.GENERATED);
+        itemModelGenerator.registerBow(ModItems.FABRIC_BOW);
+        itemModelGenerator.register(ModItems.FORGE_MACE, Models.GENERATED);
+        itemModelGenerator.register(ModItems.NEOFORGE_ITEM, Models.GENERATED);
+        itemModelGenerator.register(ModItems.QUILT_ITEM, Models.GENERATED);
     }
 }

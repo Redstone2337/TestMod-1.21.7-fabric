@@ -24,6 +24,10 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(ModItems.DELICIOUS_BLACK_GARLIC, "\"Delicious\" Black Garlic");
         translationBuilder.add(ModItems.INFO_ITEM, "Screen Info");
         translationBuilder.add(ModItems.BLUE_CHEESE, "Blue Cheese");
+        translationBuilder.add(ModItems.FABRIC_BOW, "Fabric Bow");
+        translationBuilder.add(ModItems.FORGE_MACE, "Forge Mace");
+        translationBuilder.add(ModItems.NEOFORGE_ITEM, "NeoForge");
+        translationBuilder.add(ModItems.QUILT_ITEM, "Quilt");
 
         // Blocks
         translationBuilder.add(ModBlocks.SILICON_BLOCK, "Block of Silicon");

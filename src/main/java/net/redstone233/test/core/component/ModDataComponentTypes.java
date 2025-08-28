@@ -5,10 +5,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.redstone233.test.TestMod;
-import net.redstone233.test.core.component.type.DeliciousBlackGarlicComponent;
-import net.redstone233.test.core.component.type.FreezingSwordComponent;
-import net.redstone233.test.core.component.type.HerbalTeaComponent;
-import net.redstone233.test.core.component.type.InfoItemComponent;
+import net.redstone233.test.core.component.type.*;
 
 import java.util.function.UnaryOperator;
 
@@ -35,6 +32,15 @@ public class ModDataComponentTypes {
             "info_item",
             infoItemComponentBuilder -> infoItemComponentBuilder.codec(InfoItemComponent.CODEC)
     );
+
+    public static final ComponentType<NeoForgeItemComponent> NEO_FORGE_ITEM = register(
+            "neo_forge_item",
+            neoForgeItemComponentBuilder -> neoForgeItemComponentBuilder.codec(NeoForgeItemComponent.CODEC)
+    );
+
+    public static void init() {
+        TestMod.LOGGER.info("数据组件类型注册成功！");
+    }
 
     private static <T> ComponentType<T> register(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
         return Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(TestMod.MOD_ID,id), ((ComponentType.Builder)builderOperator.apply(ComponentType.builder())).build());

@@ -38,6 +38,10 @@ public class ModItemGroups {
                             entries.add(ModItems.DELICIOUS_BLACK_GARLIC);
                             entries.add(ModItems.INFO_ITEM);
                             entries.add(ModItems.BLUE_CHEESE);
+                            entries.add(ModItems.FABRIC_BOW);
+                            entries.add(ModItems.NEOFORGE_ITEM);
+                            entries.add(ModItems.FORGE_MACE);
+                            entries.add(ModItems.QUILT_ITEM);
                         })
                         .build()
         );

@@ -1,6 +1,7 @@
 package net.redstone233.test.items;
 
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.item.BowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKey;
@@ -10,12 +11,10 @@ import net.minecraft.util.Rarity;
 import net.redstone233.test.TestMod;
 import net.redstone233.test.client.tooltip.FreezeSwordTooltipComponent;
 import net.redstone233.test.core.component.ModDataComponentTypes;
-import net.redstone233.test.core.component.type.DeliciousBlackGarlicComponent;
-import net.redstone233.test.core.component.type.FreezingSwordComponent;
-import net.redstone233.test.core.component.type.HerbalTeaComponent;
-import net.redstone233.test.core.component.type.InfoItemComponent;
+import net.redstone233.test.core.component.type.*;
 import net.redstone233.test.core.food.ModConsumableComponents;
 import net.redstone233.test.core.food.ModFoodComponents;
+import net.redstone233.test.core.until.Builder.RegisterItemBuilder;
 import net.redstone233.test.core.until.ModToolMaterial;
 import net.redstone233.test.items.custom.*;
 import net.redstone233.test.core.commands.SetValueCountCommand;
@@ -79,6 +78,48 @@ public static final float ATTACK_DAMAGE = 10.0f;
                     .maxCount(16)
     );
 
+    public static final Item FABRIC_BOW = RegisterItemBuilder.create("fabric")
+            .factory(BowItem::new)
+            .settings(new Item.Settings()
+                    .maxDamage(30000)
+                    .enchantable(1)
+                    .maxCount(1)
+            )
+            .register();
+
+    public static final Item FORGE_MACE = RegisterItemBuilder.create("forge")
+            .factory(ForgeItem::new)
+            .settings(new Item.Settings()
+                    .rarity(Rarity.EPIC)
+                    .component(DataComponentTypes.TOOL, ForgeItem.createToolComponent())
+                    .maxDamage(5000)
+                    .enchantable(15)
+                    .attributeModifiers(ForgeItem.createAttributeModifiers())
+                    .repairable(SILICON_INGOT)
+                    .maxCount(1)
+            )
+            .register();
+
+    public static final Item NEOFORGE_ITEM = RegisterItemBuilder.create("neoforge")
+            .factory(NeoForgeItem::new)
+            .settings(new Item.Settings()
+                    .component(ModDataComponentTypes.NEO_FORGE_ITEM, NeoForgeItemComponent.DEFAULT)
+                    .maxDamage(10000)
+                    .enchantable(20)
+                    .attributeModifiers(NeoForgeItem.createAttributeModifiers())
+                    .maxCount(1)
+            )
+            .register();
+
+    public static final Item QUILT_ITEM = RegisterItemBuilder.create("quilt")
+            .factory(QuiltItem::new)
+            .settings(new Item.Settings()
+                    .maxDamage(8000)
+                    .enchantable(10)
+                    .attributeModifiers(QuiltItem.createAttributeModifiers())
+                    .maxCount(1)
+            )
+            .register();
 
 
 
