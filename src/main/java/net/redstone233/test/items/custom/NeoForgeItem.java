@@ -14,6 +14,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -124,9 +125,9 @@ public class NeoForgeItem extends Item {
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
         if (user instanceof ServerPlayerEntity player) {
             World world = player.getWorld();
-            ChickenEntity chicken = EntityType.CHICKEN.create(world, SpawnReason.SPAWN_ITEM_USE);
+            FoxEntity fox = EntityType.FOX.create(world, SpawnReason.SPAWN_ITEM_USE);
             if (stack.getItem() == this && !world.isClient) {
-                world.spawnEntity(chicken);
+                world.spawnEntity(fox);
             }
         }
         return ActionResult.SUCCESS;
