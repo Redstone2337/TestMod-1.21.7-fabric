@@ -13,6 +13,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 
 import java.util.UUID;
@@ -72,6 +74,16 @@ public class BlueCheeseItem extends Item {
                     100,  // 持续时间(ticks): 5秒
                     0     // 效果等级
             ));
+            player.addStatusEffect(new StatusEffectInstance(
+                    StatusEffects.STRENGTH,      // 力量
+                    200,  // 持续时间(ticks): 10秒
+                    0     // 效果等级
+            ));
+            player.sendMessage(Text.literal("体质已达成！")
+                    .formatted(Formatting.WHITE)
+                    .append(Text.literal("[蓝纹奶酪享受者]")
+                            .formatted(Formatting.AQUA)),
+                    false);
         } else {
             // 给予负面效果
             player.addStatusEffect(new StatusEffectInstance(
@@ -84,6 +96,12 @@ public class BlueCheeseItem extends Item {
                     200,  // 持续时间(ticks): 10秒
                     0     // 效果等级
             ));
+
+            player.sendMessage(Text.literal("体质已达成！")
+                    .formatted(Formatting.WHITE)
+                            .append(Text.literal("[蓝纹奶酪受害者]")
+                                    .formatted(Formatting.AQUA)),
+                    false);
         }
     }
 
