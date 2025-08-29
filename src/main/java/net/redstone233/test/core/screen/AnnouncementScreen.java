@@ -9,6 +9,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -22,6 +23,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AnnouncementScreen extends Screen {
     private final ModConfig config;
@@ -175,6 +178,7 @@ public class AnnouncementScreen extends Screen {
         createButtons(centerX, buttonWidth, buttonHeight, buttonY);
     }
 
+    /*
     private MutableText createAnnouncementContent() {
         MutableText contentText = Text.empty();
 
@@ -201,6 +205,64 @@ public class AnnouncementScreen extends Screen {
 
         return contentText;
     }
+    */
+
+    /**
+     * 把整段公告字符串 → MutableText
+     * 支持：
+     *   - §a §b … 原版颜色码
+     *   - &#RRGGBB  自定义 RGB 颜色码
+     *   - 未写颜色 → 使用 config.contentColor
+     */
+    private MutableText createAnnouncementContent() {
+        MutableText root = Text.empty();
+
+        List<String> lines = getStrings();
+        for (String raw : lines) {
+            root.append(parseRichText(raw, config.contentColor, config.useCustomRGB));
+            root.append(Text.literal("\n"));
+        }
+        return root;
+    }
+
+    /**
+     * 解析单行富文本
+     */
+    private MutableText parseRichText(String raw, int defaultCol, boolean useRgb) {
+        MutableText result = Text.empty();
+        // 1) 先按 &#RRGGBB 或 §x 分段
+        Pattern p = Pattern.compile("(&#[0-9a-fA-F]{6}|§[0-9a-fk-or]|[^&§]+)");
+        Matcher m = p.matcher(raw);
+        Style active = Style.EMPTY;
+
+        while (m.find()) {
+            String seg = m.group();
+            if (seg.startsWith("&#")) {                       // RGB 写法
+                int rgb = Integer.parseInt(seg.substring(2), 16);
+                active = Style.EMPTY.withColor(rgb);
+            } else if (seg.startsWith("§")) {                 // 原版颜色码
+                Formatting fmt = Formatting.byCode(seg.charAt(1));
+                if (fmt != null) active = Style.EMPTY.withFormatting(fmt);
+            } else {                                          // 普通文字
+                MutableText t = Text.literal(seg);
+                if (active == Style.EMPTY && !useRgb) {
+                    // 未指定颜色且不用 RGB → 使用默认 Formatting
+                    Formatting fmt = getFormattingFromColor(defaultCol);
+                    t = t.formatted(fmt);
+                } else if (active == Style.EMPTY && useRgb) {
+                    // 未指定颜色且启用 RGB → 使用默认 RGB
+                    t = t.withColor(defaultCol);
+                } else {
+                    t = t.setStyle(active);
+                }
+                result.append(t);
+            }
+        }
+        return result;
+    }
+
+
+
 
     private List<String> getStrings() {
         List<String> defaultContent = List.of(
