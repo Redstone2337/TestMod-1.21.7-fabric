@@ -79,7 +79,7 @@ public static final float ATTACK_DAMAGE = 10.0f;
     );
 
     public static final Item FABRIC_BOW = RegisterItemBuilder.create("fabric")
-            .factory(BowItem::new)
+            .factory(FabricBowItem::new)
             .settings(new Item.Settings()
                     .maxDamage(30000)
                     .enchantable(1)
@@ -100,7 +100,7 @@ public static final float ATTACK_DAMAGE = 10.0f;
             )
             .register();
 
-    public static final Item NEOFORGE_ITEM = RegisterItemBuilder.create("neoforge")
+    public static final Item NEOFORGE_ITEM = RegisterItemBuilder.create("neoforged")
             .factory(NeoForgeItem::new)
             .settings(new Item.Settings()
                     .component(ModDataComponentTypes.NEO_FORGE_ITEM, NeoForgeItemComponent.DEFAULT)

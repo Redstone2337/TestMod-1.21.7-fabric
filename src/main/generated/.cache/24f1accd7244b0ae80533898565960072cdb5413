@@ -20,7 +20,7 @@ cceba27c0ea6f71a726f7b4a19dbaa9d4e90bf65 assets/mtc/items/forge.json
 e1bdb9c3ee1ff393f62708549042a78e109cedf0 assets/mtc/items/freeze_sword.json
 38f16d9c0997320aa6119cf87cfaa8d2ed2cf18c assets/mtc/items/herbal_tea.json
 804a2e5f5c5988c0891c8b1c37d918f6698de0da assets/mtc/items/info_item.json
-f4d64d8950256760cd5e4e7c8e529dbb336e4cad assets/mtc/items/neoforge.json
+a414e6cb422a9fab296bc981d7261c36325cf146 assets/mtc/items/neoforged.json
 cde6da770454192cf5b8980d3d7b9257b16bb475 assets/mtc/items/quilt.json
 e2404a6887053122ea2508654195c44f8687b808 assets/mtc/items/raw_silicon.json
 d095a2b2baf6ad57efc44404d70670a2ae7f3a53 assets/mtc/items/raw_silicon_block.json
@@ -82,7 +82,7 @@ a8ad230ee0a153f5cd430b61323c6c1663b0d364 assets/mtc/models/item/fabric_pulling_0
 a6e1eb25c6c0a564d0232f1fc2880a4ac7a0d1ff assets/mtc/models/item/freeze_sword.json
 5efd4efc14fb2903b41362fe7ad34bac5a3576a1 assets/mtc/models/item/herbal_tea.json
 2068b36c4e33e5415dc54a4e4e64b2302e48c616 assets/mtc/models/item/info_item.json
-b0ee78800b4174797738fbbf48c07bc0867d38c7 assets/mtc/models/item/neoforge.json
+9048d62baacad943980896e435fd521dfb442a96 assets/mtc/models/item/neoforged.json
 129017f1cd41e6b0ef6ae92e375ee77e81896b79 assets/mtc/models/item/quilt.json
 69b8e474c39404f5a9a5921bbbc08faf4ca2a3eb assets/mtc/models/item/raw_silicon.json
 4d71bd92eca99a678d30849453ae5bf95ed26b9f assets/mtc/models/item/silicon.json

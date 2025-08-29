@@ -3,11 +3,16 @@ package net.redstone233.test.items.custom;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -57,6 +62,27 @@ public class NeoForgeItem extends Item {
                         chicken.teleport(playerPos.x, playerPos.y, playerPos.z, false);
                     }
 
+                    List<PlayerEntity> playerEntitiesInRange = world.getEntitiesByClass(PlayerEntity.class, schoolBox, p -> p != player);
+                    for (PlayerEntity otherPlayer : playerEntitiesInRange) {
+//                        otherPlayer.teleport(playerPos.x, playerPos.y, playerPos.z, false);
+                        otherPlayer.addStatusEffect(
+                                new StatusEffectInstance(
+                                        StatusEffects.RESISTANCE,
+                                        400,
+                                        1,
+                                        false,
+                                        true
+                                )
+                        );
+                    }
+
+                    List<MobEntity> mobEntitiesInRange = world.getEntitiesByClass(MobEntity.class, schoolBox, mob -> mob instanceof Monster);
+                    for (MobEntity mob : mobEntitiesInRange) {
+                        mob.setOnFireFor(200);
+                        mob.setFireTicks(200);
+                        mob.setOnFire(true);
+                    }
+
                 } else {
                     Box schoolBox = new Box(
                             playerPos.x - 5, playerPos.y - 5, playerPos.z - 5,
@@ -68,6 +94,25 @@ public class NeoForgeItem extends Item {
                         chicken.teleport(playerPos.x, playerPos.y, playerPos.z, false);
                     }
 
+                    List<PlayerEntity> playerEntitiesInRange = world.getEntitiesByClass(PlayerEntity.class, schoolBox, p -> p != player);
+                    for (PlayerEntity otherPlayer : playerEntitiesInRange) {
+                        otherPlayer.addStatusEffect(
+                                new StatusEffectInstance(
+                                        StatusEffects.RESISTANCE,
+                                        200,
+                                        1,
+                                        false,
+                                        true
+                                )
+                        );
+                    }
+
+                    List<MobEntity> mobEntitiesInRange = world.getEntitiesByClass(MobEntity.class, schoolBox, mob -> mob instanceof Monster);
+                    for (MobEntity mob : mobEntitiesInRange) {
+                        mob.setOnFireFor(100);
+                        mob.setFireTicks(100);
+                        mob.setOnFire(true);
+                    }
                 }
 
             }
