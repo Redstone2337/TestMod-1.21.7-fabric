@@ -1,4 +1,3 @@
-// AnnouncementScreen.java
 package net.redstone233.test.core.screen;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -208,58 +207,75 @@ public class AnnouncementScreen extends Screen {
     */
 
     /**
-     * 把整段公告字符串 → MutableText
-     * 支持：
-     *   - §a §b … 原版颜色码
-     *   - &#RRGGBB  自定义 RGB 颜色码
-     *   - 未写颜色 → 使用 config.contentColor
+      * 把整段公告字符串 → MutableText
+      * 支持：
+      *  - §a §b … 原版颜色码
+      *  - &#RRGGBB  自定义 RGB 颜色码
+      *  - 未写颜色 → 使用 config.contentColor
      */
     private MutableText createAnnouncementContent() {
         MutableText root = Text.empty();
+        List<String> src = getStrings();
 
-        List<String> lines = getStrings();
-        for (String raw : lines) {
-            root.append(parseRichText(raw, config.contentColor, config.useCustomRGB));
-            root.append(Text.literal("\n"));
+        Pattern pattern = Pattern.compile("(&#[0-9a-fA-F]{6}|§[0-9a-fk-or]|[^&§\n]+|\n)");
+        for (String raw : src) {
+            Matcher m = pattern.matcher(raw);
+            MutableText line = Text.empty();
+
+            while (m.find()) {
+                String seg = m.group();
+                if (seg.startsWith("&#")) {
+                    int rgb = Integer.parseInt(seg.substring(2), 16);
+                    line.append(Text.literal("").setStyle(Style.EMPTY.withColor(rgb)));
+                } else if (seg.startsWith("§")) {
+                    Formatting fmt = Formatting.byCode(seg.charAt(1));
+                    if (fmt != null) line.append(Text.literal("").setStyle(Style.EMPTY.withFormatting(fmt)));
+                } else if (seg.equals("\n")) {
+                    // 换行符已在根文本里处理
+                } else {
+                    line.append(Text.literal(seg));
+                }
+            }
+            root.append(line).append(Text.literal("\n"));
         }
         return root;
     }
 
-    /**
-     * 解析单行富文本
-     */
-    private MutableText parseRichText(String raw, int defaultCol, boolean useRgb) {
-        MutableText result = Text.empty();
-        // 1) 先按 &#RRGGBB 或 §x 分段
-        Pattern p = Pattern.compile("(&#[0-9a-fA-F]{6}|§[0-9a-fk-or]|[^&§]+)");
-        Matcher m = p.matcher(raw);
-        Style active = Style.EMPTY;
-
-        while (m.find()) {
-            String seg = m.group();
-            if (seg.startsWith("&#")) {                       // RGB 写法
-                int rgb = Integer.parseInt(seg.substring(2), 16);
-                active = Style.EMPTY.withColor(rgb);
-            } else if (seg.startsWith("§")) {                 // 原版颜色码
-                Formatting fmt = Formatting.byCode(seg.charAt(1));
-                if (fmt != null) active = Style.EMPTY.withFormatting(fmt);
-            } else {                                          // 普通文字
-                MutableText t = Text.literal(seg);
-                if (active == Style.EMPTY && !useRgb) {
-                    // 未指定颜色且不用 RGB → 使用默认 Formatting
-                    Formatting fmt = getFormattingFromColor(defaultCol);
-                    t = t.formatted(fmt);
-                } else if (active == Style.EMPTY && useRgb) {
-                    // 未指定颜色且启用 RGB → 使用默认 RGB
-                    t = t.withColor(defaultCol);
-                } else {
-                    t = t.setStyle(active);
-                }
-                result.append(t);
-            }
-        }
-        return result;
-    }
+//    /**
+//     * 解析单行富文本
+//     */
+//    private MutableText parseRichText(String raw, int defaultCol, boolean useRgb) {
+//        MutableText result = Text.empty();
+//        // 1) 先按 &#RRGGBB 或 §x 分段
+//        Pattern p = Pattern.compile("(&#[0-9a-fA-F]{6}|§[0-9a-fk-or]|[^&§]+)");
+//        Matcher m = p.matcher(raw);
+//        Style active = Style.EMPTY;
+//
+//        while (m.find()) {
+//            String seg = m.group();
+//            if (seg.startsWith("&#")) {                       // RGB 写法
+//                int rgb = Integer.parseInt(seg.substring(2), 16);
+//                active = Style.EMPTY.withColor(rgb);
+//            } else if (seg.startsWith("§")) {                 // 原版颜色码
+//                Formatting fmt = Formatting.byCode(seg.charAt(1));
+//                if (fmt != null) active = Style.EMPTY.withFormatting(fmt);
+//            } else {                                          // 普通文字
+//                MutableText t = Text.literal(seg);
+//                if (active == Style.EMPTY && !useRgb) {
+//                    // 未指定颜色且不用 RGB → 使用默认 Formatting
+//                    Formatting fmt = getFormattingFromColor(defaultCol);
+//                    t = t.formatted(fmt);
+//                } else if (active == Style.EMPTY && useRgb) {
+//                    // 未指定颜色且启用 RGB → 使用默认 RGB
+//                    t = t.withColor(defaultCol);
+//                } else {
+//                    t = t.setStyle(active);
+//                }
+//                result.append(t);
+//            }
+//        }
+//        return result;
+//    }
 
 
 
@@ -281,71 +297,71 @@ public class AnnouncementScreen extends Screen {
                 config.announcementContent : defaultContent;
     }
 
-    /**
-     * 解析包含Minecraft Formatting代码的字符串
-     * 支持 § 符号后跟颜色代码（如 §a 表示绿色）
-     *
-     * @param text 要解析的文本
-     * @param defaultColor 默认颜色值（十六进制整数格式，如0xFFFFFF）
-     * @param useCustomRGB 是否使用自定义RGB颜色
-     * @return 解析后的MutableText
-     */
-    private MutableText parseFormattingCodes(String text, int defaultColor, boolean useCustomRGB) {
-        MutableText result = Text.empty();
-        StringBuilder currentText = new StringBuilder();
-        Formatting currentFormatting = null;
-
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-
-            if (c == '§' && i + 1 < text.length()) {
-                // 找到Formatting代码
-                char codeChar = text.charAt(i + 1);
-                Formatting formatting = Formatting.byCode(codeChar);
-
-                if (formatting != null) {
-                    // 添加当前文本（如果有）
-                    if (!currentText.isEmpty()) {
-                        MutableText segment = Text.literal(currentText.toString());
-                        if (currentFormatting != null) {
-                            segment = segment.formatted(currentFormatting);
-                        } else if (useCustomRGB) {
-                            segment = segment.withColor(defaultColor);
-                        } else {
-                            Formatting defaultFormatting = getFormattingFromColor(defaultColor);
-                            segment = segment.formatted(defaultFormatting);
-                        }
-                        result.append(segment);
-                        currentText.setLength(0);
-                    }
-
-                    currentFormatting = formatting.isColor() ? formatting : currentFormatting;
-                    i++; // 跳过格式代码
-                } else {
-                    // 无效的格式代码，当作普通文本处理
-                    currentText.append(c);
-                }
-            } else {
-                currentText.append(c);
-            }
-        }
-
-        // 添加剩余的文本
-        if (!currentText.isEmpty()) {
-            MutableText segment = Text.literal(currentText.toString());
-            if (currentFormatting != null) {
-                segment = segment.formatted(currentFormatting);
-            } else if (useCustomRGB) {
-                segment = segment.withColor(defaultColor);
-            } else {
-                Formatting defaultFormatting = getFormattingFromColor(defaultColor);
-                segment = segment.formatted(defaultFormatting);
-            }
-            result.append(segment);
-        }
-
-        return result;
-    }
+//    /**
+//     * 解析包含Minecraft Formatting代码的字符串
+//     * 支持 § 符号后跟颜色代码（如 §a 表示绿色）
+//     *
+//     * @param text 要解析的文本
+//     * @param defaultColor 默认颜色值（十六进制整数格式，如0xFFFFFF）
+//     * @param useCustomRGB 是否使用自定义RGB颜色
+//     * @return 解析后的MutableText
+//     */
+//    private MutableText parseFormattingCodes(String text, int defaultColor, boolean useCustomRGB) {
+//        MutableText result = Text.empty();
+//        StringBuilder currentText = new StringBuilder();
+//        Formatting currentFormatting = null;
+//
+//        for (int i = 0; i < text.length(); i++) {
+//            char c = text.charAt(i);
+//
+//            if (c == '§' && i + 1 < text.length()) {
+//                // 找到Formatting代码
+//                char codeChar = text.charAt(i + 1);
+//                Formatting formatting = Formatting.byCode(codeChar);
+//
+//                if (formatting != null) {
+//                    // 添加当前文本（如果有）
+//                    if (!currentText.isEmpty()) {
+//                        MutableText segment = Text.literal(currentText.toString());
+//                        if (currentFormatting != null) {
+//                            segment = segment.formatted(currentFormatting);
+//                        } else if (useCustomRGB) {
+//                            segment = segment.withColor(defaultColor);
+//                        } else {
+//                            Formatting defaultFormatting = getFormattingFromColor(defaultColor);
+//                            segment = segment.formatted(defaultFormatting);
+//                        }
+//                        result.append(segment);
+//                        currentText.setLength(0);
+//                    }
+//
+//                    currentFormatting = formatting.isColor() ? formatting : currentFormatting;
+//                    i++; // 跳过格式代码
+//                } else {
+//                    // 无效的格式代码，当作普通文本处理
+//                    currentText.append(c);
+//                }
+//            } else {
+//                currentText.append(c);
+//            }
+//        }
+//
+//        // 添加剩余的文本
+//        if (!currentText.isEmpty()) {
+//            MutableText segment = Text.literal(currentText.toString());
+//            if (currentFormatting != null) {
+//                segment = segment.formatted(currentFormatting);
+//            } else if (useCustomRGB) {
+//                segment = segment.withColor(defaultColor);
+//            } else {
+//                Formatting defaultFormatting = getFormattingFromColor(defaultColor);
+//                segment = segment.formatted(defaultFormatting);
+//            }
+//            result.append(segment);
+//        }
+//
+//        return result;
+//    }
 
     private void createButtons(int centerX, int buttonWidth, int buttonHeight, int buttonY) {
         // 使用 MutableText 创建按钮文本

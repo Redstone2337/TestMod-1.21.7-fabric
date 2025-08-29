@@ -62,7 +62,7 @@ public class NeoForgeItem extends Item {
                         chicken.teleport(playerPos.x, playerPos.y, playerPos.z, false);
                     }
 
-                    List<PlayerEntity> playerEntitiesInRange = world.getEntitiesByClass(PlayerEntity.class, schoolBox, p -> p != player);
+                    List<PlayerEntity> playerEntitiesInRange = world.getEntitiesByClass(PlayerEntity.class, schoolBox, p -> p == player);
                     for (PlayerEntity otherPlayer : playerEntitiesInRange) {
 //                        otherPlayer.teleport(playerPos.x, playerPos.y, playerPos.z, false);
                         otherPlayer.addStatusEffect(
@@ -94,7 +94,7 @@ public class NeoForgeItem extends Item {
                         chicken.teleport(playerPos.x, playerPos.y, playerPos.z, false);
                     }
 
-                    List<PlayerEntity> playerEntitiesInRange = world.getEntitiesByClass(PlayerEntity.class, schoolBox, p -> p != player);
+                    List<PlayerEntity> playerEntitiesInRange = world.getEntitiesByClass(PlayerEntity.class, schoolBox, p -> p == player);
                     for (PlayerEntity otherPlayer : playerEntitiesInRange) {
                         otherPlayer.addStatusEffect(
                                 new StatusEffectInstance(
@@ -124,7 +124,7 @@ public class NeoForgeItem extends Item {
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
         if (user instanceof ServerPlayerEntity player) {
             World world = player.getWorld();
-            ChickenEntity chicken = EntityType.CHICKEN.create(world, SpawnReason.COMMAND);
+            ChickenEntity chicken = EntityType.CHICKEN.create(world, SpawnReason.SPAWN_ITEM_USE);
             if (stack.getItem() == this && !world.isClient) {
                 world.spawnEntity(chicken);
             }

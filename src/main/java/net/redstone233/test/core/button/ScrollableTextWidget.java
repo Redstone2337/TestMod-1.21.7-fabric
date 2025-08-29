@@ -1,9 +1,9 @@
-// ScrollableTextWidget.java
 package net.redstone233.test.core.button;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -13,6 +13,7 @@ import net.redstone233.test.TestModClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ScrollableTextWidget extends ClickableWidget {
     private final MinecraftClient client;
@@ -36,6 +37,10 @@ public class ScrollableTextWidget extends ClickableWidget {
         updateTextLines(); // 改为更新文本行
     }
 
+
+
+
+    /*
     public void updateTextLines() {
         textLines.clear();
 
@@ -62,6 +67,37 @@ public class ScrollableTextWidget extends ClickableWidget {
                     TestModClient.LOGGER.info("行 {}: {}", i, textLines.get(i).getString());
                 }
             }
+        } catch (Exception e) {
+            TestModClient.LOGGER.error("文本处理失败", e);
+            textLines.add(Text.literal("文本渲染错误"));
+            totalHeight = textRenderer.fontHeight;
+        }
+    }*/
+
+    public void updateTextLines() {
+        textLines.clear();
+
+        try {
+            if (getMessage() == null) {
+                textLines.add(Text.literal("暂无公告内容"));
+            } else {
+                // 直接按换行符切分，保留 Text 对象本身（已含颜色）
+                getMessage().visit((style, text) -> {
+                    for (String line : text.split("\n")) {
+                        textLines.add(Text.literal(line).setStyle(style));
+                    }
+                    return Optional.empty();
+                }, Style.EMPTY);
+            }
+
+            if (TestModClient.DEBUG_MODE) {
+                TestModClient.LOGGER.info("处理了 {} 行文本，总高度: {}", textLines.size(), totalHeight);
+                for (int i = 0; i < textLines.size(); i++) {
+                    TestModClient.LOGGER.info("行 {}: {}", i, textLines.get(i).getString());
+                }
+            }
+
+            totalHeight = textLines.size() * textRenderer.fontHeight;
         } catch (Exception e) {
             TestModClient.LOGGER.error("文本处理失败", e);
             textLines.add(Text.literal("文本渲染错误"));
