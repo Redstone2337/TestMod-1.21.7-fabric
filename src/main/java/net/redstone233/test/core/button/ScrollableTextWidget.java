@@ -189,7 +189,7 @@ public class ScrollableTextWidget extends ClickableWidget {
         for (Text line : textLines) {
             if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
                 // 使用Text对象自身的颜色，而不是固定颜色
-                context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, -1, false);
+                context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, getColor(), false);
             }
             yOffset += textRenderer.fontHeight;
         }
