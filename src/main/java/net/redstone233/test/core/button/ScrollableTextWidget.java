@@ -5,7 +5,9 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.MutableText;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Formatting;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.font.TextRenderer;
@@ -113,7 +115,7 @@ public class ScrollableTextWidget extends ClickableWidget {
      * @return 解析后的Text对象
      */
     private Text parseFormattingCodes(String text) {
-        net.minecraft.text.MutableText result = net.minecraft.text.Text.empty();
+        MutableText result = Text.empty();
         StringBuilder currentText = new StringBuilder();
         net.minecraft.util.Formatting currentFormatting = null;
 
@@ -123,12 +125,12 @@ public class ScrollableTextWidget extends ClickableWidget {
             if (c == '§' && i + 1 < text.length()) {
                 // 找到Formatting代码
                 char codeChar = text.charAt(i + 1);
-                net.minecraft.util.Formatting formatting = net.minecraft.util.Formatting.byCode(codeChar);
+                Formatting formatting = Formatting.byCode(codeChar);
 
                 if (formatting != null) {
                     // 添加当前文本（如果有）
                     if (!currentText.isEmpty()) {
-                        net.minecraft.text.MutableText segment = net.minecraft.text.Text.literal(currentText.toString());
+                        MutableText segment = Text.literal(currentText.toString());
                         if (currentFormatting != null) {
                             segment = segment.formatted(currentFormatting);
                         }
@@ -149,7 +151,7 @@ public class ScrollableTextWidget extends ClickableWidget {
 
         // 添加剩余的文本
         if (!currentText.isEmpty()) {
-            net.minecraft.text.MutableText segment = net.minecraft.text.Text.literal(currentText.toString());
+            MutableText segment = Text.literal(currentText.toString());
             if (currentFormatting != null) {
                 segment = segment.formatted(currentFormatting);
             }
@@ -189,7 +191,12 @@ public class ScrollableTextWidget extends ClickableWidget {
         for (Text line : textLines) {
             if (yOffset + textRenderer.fontHeight >= getY() && yOffset <= getY() + height) {
                 // 使用Text对象自身的颜色，而不是固定颜色
-                context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, -1, false);
+                //context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, -1, false);
+
+										// 在renderWidget方法中，修改文本渲染部分
+						context.drawText(textRenderer, line, getX() + scrollbarPadding, yOffset, 
+                 line.getStyle().getColor() != null ? line.getStyle().getColor().getRgb() : color, 
+                 false);
             }
             yOffset += textRenderer.fontHeight;
         }
