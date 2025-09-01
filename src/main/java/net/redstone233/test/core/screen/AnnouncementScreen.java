@@ -213,6 +213,58 @@ public class AnnouncementScreen extends Screen {
       *  - &#RRGGBB  自定义 RGB 颜色码
       *  - 未写颜色 → 使用 config.contentColor
      */
+				private MutableText createAnnouncementContent() {
+    MutableText root = Text.empty();
+    List<String> src = getStrings();
+    
+    for (String line : src) {
+        // 跳过空行
+        if (line.trim().isEmpty()) {
+            root.append(Text.literal("\n"));
+            continue;
+        }
+        
+        MutableText lineText = Text.empty();
+        Pattern pattern = Pattern.compile("(&#[0-9a-fA-F]{6}|§[0-9a-fk-or]|[^&§]+)");
+        Matcher m = pattern.matcher(line);
+        Style currentStyle = Style.EMPTY;
+        
+        while (m.find()) {
+            String segment = m.group();
+            
+            if (segment.startsWith("&#")) {
+                // 处理自定义RGB颜色
+                try {
+                    int rgb = Integer.parseInt(segment.substring(2), 16);
+                    currentStyle = currentStyle.withColor(rgb);
+                } catch (NumberFormatException e) {
+                    TestModClient.LOGGER.warn("无效的RGB颜色代码: {}", segment);
+                }
+            } else if (segment.startsWith("§")) {
+                // 处理原版格式代码
+                Formatting formatting = Formatting.byCode(segment.charAt(1));
+                if (formatting != null) {
+                    if (formatting == Formatting.RESET) {
+                        currentStyle = Style.EMPTY;
+                    } else if (formatting.isColor()) {
+                        currentStyle = currentStyle.withColor(formatting);
+                    } else {
+                        currentStyle = currentStyle.withFormatting(formatting);
+                    }
+                }
+            } else {
+                // 普通文本，应用当前样式
+                MutableText textSegment = Text.literal(segment).setStyle(currentStyle);
+                lineText.append(textSegment);
+            }
+        }
+        
+        root.append(lineText).append(Text.literal("\n"));
+    }
+    
+    return root;
+}
+/*
     private MutableText createAnnouncementContent() {
         MutableText root = Text.empty();
         List<String> src = getStrings();
@@ -240,6 +292,7 @@ public class AnnouncementScreen extends Screen {
         }
         return root;
     }
+*/
 
 //    /**
 //     * 解析单行富文本
